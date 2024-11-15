@@ -7,11 +7,12 @@ using UnityEngine;
 /// </summary>
 public class BasePilot : MonoBehaviour
 {
-    [SerializeField, Header("自身の機体")]
-    private BaseMS myMs;
+    // 自身の機体
+    public BaseMS myMs
+    { get; private set; }
 
     [SerializeField, Header("自身のカメラ")]
-    private GameObject myCamera;
+    private GameObject myCamera;    
 
     [SerializeField, Header("自身のUI")]
     private UIManager myUImanager;
@@ -51,5 +52,14 @@ public class BasePilot : MonoBehaviour
     {
         myTeamCost = _myTeamCost;
         enemyTeamCost = _enemyTeamCost;
+    }
+
+    /// <summary>
+    /// 自身の機体を設定
+    /// </summary>
+    /// <param name="ms"></param>
+    public void SetMyMs(BaseMS _ms)
+    {
+        myMs = _ms;
     }
 }

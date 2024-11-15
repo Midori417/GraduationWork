@@ -128,6 +128,56 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3971100177572303617, guid: e6734b60cea141444919387b50b2522e, type: 3}
   m_PrefabInstance: {fileID: 661458780718452373}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &109595497
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 109595499}
+  - component: {fileID: 109595498}
+  m_Layer: 0
+  m_Name: Pilot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &109595498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109595497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43641597ab4f20046a5ff7836627fc89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myCamera: {fileID: 0}
+  myUImanager: {fileID: 0}
+  enemyPilots: []
+  targetPilot: {fileID: 0}
+--- !u!4 &109595499
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109595497}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 661458780718452374}
+  - {fileID: 1641984457}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &467336336
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,7 +570,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 109595499}
     m_Modifications:
     - target: {fileID: 650974562636471692, guid: 179f334581e3ca844994095f5b6a3a34, type: 3}
       propertyPath: m_Name
@@ -532,7 +582,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4611248444515904762, guid: 179f334581e3ca844994095f5b6a3a34, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.7
+      value: 0.7000122
       objectReference: {fileID: 0}
     - target: {fileID: 4611248444515904762, guid: 179f334581e3ca844994095f5b6a3a34, type: 3}
       propertyPath: m_LocalPosition.z
@@ -544,15 +594,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4611248444515904762, guid: 179f334581e3ca844994095f5b6a3a34, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4611248444515904762, guid: 179f334581e3ca844994095f5b6a3a34, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4611248444515904762, guid: 179f334581e3ca844994095f5b6a3a34, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4611248444515904762, guid: 179f334581e3ca844994095f5b6a3a34, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -600,13 +650,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!4 &1641984457 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4611248444515904762, guid: 179f334581e3ca844994095f5b6a3a34, type: 3}
+  m_PrefabInstance: {fileID: 1641984454}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &661458780718452373
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 109595499}
     m_Modifications:
     - target: {fileID: 117290751937694500, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: img_BoostGauge
@@ -650,11 +705,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5340189165629864944, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 252.63557
+      value: -707.36444
       objectReference: {fileID: 0}
     - target: {fileID: 5340189165629864944, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1019.51184
+      value: 479.51184
       objectReference: {fileID: 0}
     - target: {fileID: 5340189165629864944, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -666,15 +721,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5340189165629864944, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5340189165629864944, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5340189165629864944, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5340189165629864944, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -736,6 +791,11 @@ PrefabInstance:
       addedObject: {fileID: 467336337}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6734b60cea141444919387b50b2522e, type: 3}
+--- !u!4 &661458780718452374 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5340189165629864944, guid: e6734b60cea141444919387b50b2522e, type: 3}
+  m_PrefabInstance: {fileID: 661458780718452373}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -744,5 +804,4 @@ SceneRoots:
   - {fileID: 863047579}
   - {fileID: 1159971697}
   - {fileID: 662789265}
-  - {fileID: 661458780718452373}
-  - {fileID: 1641984454}
+  - {fileID: 109595499}
