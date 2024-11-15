@@ -1,4 +1,4 @@
-Shader "Hidden/s_UIFilleAmout"
+Shader "Hidden/s_UIBoostGauge"
 {
     Properties
     {

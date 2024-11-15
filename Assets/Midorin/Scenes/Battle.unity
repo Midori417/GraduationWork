@@ -628,6 +628,22 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 220
       objectReference: {fileID: 0}
+    - target: {fileID: 2079133053425904665, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_Type
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079133053425904665, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079133053425904665, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_FillAmount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079133053425904665, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_FillMethod
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2662163317272685299, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_Name
       value: pfb_UIManager
@@ -671,6 +687,46 @@ PrefabInstance:
     - target: {fileID: 5340189165629864944, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584824748408990447, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 575
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584824748408990447, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584824748408990447, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -22.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584824748408990447, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 43.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8022661738072457273, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_Name
+      value: cvs_PlayerUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 8788474831717579656, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940427801854621064, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 575
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940427801854621064, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940427801854621064, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 2.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8940427801854621064, guid: e6734b60cea141444919387b50b2522e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

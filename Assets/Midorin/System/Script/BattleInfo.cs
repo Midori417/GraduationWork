@@ -1,0 +1,65 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>
+/// チーム
+/// </summary>
+public enum Team
+{
+    None=0,
+    Read=1,
+    Blue=2,
+}
+
+/// <summary>
+/// プレイヤーのタイプ
+/// </summary>
+public enum PlayerType
+{
+    Human,
+    Cpu,
+}
+
+/// <summary>
+/// 機体リスト
+/// </summary>
+public enum MsList
+{
+    None,
+    Gundam,
+}
+
+/// <summary>
+/// パイロット情報
+/// </summary>
+[System.Serializable]
+public struct PilotInfo
+{
+    // チームID
+    public Team teamId;
+
+    // プレイヤータイプ
+    public PlayerType playerType;
+
+    // 仕様機体
+    public MsList useMs;
+}
+
+/// <summary>
+/// バトル情報
+/// </summary>
+[System.Serializable]
+public struct BattleInfo
+{
+    // 赤チームのコスト
+    public int teamRedCost;
+
+    // 青チームのコスト
+    public int teamBlueCost;
+
+    // 制限時間
+    public int time;
+
+    // パイロット情報配列
+    public List<PilotInfo> pilotsInfo;
+}
