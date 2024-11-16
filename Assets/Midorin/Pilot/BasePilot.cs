@@ -8,14 +8,14 @@ using UnityEngine;
 public class BasePilot : MonoBehaviour
 {
     // 自身の機体
-    public BaseMS myMs
+    public BaseMs myMs
     { get; private set; }
 
     [SerializeField, Header("自身のカメラ")]
-    private GameObject myCamera;    
+    protected GameObject myCamera;    
 
     [SerializeField, Header("自身のUI")]
-    private UIManager myUImanager;
+    protected UIManager myUImanager;
 
     [SerializeField, Header("相手チームのパイロット")]
     private BasePilot[] enemyPilots;
@@ -58,7 +58,7 @@ public class BasePilot : MonoBehaviour
     /// 自身の機体を設定
     /// </summary>
     /// <param name="ms"></param>
-    public void SetMyMs(BaseMS _ms)
+    public void SetMyMs(BaseMs _ms)
     {
         myMs = _ms;
     }
