@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// 基底コンポーネント
 /// </summary>
-public class BaseMs : MonoBehaviour
+public class P_BaseMs : MonoBehaviour
 {
 
     [Header("カメラトランスフォームコンポーネント")]
@@ -230,22 +230,6 @@ public class BaseMs : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// カメラの正面を基準に移動方向を計算する
-    /// </summary>
-    /// <returns></returns>
-    protected Vector3 MoveForward(Vector2 moveAxis)
-    {
-        if (!cameraTrs)
-        {
-            return Vector3.zero;
-        }
-        Vector3 cameraForward = Vector3.Scale(cameraTrs.forward, new Vector3(1, 0, 1)).normalized;
-        Vector3 moveForward = cameraForward * moveAxis.y + cameraTrs.right * moveAxis.x;
-
-        return moveForward;
-    }
-
     // エフェクトを停止
     protected void StopEffect()
     {
@@ -262,5 +246,21 @@ public class BaseMs : MonoBehaviour
         //{
         //    particleSystem.Play();
         //}
+    }
+
+    /// <summary>
+    /// カメラの正面を基準に移動方向を計算する
+    /// </summary>
+    /// <returns></returns>
+    protected Vector3 MoveForward(Vector2 moveAxis)
+    {
+        if (!cameraTrs)
+        {
+            return Vector3.zero;
+        }
+        Vector3 cameraForward = Vector3.Scale(cameraTrs.forward, new Vector3(1, 0, 1)).normalized;
+        Vector3 moveForward = cameraForward * moveAxis.y + cameraTrs.right * moveAxis.x;
+
+        return moveForward;
     }
 }

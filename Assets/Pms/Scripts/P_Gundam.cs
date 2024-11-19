@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// ガンダム
 /// </summary>
-public class Gundam : BaseMs
+public class P_Gundam : P_BaseMs
 {
     /// <summary>
     /// 移動パラメータ
@@ -72,23 +72,6 @@ public class Gundam : BaseMs
     [SerializeField, Header("ダッシュパラメータ")]
     private DashParamater dashParamater;
 
-    /// <summary>
-    /// ビームライフルパラメータ
-    /// </summary>
-    [System.Serializable]
-    private struct BeumRifleParamater
-    {
-        [Header("ビームライフルの弾")]
-        public GameObject bullet;
-
-        [Header("射撃位置")]
-        public Transform shotTrs;
-
-        public bool lookTaget;
-    }
-    [SerializeField, Header("ビームライフルパラメータ")]
-    private BeumRifleParamater beumRifleParamater;
-
     [SerializeField, Header("ターゲット機体")]
     private GameObject target;
 
@@ -119,7 +102,7 @@ public class Gundam : BaseMs
         BoostGaugeInit();
 
         moveParamater.speed = 20.0f;
-        moveParamater.rotationSpeed = 0.01f;   
+        moveParamater.rotationSpeed = 0.01f;
 
         jumpParamater.power = 25.0f;
         jumpParamater.speed = 5.0f;
@@ -155,11 +138,9 @@ public class Gundam : BaseMs
             return;
         }
 
-        Move(pilotInput.MoveAxis);
-        Jump(pilotInput.MoveAxis, pilotInput.IsJumpBtn);
-        Dash(pilotInput.MoveAxis, pilotInput.IsDashBtn);
-        BeumRifle();
-
+        Move(pilotInput.moveAxis);
+        Jump(pilotInput.moveAxis, pilotInput.isJumpBtn);
+        Dash(pilotInput.moveAxis, pilotInput.isDashBtn);
 
         // ブーストパラメータを補正
         boostParamater.current = Mathf.Clamp(boostParamater.current, 0, boostParamater.max);
@@ -292,28 +273,6 @@ public class Gundam : BaseMs
         }
 
         anim.SetBool("Dash", dashParamater.isNow);
-    }
-
-    private void BeumRifle()
-    {
-        if (pilotInput.GetAttackBtn(PilotInput.BtnState.Down))
-        {
-            beumRifleParamater.lookTaget = true;
-            anim.SetTrigger("Shot");
-        }
-    }
-
-    /// <summary>
-    /// ビームライフルを作成する
-    /// </summary>
-    private void CreateBullet()
-    {
-        Instantiate(beumRifleParamater.bullet, beumRifleParamater.shotTrs);
-    }
-
-    private void FalidBeumRifle()
-    {
-        beumRifleParamater.lookTaget = false;
     }
 
     /// <summary>

@@ -7,50 +7,33 @@ using UnityEngine;
 /// </summary>
 public class PilotInput : MonoBehaviour
 {
-    public enum BtnState
-    {
-        Consecutive,
-        Down,
-        Up,
-    }
-
-    public Vector2 MoveAxis
+    // 移動軸
+    public Vector2 moveAxis
     {
         get;
         private set;
     }
 
-    public bool IsJumpBtn
+    // ジャンプボタン
+    public bool isJumpBtn
     {
         get;
         private set;
     }
 
-    public bool IsDashBtn
+    // ダッシュボタン
+    public bool isDashBtn
     {
         get;
         private set;
     }
 
-    public bool GetAttackBtn(BtnState state)
-    {
-        switch(state)
-        {
-            case BtnState.Consecutive:
-                return Input.GetMouseButton(0);
-            case BtnState.Down:
-                return Input.GetMouseButtonDown(0);
-            case BtnState.Up:
-                return Input.GetMouseButtonUp(0);
-        }
-        return false;
-    }
-
+    // 入力の更新
     void Update()
     {
-        MoveAxis = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        IsJumpBtn = Input.GetKey(KeyCode.Space);
-        IsDashBtn = Input.GetKey(KeyCode.LeftShift);
+        moveAxis = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        isJumpBtn = Input.GetKey(KeyCode.Space);
+        isDashBtn = Input.GetKey(KeyCode.LeftShift);
 
     }
 }
