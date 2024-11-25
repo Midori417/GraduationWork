@@ -50,8 +50,10 @@ public class Gundam : BaseMs
             move.Move(pilotInput.moveAxis);
         }
         move.Dash(pilotInput.moveAxis, pilotInput.isDashBtn);
-        move.Jump(pilotInput.moveAxis, pilotInput.isJumpBtn);
-
+        if (!move.isDash)
+        {
+            move.Jump(pilotInput.moveAxis, pilotInput.isJumpBtn);
+        }
         AnimationUpdate();
     }
 
@@ -107,9 +109,30 @@ public class Gundam : BaseMs
         {
             return;
         }
+        if (!olsIsGround && isGround)
+        {
+            anim.SetTrigger("Landing");
+        }
+
         anim.SetBool("Move", move.isMove);
+        if (!isGround)
+        {
+            anim.SetBool("Move", false);
+        }
+
         anim.SetBool("Dash", move.isDash);
         anim.SetBool("Jump", move.isJump);
+    }
+
+    /// <summary>
+    /// 着地アニメーション終了時の処理
+    /// </summary>
+    public void AnimLandingFailed()
+    {
+        if(move)
+        {
+            move.isMoveStop = false;
+        }
     }
 
 }

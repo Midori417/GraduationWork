@@ -30,6 +30,8 @@ public class GundomMove : BaseParts
         get;
         private set;
     }
+    [System.NonSerialized]
+    public bool isMoveStop = false;
 
     /// <summary>
     /// ジャンプパラメータ
@@ -113,7 +115,7 @@ public class GundomMove : BaseParts
         }
 
         moveParamater.speed = 20.0f;
-        moveParamater.rotationSpeed = 0.01f;
+        moveParamater.rotationSpeed = 0.02f;
 
         jumpParamater.power = 25.0f;
         jumpParamater.speed = 5.0f;
@@ -135,6 +137,7 @@ public class GundomMove : BaseParts
     public void Landing()
     {
         rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, jumpParamater.inertia);
+        isMoveStop = true;
     }
 
     /// <summary>
@@ -142,6 +145,11 @@ public class GundomMove : BaseParts
     /// </summary>
     public void Move(Vector2 moveAxis)
     {
+        if(isMoveStop)
+        {
+            return;
+        }
+
         Vector3 moveFoward = MoveForward(moveAxis);
 
         // 進行方向に補間しながら回転

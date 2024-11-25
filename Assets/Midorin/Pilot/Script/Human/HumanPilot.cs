@@ -24,4 +24,12 @@ public class HumanPilot : BasePilot
             myMs.SetCameraTrs(myCamera.transform);
         }
     }
+
+    private void Update()
+    {
+        if (myMs)
+        {
+            myUImanager.BoostGauge(myMs.boostCurrent);
+        }
+    }
 }

@@ -24,7 +24,7 @@ public class GroundCheck : MonoBehaviour
         private set;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         oldIsGround = isGround;
     }
