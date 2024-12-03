@@ -5,25 +5,38 @@ using UnityEngine;
 /// <summary>
 /// ガンダム
 /// </summary>
-public class Gundam : BaseMs
+public class Gundam : MonoBehaviour
 {
-    [SerializeField, Header("移動機能")]
-    private GundomMove move;
+    [SerializeField, Header("自身のカメラ")]
+    private Transform myCamera;
+
+    [SerializeField]
+    private Rigidbody rb;
+
+    [SerializeField]
+    private Animator animator;
+
+    [SerializeField]
+    private GroundCheck groundCheck;
 
     /// <summary>
-    /// Updateの前に実行
+    /// 必要なコンポーネントを取得
+    /// </summary>
+    void UseGetComponent()
+    {
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+        groundCheck = GetComponentInChildren<GroundCheck>();
+    }
+
+    #region イベント
+
+    /// <summary>
+    /// Updateより前に実行する
     /// </summary>
     private void Start()
     {
-        // 必要なコンポーネントを取得する
-        // コンポーネントが足りなければスクリプトを停止する
-        enabled = GetGundamComponent();
-        if (!enabled)
-        {
-            return;
-        }
-
-        Initialize();
+        UseGetComponent();
     }
 
     /// <summary>
@@ -31,108 +44,191 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
-        if (!move)
-        {
-            return;
-        }
-        BoostGaugeChage();
-        UseGravity();
+        boostParamater.Charge();
 
-        // 着地処理
-        if (!olsIsGround && isGround)
-        {
-            move.Landing();
-        }
-
-        // 地面についている場合
-        if (isGround)
-        {
-            move.Move(pilotInput.moveAxis);
-        }
-        move.Dash(pilotInput.moveAxis, pilotInput.isDashBtn);
-        if (!move.isDash)
-        {
-            move.Jump(pilotInput.moveAxis, pilotInput.isJumpBtn);
-        }
-        AnimationUpdate();
+        Vector2 moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        Move(moveAxis);
+        MoveAnim();
     }
 
     /// <summary>
-    /// ガンダムに必要なコンポーネントを取得する
+    ///  Updateより後に実行
     /// </summary>
+    private void LateUpdate()
+    {
+        
+    }
+
+    #endregion
+
+    #region ブースト関係
+
+    [System.Serializable]
+    private struct BoostParamater
+    {
+        // エネルギーの最大量
+        public static float max = 100;
+
+        // 現在のエネルギー量
+        private float _current;
+        public float current
+        {
+            get
+            {
+                return _current;
+            }
+        }
+
+        [Header("チャージ速度")]
+        public float chargeSpeed;
+
+        // チャージタイマー
+        private float chargeTimer;
+
+        [Header("チャージロック時間")]
+        public float chargeLockTime;
+
+        [Header("オーバーヒートしたときのチャージロック時間")]
+        public float overHeartChargeLockTime;
+
+        // trueなら使用中
+        private bool isUse;
+
+        /// <summary>
+        /// ブーストパラメータの初期化
+        /// </summary>
+        public void Initialize()
+        {
+            _current = max;
+        }
+
+        /// <summary>
+        /// チャージ処理
+        /// </summary>
+        public void Charge()
+        {
+            // 使用中はチャージを行わない
+            if(isUse)
+            {
+                return;
+            }
+
+            // チャージタイマーが0以上あれば減らす
+            if(chargeTimer > 0)
+            {
+                chargeTimer -= Time.deltaTime;
+            }
+            else
+            {
+                // エネルギーを回復する
+                _current += chargeSpeed * Time.deltaTime;
+            }
+
+            // 値を補正
+            chargeTimer = Mathf.Clamp(chargeTimer, 0, overHeartChargeLockTime);
+            _current = Mathf.Clamp(_current, 0, max);
+        }
+
+        /// <summary>
+        /// ブーストの消費
+        /// </summary>
+        /// <param name="value">消費量</param>
+        public void UseBoost(float value)
+        {
+            // 0以下なら処理を行わない
+            if(_current <= 0)
+            {
+                return;
+            }
+
+            // 使用中
+            isUse = true;
+
+            // 消費
+            _current -= value;
+
+            // チャージタイムを入れておく
+            if(_current > 0)
+            {
+                chargeTimer = chargeLockTime;
+            }
+            // 0以下ならオーバーヒート状態
+            else
+            {
+                chargeTimer = overHeartChargeLockTime;
+            }
+
+            // 値を補正
+            _current = Mathf.Clamp(_current, 0, max);
+        }
+    }
+    [SerializeField, Header("ブーストパラメータ")]
+    private BoostParamater boostParamater;
+
+    #endregion
+
+    #region 移動関係
+
+    /// <summary>
+    /// 移動パラメータ
+    /// </summary>
+    [System.Serializable]
+    private struct MoveParamater
+    {
+        [Header("移動速度")]
+        public float speed;
+
+        [Header("旋回速度")]
+        public float rotationSpeed;
+    }
+    [SerializeField, Header("移動パラメータ")]
+    private MoveParamater moveParamater;
+
+    /// <summary>
+    /// カメラを基準に移動方向を取得
+    /// </summary>
+    /// <param name="moveAxis">移動軸</param>
     /// <returns></returns>
-    private bool GetGundamComponent()
+    Vector3 MoveForward(Vector2 moveAxis)
     {
-        if (!GetBaseMsComponent())
-        {
-            return false;
-        }
-        move = GetComponent<GundomMove>();
-        if (!move)
-        {
-            return false;
-        }
+        // カメラの方向から、X-Z単位ベクトル(正規化)を取得
+        Vector3 cameraForward = Vector3.Scale(myCamera.forward, new Vector3(1, 0, 1));
+        Vector3 moveForward = cameraForward * moveAxis.y + myCamera.right * moveAxis.x;
 
-        return true;
+        return moveForward;
     }
 
     /// <summary>
-    /// ガンダムの機体パラメータの初期化
+    /// 移動処理
     /// </summary>
-    private void Initialize()
+    public void Move(Vector2 moveAxis)
     {
-        BoostGaugeInit();
-        move.Initalize();
-    }
+        Vector3 moveFoward = MoveForward(moveAxis);
 
-    /// <summary>
-    /// 重力が必要か
-    /// </summary>
-    void UseGravity()
-    {
-        if (move.isDash || move.isJump)
+        // 進行方向に回転しながら正面方向に進む
+        if (moveFoward != Vector3.zero)
         {
-            rb.useGravity = false;
+            Quaternion rotation = Quaternion.LookRotation(moveFoward);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 
+                moveParamater.rotationSpeed * Time.deltaTime);
+            rb.velocity = transform.forward * moveParamater.speed + new Vector3(0, rb.velocity.y, 0);
         }
         else
         {
-            rb.useGravity = true;
+            // 移動入力がなくなったら速度をなくす
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
         }
     }
 
     /// <summary>
-    /// アニメーションの状態を更新
+    /// 移動関係のアニメーション
     /// </summary>
-    void AnimationUpdate()
+    void MoveAnim()
     {
-        if (!anim)
-        {
-            return;
-        }
-        if (!olsIsGround && isGround)
-        {
-            anim.SetTrigger("Landing");
-        }
-
-        anim.SetBool("Move", move.isMove);
-        if (!isGround)
-        {
-            anim.SetBool("Move", false);
-        }
-
-        anim.SetBool("Dash", move.isDash);
-        anim.SetBool("Jump", move.isJump);
+        float speed = new Vector2(rb.velocity.x, rb.velocity.z).magnitude;
+        animator.SetFloat("Speed", speed);
+        animator.SetBool("IsGround", groundCheck.isGround);
     }
 
-    /// <summary>
-    /// 着地アニメーション終了時の処理
-    /// </summary>
-    public void AnimLandingFailed()
-    {
-        if(move)
-        {
-            move.isMoveStop = false;
-        }
-    }
-
+    #endregion
 }

@@ -14,26 +14,15 @@ public class UIManager : MonoBehaviour
     [SerializeField, Header("耐久値")]
     private Text txt_DurabilityValue;
 
-    #region Test
-
-    [SerializeField, Header("(Test)ブースト容量")]
-    private float boost;
-
-    [SerializeField, Header("ブースト最大量")]
-    private float boostMax = 100;
-
-    #endregion
-
     /// <summary>
     /// ブーストゲージの設定
     /// </summary>
-    /// <param name="value">現在のブースト容量</param>
+    /// <param name="value">現在のブースト容量(0～1)</param>
     public void BoostGauge(float value)
     {
         if (img_BoostGauge)
         {
-            float fillAmout = Mathf.Clamp01((boostMax - (boostMax - value)) / boostMax);
-            img_BoostGauge.material.SetFloat("_FillAmount", fillAmout);
+            img_BoostGauge.material.SetFloat("_FillAmount", value);
         }
     }
 
