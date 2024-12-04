@@ -37,6 +37,7 @@ public class Gundam : MonoBehaviour
     private void Start()
     {
         UseGetComponent();
+        boostParamater.Initialize();
     }
 
     /// <summary>
