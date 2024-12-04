@@ -8,16 +8,26 @@ using UnityEngine;
 public class Gundam : MonoBehaviour
 {
     [SerializeField, Header("自身のカメラ")]
-    private Transform myCamera;
+    private Transform _myCamera;
 
-    [SerializeField]
-    private Rigidbody rb;
-
-    [SerializeField]
-    private Animator animator;
-
-    [SerializeField]
+    // 地面判定コンポーネント
     private GroundCheck groundCheck;
+
+    [SerializeField, Header("移動コンポーネント")]
+    private MsMove move;
+
+    // 他に伝える
+    public Rigidbody rb
+    { get; private set; }
+    public Animator animator
+    { get; private set; }
+    public Transform myCamera
+    { get { return _myCamera; } }
+
+    // 仮入力
+    Vector2 moveAxis;
+    bool isJumpBtn;
+    bool isDashBtn;
 
     /// <summary>
     /// 必要なコンポーネントを取得
@@ -37,7 +47,27 @@ public class Gundam : MonoBehaviour
     private void Start()
     {
         UseGetComponent();
+        rb.drag = 0.1f;
         boostParamater.Initialize();
+        move.Initalize();
+    }
+
+    /// <summary>
+    /// 必要なコンポーネントがあるか
+    /// </summary>
+    /// <returns></returns>
+    bool ComponentCheck()
+    {
+        if (!move)
+        {
+            return false;
+        }
+        if (!groundCheck)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -45,11 +75,23 @@ public class Gundam : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (!ComponentCheck())
+        {
+            Debug.LogError("必要なコンポーネント足りません");
+            return;
+        }
+
+        // 仮キー入力
+        moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        isJumpBtn = Input.GetKey(KeyCode.Space);
+        isDashBtn = Input.GetKey(KeyCode.LeftShift);
+
         boostParamater.Charge();
 
-        Vector2 moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        Move(moveAxis);
-        MoveAnim();
+        animator.SetTrigger("BeumRifleShot");
+
+        Move();
+        AnimUpdate();
     }
 
     /// <summary>
@@ -57,7 +99,7 @@ public class Gundam : MonoBehaviour
     /// </summary>
     private void LateUpdate()
     {
-        
+
     }
 
     #endregion
@@ -109,13 +151,13 @@ public class Gundam : MonoBehaviour
         public void Charge()
         {
             // 使用中はチャージを行わない
-            if(isUse)
+            if (isUse)
             {
                 return;
             }
 
             // チャージタイマーが0以上あれば減らす
-            if(chargeTimer > 0)
+            if (chargeTimer > 0)
             {
                 chargeTimer -= Time.deltaTime;
             }
@@ -137,7 +179,7 @@ public class Gundam : MonoBehaviour
         public void UseBoost(float value)
         {
             // 0以下なら処理を行わない
-            if(_current <= 0)
+            if (_current <= 0)
             {
                 return;
             }
@@ -149,7 +191,7 @@ public class Gundam : MonoBehaviour
             _current -= value;
 
             // チャージタイムを入れておく
-            if(_current > 0)
+            if (_current > 0)
             {
                 chargeTimer = chargeLockTime;
             }
@@ -168,68 +210,44 @@ public class Gundam : MonoBehaviour
 
     #endregion
 
-    #region 移動関係
-
-    /// <summary>
-    /// 移動パラメータ
-    /// </summary>
-    [System.Serializable]
-    private struct MoveParamater
-    {
-        [Header("移動速度")]
-        public float speed;
-
-        [Header("旋回速度")]
-        public float rotationSpeed;
-    }
-    [SerializeField, Header("移動パラメータ")]
-    private MoveParamater moveParamater;
-
-    /// <summary>
-    /// カメラを基準に移動方向を取得
-    /// </summary>
-    /// <param name="moveAxis">移動軸</param>
-    /// <returns></returns>
-    Vector3 MoveForward(Vector2 moveAxis)
-    {
-        // カメラの方向から、X-Z単位ベクトル(正規化)を取得
-        Vector3 cameraForward = Vector3.Scale(myCamera.forward, new Vector3(1, 0, 1));
-        Vector3 moveForward = cameraForward * moveAxis.y + myCamera.right * moveAxis.x;
-
-        return moveForward;
-    }
-
     /// <summary>
     /// 移動処理
     /// </summary>
-    public void Move(Vector2 moveAxis)
+    void Move()
     {
-        Vector3 moveFoward = MoveForward(moveAxis);
+        // 着地した瞬間
+        if(groundCheck.isGround && groundCheck.oldIsGround)
+        {
+            //move.Landing();
+            //animator.SetTrigger("Landing");
+        }
 
-        // 進行方向に回転しながら正面方向に進む
-        if (moveFoward != Vector3.zero)
+        // 地面ついているときのみ
+        if (groundCheck.isGround)
         {
-            Quaternion rotation = Quaternion.LookRotation(moveFoward);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 
-                moveParamater.rotationSpeed * Time.deltaTime);
-            rb.velocity = transform.forward * moveParamater.speed + new Vector3(0, rb.velocity.y, 0);
+            move.Move(moveAxis);
         }
-        else
+
+        if (!move.isDash)
         {
-            // 移動入力がなくなったら速度をなくす
-            rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            move.Jump(moveAxis, isJumpBtn);
         }
+        move.Dash(moveAxis, isDashBtn);
+
+        // ダッシュとジャンプ中は重力の影響を受けない
+        rb.useGravity = (!isDashBtn) && (!isJumpBtn);
     }
 
     /// <summary>
-    /// 移動関係のアニメーション
+    /// アニメータに伝える変数の更新
     /// </summary>
-    void MoveAnim()
+    void AnimUpdate()
     {
+        // アニメータ変数処理
         float speed = new Vector2(rb.velocity.x, rb.velocity.z).magnitude;
         animator.SetFloat("Speed", speed);
         animator.SetBool("IsGround", groundCheck.isGround);
+        animator.SetBool("Jump", move.isJump);
+        animator.SetBool("Dash", move.isDash);
     }
-
-    #endregion
 }
