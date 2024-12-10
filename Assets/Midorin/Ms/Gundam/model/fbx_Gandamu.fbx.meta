@@ -1,49 +1,9 @@
 fileFormatVersion: 2
-guid: 17a0acda3b6eeeb4eb94644a140265af
+guid: 9edb7800bda5f6b4c8c604f8373ce7e6
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Blue
-    second: {fileID: 2100000, guid: ec6e8fb539bbf814d82ab8d3e2be348f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Gree
-    second: {fileID: 2100000, guid: 169720923ea7efc408822d25efd78a95, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Gree2
-    second: {fileID: 2100000, guid: d336a95a13977004da3c880f4c108c9a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_GudamHead
-    second: {fileID: 2100000, guid: 228f78a43588ac44784eb82e86aceb2b, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Orenge
-    second: {fileID: 2100000, guid: a3244e8728428e84ab406ec88fffca51, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_Red
-    second: {fileID: 2100000, guid: 717db5bb7d0b22f4fa67c220af2a9925, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_SkyBlue
-    second: {fileID: 2100000, guid: b51946a152f9d9c469f7235071091054, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: M_White
-    second: {fileID: 2100000, guid: b19d29beb37b14142a86c9db779f9680, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -131,7 +91,7 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     globalScale: 1
-    rootMotionBoneName: Hips
+    rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1

@@ -11,8 +11,8 @@ public class UIManager : MonoBehaviour
     [SerializeField, Header("ブーストゲージ")]
     private Image img_BoostGauge;
 
-    [SerializeField, Header("耐久値")]
-    private Text txt_DurabilityValue;
+    [SerializeField, Header("自身の機体の体力")]
+    private Text txt_Hp;
 
     /// <summary>
     /// ブーストゲージの設定
@@ -27,14 +27,14 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 耐久値の設定
+    /// 体力の設定
     /// </summary>
     /// <param name="value"></param>
-    public void DurabilityValue(int value)
+    public void Hp(int value)
     {
-        if (txt_DurabilityValue)
+        if (txt_Hp)
         {
-            txt_DurabilityValue.text = value.ToString("000");
+            txt_Hp.text = value.ToString("000");
         }
     }
 }

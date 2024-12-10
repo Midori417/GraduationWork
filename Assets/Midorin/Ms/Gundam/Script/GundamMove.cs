@@ -13,7 +13,7 @@ public class MsMove : MonoBehaviour
 
     // 物理コンポーネント
     private Rigidbody rb;
-    
+
     // 自身のカメラ
     private Transform myCamera;
 
@@ -149,16 +149,15 @@ public class MsMove : MonoBehaviour
     /// </summary>
     public void Move(Vector2 moveAxis)
     {
-        if(isDash)
+        if (isDash)
         {
             return;
         }
 
-        Vector3 moveFoward = MoveForward(moveAxis);
-
         // 進行方向に回転しながら正面方向に進む
-        if (moveFoward != Vector3.zero)
+        if (moveAxis != Vector2.zero)
         {
+            Vector3 moveFoward = MoveForward(moveAxis);
             MoveForwardRot(moveFoward, moveParamater.rotationSpeed);
             rb.velocity = transform.forward * moveParamater.speed + new Vector3(0, rb.velocity.y, 0);
         }
@@ -176,7 +175,7 @@ public class MsMove : MonoBehaviour
     {
         if (isJumpBtn)
         {
-            if (10 > 0)
+            if (mainMs.boost01 > 0)
             {
                 Vector3 moveFoward = MoveForward(moveAxis);
 
@@ -189,6 +188,13 @@ public class MsMove : MonoBehaviour
                 rb.velocity = new Vector3(rb.velocity.x, jumpParamater.power, rb.velocity.z);
 
                 jumpParamater.isNow = true;
+
+                // エネルギーの使用
+                mainMs.UseBoost(jumpParamater.useBoost);
+            }
+            else
+            {
+                jumpParamater.isNow = false;
             }
         }
         else
@@ -204,7 +210,7 @@ public class MsMove : MonoBehaviour
     {
         if (isDashBtn)
         {
-            if (10 > 0)
+            if (mainMs.boost01 > 0)
             {
                 Vector3 moveFoward = MoveForward(moveAxis);
                 // 進行方向に補間しながら回転
@@ -215,6 +221,13 @@ public class MsMove : MonoBehaviour
                 rb.velocity = transform.forward * dashParamater.speed;
 
                 dashParamater.isNow = true;
+
+                // エネルギーの使用
+                mainMs.UseBoost(dashParamater.useBoost);
+            }
+            else
+            {
+                dashParamater.isNow = false;
             }
         }
         else
