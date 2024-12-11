@@ -127,7 +127,7 @@ public class Gundam : BaseMs
         {
             move.Landing();
             animator.SetTrigger("Landing");
-            //isStop = true;
+            Stop();
         }
 
         // ダッシュとジャンプ中は重力の影響を受けない
