@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
-public class TargetCamera : MonoBehaviour
+public class TargetSetter : MonoBehaviour
 {
     /// <summary> バーチャルカメラ </summary>
     [Header("使用するバーチャルカメラ")]
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
 
-    /// <summary> 注視対象 </summary>
-    [Header("注視対象")]
-    [SerializeField] private Transform[] targetList;
+    /// <summary> 注視対象リスト </summary>
+    private List<Transform> targetList;
 
     /// <summary> 注視対象の要素番号 </summary>
     private int targetIndex = 0;
@@ -19,6 +18,9 @@ public class TargetCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // 注視対象リストを初期化する
+        InitTargetList();
+
         // nullチェック
         if (NullCheck())
         {
@@ -26,7 +28,7 @@ public class TargetCamera : MonoBehaviour
         }
 
         // 注視対象を初期化する
-        virtualCamera.LookAt = targetList[0];
+        virtualCamera.LookAt = targetList[0].transform;
         targetIndex = 0;
     }
 
@@ -63,7 +65,7 @@ public class TargetCamera : MonoBehaviour
 
         targetIndex++;
 
-        if(targetIndex >= targetList.Length)
+        if(targetIndex >= targetList.Count)
         {
             targetIndex = 0;
         }
@@ -72,7 +74,7 @@ public class TargetCamera : MonoBehaviour
         // 注視対象の変更
         // -----------------------------
 
-        virtualCamera.LookAt = targetList[targetIndex];
+        virtualCamera.LookAt = targetList[targetIndex].transform;
     }
 
     /// <summary>
@@ -86,11 +88,36 @@ public class TargetCamera : MonoBehaviour
             return true;
         }
 
-        if (targetList.Length == 0)
+        if (targetList.Count == 0)
         {
             return true;
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// 注視対象リストを初期化する
+    /// </summary>
+    void InitTargetList()
+    {
+        // 初期化
+        targetList = new List<Transform>();
+
+        // シーン内のMS
+        GameObject[] msList = GameObject.FindGameObjectsWithTag("MS");
+
+        // 自身以外のMSを注視対象リストに追加する
+        foreach (GameObject ms in msList)
+        {
+            // 自身なら何もしない
+            if (ms == gameObject)
+            {
+                continue;
+            }
+
+            // 注視対象リストに追加する
+            targetList.Add(ms.transform);
+        }
     }
 }
