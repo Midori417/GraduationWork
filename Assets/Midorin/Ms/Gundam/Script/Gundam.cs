@@ -18,6 +18,9 @@ public class Gundam : BaseMs
     bool isJumpBtn;
     bool isDashBtn;
 
+    // ビームライフル攻撃レイヤーインデックス
+    int beumRifleLayerIndex = 0;
+
     #region イベント
 
     /// <summary>
@@ -43,6 +46,12 @@ public class Gundam : BaseMs
         moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         isJumpBtn = Input.GetKey(KeyCode.Space);
         isDashBtn = Input.GetKey(KeyCode.LeftShift);
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            animator.SetTrigger("BeumRifleShot");
+            animator.SetLayerWeight(beumRifleLayerIndex, 1);
+        }
 
         BoostCharge();
 
@@ -75,6 +84,8 @@ public class Gundam : BaseMs
 
         rb.drag = 0.1f;
         move.Initalize();
+
+        beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
     }
 
     /// <summary>
@@ -106,6 +117,16 @@ public class Gundam : BaseMs
     }
 
     /// <summary>
+    /// 着地処理
+    /// </summary>
+    void Landing()
+    {
+        move.Landing();
+        animator.SetTrigger("Landing");
+        //Stop();
+    }
+
+    /// <summary>
     /// 移動処理
     /// </summary>
     void Move()
@@ -120,14 +141,19 @@ public class Gundam : BaseMs
         {
             move.Jump(moveAxis, isJumpBtn);
         }
+
+        // ダッシュが終わったとき地面についていたら着地する
+        if(move.isDash && !isDashBtn && groundCheck.isGround)
+        {
+            Landing();
+        }
+
         move.Dash(moveAxis, isDashBtn);
 
         // 着地した瞬間
         if (groundCheck.isGround && !groundCheck.oldIsGround)
         {
-            move.Landing();
-            animator.SetTrigger("Landing");
-            Stop();
+            Landing();
         }
 
         // ダッシュとジャンプ中は重力の影響を受けない
@@ -145,5 +171,13 @@ public class Gundam : BaseMs
         animator.SetBool("IsGround", groundCheck.isGround);
         animator.SetBool("Jump", move.isJump);
         animator.SetBool("Dash", move.isDash);
+    }
+
+    /// <summary>
+    /// ビームライフル攻撃が終わった時の処理
+    /// </summary>
+    public void BeumRifleShotFailed()
+    {
+        animator.SetLayerWeight(beumRifleLayerIndex, 0);
     }
 }
