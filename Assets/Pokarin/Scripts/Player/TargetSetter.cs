@@ -10,6 +10,7 @@ public class TargetSetter : MonoBehaviour
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
 
     /// <summary> 注視対象リスト </summary>
+    [SerializeField]
     private List<Transform> targetList;
 
     /// <summary> 注視対象の要素番号 </summary>
@@ -19,7 +20,7 @@ public class TargetSetter : MonoBehaviour
     void Start()
     {
         // 注視対象リストを初期化する
-        InitTargetList();
+        //InitTargetList();
 
         // nullチェック
         if (NullCheck())

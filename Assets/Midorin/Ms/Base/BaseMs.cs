@@ -7,6 +7,9 @@ using UnityEngine;
 /// </summary>
 public class BaseMs : MonoBehaviour
 {
+    [SerializeField, Header("自身のセインター位置")]
+    private Transform _center;
+
     [SerializeField, Header("自身のカメラ")]
     private Transform _myCamera;
 
@@ -131,8 +134,12 @@ public class BaseMs : MonoBehaviour
     { get { return _myCamera; } }
 
     // ターゲット機体
-    public BaseMs targetMs 
+    public BaseMs targetMs
     { get { return _targetMs; } }
+
+    // センター
+    public Transform center
+    { get { return _center; } }
 
     // 体力
     public int hp
@@ -141,6 +148,9 @@ public class BaseMs : MonoBehaviour
     // 現在のエネルギーの割合(0～1)
     public float boost01
     { get { return boostParamater.current01; } }
+
+    // UIに表示する弾
+    public List<int> uiArmedValue;
 
     #endregion
 
@@ -165,6 +175,7 @@ public class BaseMs : MonoBehaviour
         if (!rb) return false;
         if (!animator) return false;
         if (!groundCheck) return false;
+        if (!center) return false;
 
         return true;
     }
@@ -176,7 +187,7 @@ public class BaseMs : MonoBehaviour
     /// </summary>
     protected void BoostCharge()
     {
-        if(!groundCheck.isGround)
+        if (!groundCheck.isGround)
         {
             return;
         }

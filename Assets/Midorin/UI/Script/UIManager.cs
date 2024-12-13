@@ -14,6 +14,9 @@ public class UIManager : MonoBehaviour
     [SerializeField, Header("自身の機体の体力")]
     private Text txt_Hp;
 
+    [SerializeField, Header("武装の弾")]
+    private Text txt_ArmedValue;
+
     /// <summary>
     /// ブーストゲージの設定
     /// </summary>
@@ -23,6 +26,18 @@ public class UIManager : MonoBehaviour
         if (img_BoostGauge)
         {
             img_BoostGauge.material.SetFloat("_FillAmount", value);
+        }
+    }
+
+    /// <summary>
+    /// 武装の残弾を設定
+    /// </summary>
+    /// <param name="value"></param>
+    public void ArmedValue(int _value)
+    {
+        if(txt_ArmedValue)
+        {
+            txt_ArmedValue.text = _value.ToString();
         }
     }
 

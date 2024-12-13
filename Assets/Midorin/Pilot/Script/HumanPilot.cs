@@ -40,5 +40,6 @@ public class HumanPilot : BasePilot
         }
         uiManager.BoostGauge(myMs.boost01);
         uiManager.Hp(myMs.hp);
+        uiManager.ArmedValue(myMs.uiArmedValue[0]);
     }
 }
