@@ -123,7 +123,7 @@ public class Gundam : BaseMs
     {
         move.Landing();
         animator.SetTrigger("Landing");
-        //Stop();
+        Stop();
     }
 
     /// <summary>
@@ -178,6 +178,7 @@ public class Gundam : BaseMs
     /// </summary>
     public void BeumRifleShotFailed()
     {
+        Debug.Log("A");
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
     }
 }

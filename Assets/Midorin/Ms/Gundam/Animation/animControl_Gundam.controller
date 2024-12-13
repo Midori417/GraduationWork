@@ -337,7 +337,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Base Layer
     m_StateMachine: {fileID: -3754142047762240123}
-    m_Mask: {fileID: 31900000, guid: 47f171063f938fd4ba329a4484ebe431, type: 2}
+    m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -349,7 +349,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: BeumRifleLayer
     m_StateMachine: {fileID: -2949432655267183980}
-    m_Mask: {fileID: 31900000, guid: 47f171063f938fd4ba329a4484ebe431, type: 2}
+    m_Mask: {fileID: 31900000, guid: 2e12c243c6b686842bf9bccaf766bc59, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
