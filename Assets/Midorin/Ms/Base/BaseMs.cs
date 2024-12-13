@@ -10,6 +10,9 @@ public class BaseMs : MonoBehaviour
     [SerializeField, Header("自身のカメラ")]
     private Transform _myCamera;
 
+    [SerializeField, Header("ターゲット機体")]
+    private BaseMs _targetMs;
+
     // 地面判定コンポーネント
     public GroundCheck groundCheck
     {
@@ -126,6 +129,10 @@ public class BaseMs : MonoBehaviour
     // 自身のカメラ
     public Transform myCamera
     { get { return _myCamera; } }
+
+    // ターゲット機体
+    public BaseMs targetMs 
+    { get { return _targetMs; } }
 
     // 体力
     public int hp

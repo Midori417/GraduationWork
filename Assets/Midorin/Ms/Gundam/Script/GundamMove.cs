@@ -105,7 +105,6 @@ public class MsMove : MonoBehaviour
         if (!mainMs)
         {
             Debug.LogError("メインコンポーネントが取得できません");
-            mainMs.enabled = false;
             return;
         }
 

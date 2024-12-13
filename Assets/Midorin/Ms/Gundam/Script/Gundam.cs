@@ -13,10 +13,14 @@ public class Gundam : BaseMs
     [SerializeField, Header("移動コンポーネント")]
     private MsMove move;
 
+    [SerializeField, Header("ビームライフルコンポネント")]
+    private GundamShotRifle shotRifle;
+
     // 仮入力
     Vector2 moveAxis;
     bool isJumpBtn;
     bool isDashBtn;
+    bool isAttackBtn;
 
     // ビームライフル攻撃レイヤーインデックス
     int beumRifleLayerIndex = 0;
@@ -46,18 +50,14 @@ public class Gundam : BaseMs
         moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         isJumpBtn = Input.GetKey(KeyCode.Space);
         isDashBtn = Input.GetKey(KeyCode.LeftShift);
-
-        if(Input.GetMouseButtonDown(0))
-        {
-            animator.SetTrigger("BeumRifleShot");
-            animator.SetLayerWeight(beumRifleLayerIndex, 1);
-        }
+        isAttackBtn = Input.GetKeyDown(KeyCode.Mouse0);
 
         BoostCharge();
 
         if (!isStop)
         {
             Move();
+            BeumRifle();
         }
 
         AnimUpdate();
@@ -84,6 +84,7 @@ public class Gundam : BaseMs
 
         rb.drag = 0.1f;
         move.Initalize();
+        shotRifle.Initalize();
 
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
     }
@@ -94,11 +95,27 @@ public class Gundam : BaseMs
     /// <returns></returns>
     protected override bool ComponentCheck()
     {
-        if(!base.ComponentCheck()) return false;
+        if (!base.ComponentCheck()) return false;
         if (!move) return false;
+        if (!shotRifle) return false;
 
         return true;
     }
+
+    /// <summary>
+    /// アニメータに伝える変数の更新
+    /// </summary>
+    void AnimUpdate()
+    {
+        // アニメータ変数処理
+        float speed = new Vector2(rb.velocity.x, rb.velocity.z).magnitude;
+        animator.SetFloat("Speed", speed);
+        animator.SetBool("IsGround", groundCheck.isGround);
+        animator.SetBool("Jump", move.isJump);
+        animator.SetBool("Dash", move.isDash);
+    }
+
+    #region 行動のコントロール
 
     /// <summary>
     /// 動きを止める
@@ -115,7 +132,9 @@ public class Gundam : BaseMs
     {
         isStop = false;
     }
+    #endregion
 
+    #region 移動
     /// <summary>
     /// 着地処理
     /// </summary>
@@ -143,7 +162,7 @@ public class Gundam : BaseMs
         }
 
         // ダッシュが終わったとき地面についていたら着地する
-        if(move.isDash && !isDashBtn && groundCheck.isGround)
+        if (move.isDash && !isDashBtn && groundCheck.isGround)
         {
             Landing();
         }
@@ -160,17 +179,26 @@ public class Gundam : BaseMs
         rb.useGravity = (!move.isDash) && (!move.isJump);
     }
 
+    #endregion
+
+    #region ビームライフル
+
     /// <summary>
-    /// アニメータに伝える変数の更新
+    /// ビームライフル処理
     /// </summary>
-    void AnimUpdate()
+    public void BeumRifle()
     {
-        // アニメータ変数処理
-        float speed = new Vector2(rb.velocity.x, rb.velocity.z).magnitude;
-        animator.SetFloat("Speed", speed);
-        animator.SetBool("IsGround", groundCheck.isGround);
-        animator.SetBool("Jump", move.isJump);
-        animator.SetBool("Dash", move.isDash);
+        if (isAttackBtn)
+        {
+            if(!shotRifle.ShotCheck())
+            {
+                // 射撃不可
+                return;
+            }
+
+            animator.SetTrigger("BeumRifleShot");
+            animator.SetLayerWeight(beumRifleLayerIndex, 1);
+        }
     }
 
     /// <summary>
@@ -178,7 +206,9 @@ public class Gundam : BaseMs
     /// </summary>
     public void BeumRifleShotFailed()
     {
-        Debug.Log("A");
+        shotRifle.Failed();
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
     }
+
+    #endregion
 }
