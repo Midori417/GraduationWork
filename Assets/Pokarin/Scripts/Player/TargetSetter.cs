@@ -10,7 +10,6 @@ public class TargetSetter : MonoBehaviour
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
 
     /// <summary> 注視対象リスト </summary>
-    [SerializeField]
     private List<Transform> targetList;
 
     /// <summary> 注視対象の要素番号 </summary>
@@ -19,8 +18,8 @@ public class TargetSetter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // 注視対象リストを初期化する
-        //InitTargetList();
+        // 注視対象配列の初期化
+        InitTargetList();
 
         // nullチェック
         if (NullCheck())
@@ -66,7 +65,7 @@ public class TargetSetter : MonoBehaviour
 
         targetIndex++;
 
-        if(targetIndex >= targetList.Count)
+        if (targetIndex >= targetList.Count)
         {
             targetIndex = 0;
         }
@@ -98,27 +97,23 @@ public class TargetSetter : MonoBehaviour
     }
 
     /// <summary>
-    /// 注視対象リストを初期化する
+    /// 注視対象配列を初期化する
     /// </summary>
     void InitTargetList()
     {
-        // 初期化
+        // 注視対象配列の初期化
         targetList = new List<Transform>();
 
         // シーン内のMS
         GameObject[] msList = GameObject.FindGameObjectsWithTag("MS");
 
-        // 自身以外のMSを注視対象リストに追加する
-        foreach (GameObject ms in msList)
+        foreach (var ms in msList)
         {
-            // 自身なら何もしない
-            if (ms == gameObject)
+            // 自身以外なら注視対象に追加する
+            if (ms != gameObject)
             {
-                continue;
+                targetList.Add(ms.transform);
             }
-
-            // 注視対象リストに追加する
-            targetList.Add(ms.transform);
         }
     }
 }
