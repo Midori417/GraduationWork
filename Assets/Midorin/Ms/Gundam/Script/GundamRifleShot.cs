@@ -6,7 +6,7 @@ public class GundamRifleShot : BaseMsParts
 {
     /// <summary> 弾用プレハブ </summary>
     [Header("弾用プレハブ")]
-    [SerializeField] private Bullet bulletPrefab;
+    [SerializeField] private RifleBullet bulletPrefab;
 
     /// <summary> 弾生成位置 </summary>
     [Header("弾生成位置")]
@@ -72,10 +72,10 @@ public class GundamRifleShot : BaseMsParts
 
     private void Update()
     {
-        //if (mainMs)
-        //{
-        //    mainMs.uiArmedValue[0] = amo;
-        //}
+        if (mainMs)
+        {
+            mainMs.uiArmedValue[0] = amo;
+        }
     }
 
     private void LateUpdate()
@@ -177,7 +177,7 @@ public class GundamRifleShot : BaseMsParts
             // ターゲット方向を計算
             Vector3 directioToTarget = transform.position - target.position;
             float dot = Vector3.Dot(directioToTarget, transform.forward);
-            if (dot > 0.5)
+            if (dot > 0)
             {
                 isBackShot = true;
             }
@@ -212,11 +212,11 @@ public class GundamRifleShot : BaseMsParts
                 Vector3 pos = center.position + rot * shotPos;
 
                 // 弾を生成
-                Bullet bullet = Instantiate(bulletPrefab, pos, rot);
+                RifleBullet bullet = Instantiate(bulletPrefab, pos, rot);
             }
             else
             {
-                Bullet bullet = Instantiate(bulletPrefab, spineBone);
+                RifleBullet bullet = Instantiate(bulletPrefab, spineBone);
             }
             // インターバルコルーチン起動
             StartCoroutine("ShotInterval");

@@ -35,6 +35,9 @@ public class Gundam : BaseMs
     // ビームライフル攻撃レイヤーインデックス
     int beumRifleLayerIndex = 0;
 
+    float beumRifleShotTime;
+    float beumRifleShotBackTime;
+
     #region イベント
 
     /// <summary>
@@ -235,14 +238,16 @@ public class Gundam : BaseMs
             {
                 animator.SetTrigger("BeumRifleShotBack");
             }
+            StartCoroutine("BeumRifleShotFailed");
         }
     }
 
     /// <summary>
     /// ビームライフル攻撃が終わった時の処理
     /// </summary>
-    public void BeumRifleShotFailed()
+    IEnumerator BeumRifleShotFailed()
     {
+        yield return new WaitForSeconds(0.8f);
         shotRifle.Failed();
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
     }
