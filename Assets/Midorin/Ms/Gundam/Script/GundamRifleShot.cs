@@ -1,17 +1,12 @@
-using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
-public class GundamShotRifle : MonoBehaviour
+public class GundamRifleShot : BaseMsParts
 {
-    // メインコンポネント
-    private Gundam mainMs;
-
     /// <summary> 弾用プレハブ </summary>
     [Header("弾用プレハブ")]
-    [SerializeField] private BeumRifleBullet bulletPrefab;
+    [SerializeField] private Bullet bulletPrefab;
 
     /// <summary> 弾生成位置 </summary>
     [Header("弾生成位置")]
@@ -32,11 +27,6 @@ public class GundamShotRifle : MonoBehaviour
     // ターゲット
     private Transform target;
 
-    private Transform center;
-
-    // タイマー
-    private float shotTimer;
-
     // trueなら射撃可能
     private bool isShotOk = true;
 
@@ -55,18 +45,16 @@ public class GundamShotRifle : MonoBehaviour
     // 初期回転を保存する変数
     private Quaternion initialRotation;
 
+    // バックショット
+    public bool isBackShot
+    { get; private set; }
+
     /// <summary>
     /// 初期処理
     /// </summary>
-    public void Initalize()
+    public override bool Initalize()
     {
-        mainMs = GetComponent<Gundam>();
-        if (!mainMs)
-        {
-            Debug.LogError("メインコンポーネントが取得できません");
-            return;
-        }
-        DebugLog();
+        base.Initalize();
         mainMs.uiArmedValue.Add(amo);
 
         // 初期回転を保存
@@ -75,35 +63,19 @@ public class GundamShotRifle : MonoBehaviour
             initialRotation = spineBone.localRotation;
         }
 
-        center = mainMs.center;
         amo = amoMax;
+
+        return true;
     }
 
-    /// <summary>
-    /// デバッグ用
-    /// </summary>
-    private void DebugLog()
-    {
-        if (!bulletPrefab)
-        {
-            Debug.Log("弾用プレハブが設定されていません");
-        }
-    }
+    #region イベント
 
     private void Update()
     {
-        if(mainMs)
-        {
-            mainMs.uiArmedValue[0] = amo;
-        }
-        if (shotTimer > 0)
-        {
-            shotTimer -= Time.deltaTime;
-            if (shotTimer <= 0)
-            {
-                shotTimer = 0;
-            }
-        }
+        //if (mainMs)
+        //{
+        //    mainMs.uiArmedValue[0] = amo;
+        //}
     }
 
     private void LateUpdate()
@@ -111,34 +83,63 @@ public class GundamShotRifle : MonoBehaviour
         // 行動中
         if (isNow)
         {
-            if (!returnRotaion)
+            if (!isBackShot)
             {
-                if (target)
-                {
-                    Vector3 directionToTarget = target.position - spineBone.position;
-                    Vector3 localDirection = spineBone.parent.InverseTransformDirection(directionToTarget);
-
-                    // ターゲット方向の回転を計算
-                    Quaternion targetRotation = Quaternion.LookRotation(localDirection);
-                    targetRot = targetRotation;
-
-                    // 現在の回転からターゲット回転への補完
-                    rotationSpeed += 5 * Time.deltaTime;
-                    rotationSpeed = Mathf.Clamp01(rotationSpeed);
-                    Quaternion smoothRotation = Quaternion.Slerp(spineBone.localRotation, targetRotation, rotationSpeed);
-
-                    // 回転を適用
-                    spineBone.localRotation = smoothRotation;
-                }
+                SpineLookRotation();
             }
             else
             {
+                BackLookRotaion();
+            }
+        }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// 上半身をターゲットの方向に向ける
+    /// </summary>
+    void SpineLookRotation()
+    {
+        if (!returnRotaion)
+        {
+            if (target)
+            {
+                Vector3 directionToTarget = target.position - spineBone.position;
+                Vector3 localDirection = spineBone.parent.InverseTransformDirection(directionToTarget);
+
+                // ターゲット方向の回転を計算
+                Quaternion targetRotation = Quaternion.LookRotation(localDirection);
+                targetRot = targetRotation;
+
+                // 現在の回転からターゲット回転への補完
                 rotationSpeed += 5 * Time.deltaTime;
                 rotationSpeed = Mathf.Clamp01(rotationSpeed);
-                Quaternion smoothRotation = Quaternion.Slerp(targetRot, initialRotation, rotationSpeed);
+                Quaternion smoothRotation = Quaternion.Slerp(spineBone.localRotation, targetRotation, rotationSpeed);
+
+                // 回転を適用
                 spineBone.localRotation = smoothRotation;
             }
         }
+        else
+        {
+            rotationSpeed += 5 * Time.deltaTime;
+            rotationSpeed = Mathf.Clamp01(rotationSpeed);
+            Quaternion smoothRotation = Quaternion.Slerp(targetRot, initialRotation, rotationSpeed);
+            spineBone.localRotation = smoothRotation;
+        }
+    }
+
+    /// <summary>
+    /// ターゲットの逆方向に向ける
+    /// </summary>
+    void BackLookRotaion()
+    {
+        // ターゲット方向の回転を計算
+        Vector3 directionToTarget = transform.position - target.position;
+        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+        transform.rotation = targetRotation;
+        rb.velocity = Vector3.zero;
     }
 
     /// <summary>
@@ -152,23 +153,34 @@ public class GundamShotRifle : MonoBehaviour
     {
         // 射撃不可条件
         // 射撃不可 弾が0以下 インターバルが0以上
-        if (!isShotOk || amo <= 0 || shotTimer > 0)
+        if (!isShotOk || amo <= 0)
         {
             return false;
         }
 
         // バグってるので救済そち（あとでけしたい）
-        if(isNow)
+        if (isNow)
         {
             return false;
         }
-        
+
         // ターゲットを指定
         if (mainMs.targetMs)
         {
             target = mainMs.targetMs.center;
             // 回転速度をリセット
             rotationSpeed = 0;
+        }
+
+        // バックショットか判定
+        {
+            // ターゲット方向を計算
+            Vector3 directioToTarget = transform.position - target.position;
+            float dot = Vector3.Dot(directioToTarget, transform.forward);
+            if (dot > 0.5)
+            {
+                isBackShot = true;
+            }
         }
 
         isShotOk = false;
@@ -178,7 +190,6 @@ public class GundamShotRifle : MonoBehaviour
         // 射撃
         return true;
     }
-
 
     /// <summary>
     /// 弾を生成
@@ -191,6 +202,9 @@ public class GundamShotRifle : MonoBehaviour
         {
             if (target)
             {
+                // 自身の機体のセンターを代入
+                Transform center = mainMs.center;
+
                 // ターゲットの方向を計算
                 Vector3 directionToTarget = target.position - center.position;
                 Quaternion rot = Quaternion.LookRotation(directionToTarget);
@@ -198,19 +212,28 @@ public class GundamShotRifle : MonoBehaviour
                 Vector3 pos = center.position + rot * shotPos;
 
                 // 弾を生成
-                BeumRifleBullet bullet = Instantiate(bulletPrefab, pos, rot);
+                Bullet bullet = Instantiate(bulletPrefab, pos, rot);
             }
             else
             {
-                BeumRifleBullet bullet = Instantiate(bulletPrefab, spineBone);
+                Bullet bullet = Instantiate(bulletPrefab, spineBone);
             }
-            // 射撃を可能に
-            isShotOk = true;
-            // インターバルを設定
-            shotTimer = interval;
+            // インターバルコルーチン起動
+            StartCoroutine("ShotInterval");
+
             // 弾を減らす
             amo--;
         }
+    }
+
+    /// <summary>
+    /// 射撃インターバル
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator ShotInterval()
+    {
+        yield return new WaitForSeconds(interval);
+        isShotOk = true;
     }
 
     /// <summary>
@@ -230,6 +253,7 @@ public class GundamShotRifle : MonoBehaviour
     {
         returnRotaion = false;
         target = null;
+        isBackShot = false;
         isNow = false;
     }
 }

@@ -1,21 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
 /// Msの移動
 /// </summary>
-public class MsMove : MonoBehaviour
+public class MsMove : BaseMsParts
 {
-    // メインコンポネント
-    private Gundam mainMs;
-
-    // 物理コンポーネント
-    private Rigidbody rb;
-
     // 自身のカメラ
     private Transform myCamera;
+
+    [SerializeField]
+    private AudioSource se_AudioSource;
 
     /// <summary>
     /// 移動パラメータ
@@ -96,20 +92,20 @@ public class MsMove : MonoBehaviour
         }
     }
 
+    [SerializeField, Header("ブースト使用開始音")]
+    private AudioClip se_boostStart;
+    [SerializeField, Header("着地音")]
+    private AudioClip se_landing;
+
     /// <summary>
     /// 初期処理
     /// </summary>
-    public void Initalize()
+    public override bool Initalize()
     {
-        mainMs = GetComponent<Gundam>();
-        if (!mainMs)
-        {
-            Debug.LogError("メインコンポーネントが取得できません");
-            return;
-        }
-
-        rb = mainMs.rb;
+        base.Initalize();
         myCamera = mainMs.myCamera;
+
+        return true;
     }
 
     /// <summary>
@@ -117,6 +113,7 @@ public class MsMove : MonoBehaviour
     /// </summary>
     public void Landing()
     {
+        se_AudioSource.PlayOneShot(se_landing);
         rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, jumpParamater.inertia);
     }
 
@@ -185,6 +182,10 @@ public class MsMove : MonoBehaviour
                     rb.velocity = transform.forward * moveParamater.speed + new Vector3(0, rb.velocity.y, 0);
                 }
                 rb.velocity = new Vector3(rb.velocity.x, jumpParamater.power, rb.velocity.z);
+
+                // 開始時に一度だけサウンド
+                if(!jumpParamater.isNow)
+                { }
 
                 jumpParamater.isNow = true;
 

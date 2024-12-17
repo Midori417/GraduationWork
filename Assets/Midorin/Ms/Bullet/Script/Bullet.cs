@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BeumRifleBullet : MonoBehaviour
+public class Bullet : MonoBehaviour
 {
     /// <summary> ‘¬“x </summary>
     [Header("‘¬“x")]

@@ -7,7 +7,7 @@ public class LockHead : MonoBehaviour
     [SerializeField, Header("頭ボーン")]
     private Transform headBone;
 
-    [SerializeField]
+    [SerializeField, Header("ターゲット")]
     private Transform target;
 
     [SerializeField, Header("回転速度")]

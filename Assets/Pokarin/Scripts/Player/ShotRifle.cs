@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShotRifle : MonoBehaviour
+public class RifleShot : MonoBehaviour
 {
     /// <summary> 弾用プレハブ </summary>
     [Header("弾用プレハブ")]

@@ -14,13 +14,23 @@ public class Gundam : BaseMs
     private MsMove move;
 
     [SerializeField, Header("ビームライフルコンポネント")]
-    private GundamShotRifle shotRifle;
+    private GundamRifleShot shotRifle;
+
+    [SerializeField, Header("ビームライフルオブジェクト")]
+    private GameObject beumRifle;
+
+    [SerializeField, Header("バズーカオブジェクト")]
+    private GameObject bazooka;
+
+    [SerializeField, Header("バーニアエフェクト")]
+    private ParticleSystem eff_roketFire;
 
     // 仮入力
     Vector2 moveAxis;
     bool isJumpBtn;
     bool isDashBtn;
-    bool isAttackBtn;
+    bool isMainShotBtn;
+    bool isSubShotBtn;
 
     // ビームライフル攻撃レイヤーインデックス
     int beumRifleLayerIndex = 0;
@@ -50,7 +60,8 @@ public class Gundam : BaseMs
         moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         isJumpBtn = Input.GetKey(KeyCode.Space);
         isDashBtn = Input.GetKey(KeyCode.LeftShift);
-        isAttackBtn = Input.GetKeyDown(KeyCode.Mouse0);
+        isMainShotBtn = Input.GetKeyDown(KeyCode.Mouse0);
+        isSubShotBtn = Input.GetKeyDown(KeyCode.Alpha1);
 
         BoostCharge();
 
@@ -58,17 +69,11 @@ public class Gundam : BaseMs
         {
             Move();
             BeumRifle();
+            Bazooka();
         }
 
+        RoketFireControl();
         AnimUpdate();
-    }
-
-    /// <summary>
-    ///  Updateより後に実行
-    /// </summary>
-    private void LateUpdate()
-    {
-
     }
 
     #endregion
@@ -86,7 +91,9 @@ public class Gundam : BaseMs
         move.Initalize();
         shotRifle.Initalize();
 
+        // レイヤー番号を取得
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
+        bazooka.SetActive(false);
     }
 
     /// <summary>
@@ -113,6 +120,29 @@ public class Gundam : BaseMs
         animator.SetBool("IsGround", groundCheck.isGround);
         animator.SetBool("Jump", move.isJump);
         animator.SetBool("Dash", move.isDash);
+    }
+
+    /// <summary>
+    /// ロケットエフェクトコントロール
+    /// </summary>
+    void RoketFireControl()
+    {
+        if(!eff_roketFire)
+        {
+            return;
+        }
+
+        if (move.isDash || move.isJump)
+        {
+            Debug.Log("A");
+            eff_roketFire.Play();
+        }
+        else
+        {
+            // 既に存在しているパーティクルは消さないで放出だけ止める
+            //eff_roketFire.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            eff_roketFire.Stop();
+        }
     }
 
     #region 行動のコントロール
@@ -188,16 +218,23 @@ public class Gundam : BaseMs
     /// </summary>
     public void BeumRifle()
     {
-        if (isAttackBtn)
+        if (isMainShotBtn)
         {
-            if(!shotRifle.ShotCheck())
+            if (!shotRifle.ShotCheck())
             {
                 // 射撃不可
                 return;
             }
 
-            animator.SetTrigger("BeumRifleShot");
-            animator.SetLayerWeight(beumRifleLayerIndex, 1);
+            if (!shotRifle.isBackShot)
+            {
+                animator.SetTrigger("BeumRifleShot");
+                animator.SetLayerWeight(beumRifleLayerIndex, 1);
+            }
+            else
+            {
+                animator.SetTrigger("BeumRifleShotBack");
+            }
         }
     }
 
@@ -208,6 +245,32 @@ public class Gundam : BaseMs
     {
         shotRifle.Failed();
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
+    }
+
+    #endregion
+
+    #region バズーカ
+
+    /// <summary>
+    /// バズーカ処理
+    /// </summary>
+    void Bazooka()
+    {
+        if(isSubShotBtn)
+        {
+            animator.SetTrigger("BazookaShot");
+            beumRifle.SetActive(false);
+            bazooka.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// Bazooka終了処理
+    /// </summary>
+    public void BazookaFailed()
+    {
+        beumRifle.SetActive(true);
+        bazooka.SetActive(false);
     }
 
     #endregion
