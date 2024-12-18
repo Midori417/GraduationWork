@@ -20,24 +20,29 @@ public class LockHead : BaseMsParts
     private Quaternion initialRotation;
 
     /// <summary>
-    /// ‰Šú‰»ˆ—
+    /// ‰Šú‰»
     /// </summary>
+    /// <returns>
+    /// true    ‰Šú‰»¬Œ÷
+    /// faklse  ‰Šú‰»¸”s
+    /// </returns>
     public override bool Initalize()
     {
         base.Initalize();
+
         // ‰Šú‰ñ“]‚ğ•Û‘¶
-        if (headBone != null)
+        if (!headBone)
         {
-            initialRotation = headBone.localRotation;
-            return true;
+            return false;
         }
-        return false;
+        initialRotation = headBone.localRotation;
+        return true;
     }
 
     /// <summary>
-    /// ˆ—
+    /// Update‚ÌŒã‚É–ˆƒtƒŒ[ƒ€
     /// </summary>
-    void LateUpdate()
+    private void LateUpdate()
     {
         if (targetMs != null && headBone != null)
         {

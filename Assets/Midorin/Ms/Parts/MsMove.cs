@@ -43,7 +43,7 @@ public class MsMove : BaseMsParts
         [Header("ブーストゲージの消費量")]
         public float useBoost;
 
-        [Header("ジャンプ中か")]
+        [System.NonSerialized, Header("ジャンプ中か")]
         public bool isNow;
 
         [Header("着地時の慣性")]
@@ -67,13 +67,17 @@ public class MsMove : BaseMsParts
         [Header("ブーストゲージの消費量")]
         public float useBoost;
 
-        [Header("ダッシュ中か")]
+        [System.NonSerialized, Header("ダッシュ中か")]
         public bool isNow;
     }
     [SerializeField, Header("ダッシュパラメータ")]
     private DashParamater dashParamater;
 
-    // 他のところに伝える変数
+    #region プロパティ
+
+    /// <summary>
+    /// ジャンプ行動中か
+    /// </summary>
     public bool isJump
     {
         get
@@ -81,6 +85,10 @@ public class MsMove : BaseMsParts
             return jumpParamater.isNow;
         }
     }
+
+    /// <summary>
+    /// ダッシュ行動中か
+    /// </summary>
     public bool isDash
     {
         get
@@ -89,12 +97,22 @@ public class MsMove : BaseMsParts
         }
     }
 
+    #endregion
+
     /// <summary>
-    /// 初期処理
+    /// 初期化
     /// </summary>
+    /// <returns>
+    /// true    初期化成功
+    /// faklse  初期化失敗
+    /// </returns>
     public override bool Initalize()
     {
-        base.Initalize();
+        if(!base.Initalize())
+        {
+            Debug.LogError("MsMoveの初期化に失敗");
+            return false;
+        }
         myCamera = mainMs.myCamera;
 
         return true;

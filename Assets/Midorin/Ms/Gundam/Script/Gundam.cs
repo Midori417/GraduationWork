@@ -17,7 +17,7 @@ public class Gundam : BaseMs
     private MsMove move;
 
     [SerializeField, Header("ビームライフルコンポーネント")]
-    private GundamRifleShot shotRifle;
+    private GundamRifleShot rifleShot;
 
     [SerializeField, Header("ビームライフルオブジェクト")]
     private GameObject beumRifle;
@@ -70,8 +70,8 @@ public class Gundam : BaseMs
 
         if (!isStop)
         {
-            Move();
-            BeumRifle();
+            MoveProsess();
+            BeumRifleProcess();
         }
 
         RoketFireControl();
@@ -86,13 +86,11 @@ public class Gundam : BaseMs
     protected override void Initialize()
     {
         base.Initialize();
-
         ComponentCheck();
 
-        rb.drag = 0.1f;
         lockHead.Initalize();
         move.Initalize();
-        shotRifle.Initalize();
+        rifleShot.Initalize();
 
         // レイヤー番号を取得
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
@@ -108,7 +106,7 @@ public class Gundam : BaseMs
         if (!base.ComponentCheck()) return false;
         if (!lockHead) return false;
         if (!move) return false;
-        if (!shotRifle) return false;
+        if (!rifleShot) return false;
 
         return true;
     }
@@ -168,20 +166,11 @@ public class Gundam : BaseMs
     #endregion
 
     #region 移動
-    /// <summary>
-    /// 着地処理
-    /// </summary>
-    void Landing()
-    {
-        move.Landing();
-        animator.SetTrigger("Landing");
-        Stop();
-    }
 
     /// <summary>
     /// 移動処理
     /// </summary>
-    void Move()
+    void MoveProsess()
     {
         // 地面ついているときのみ
         if (groundCheck.isGround)
@@ -212,6 +201,16 @@ public class Gundam : BaseMs
         rb.useGravity = (!move.isDash) && (!move.isJump);
     }
 
+    /// <summary>
+    /// 着地処理
+    /// </summary>
+    void Landing()
+    {
+        move.Landing();
+        animator.SetTrigger("Landing");
+        Stop();
+    }
+
     #endregion
 
     #region ビームライフル
@@ -219,17 +218,17 @@ public class Gundam : BaseMs
     /// <summary>
     /// ビームライフル処理
     /// </summary>
-    public void BeumRifle()
+    private void BeumRifleProcess()
     {
         if (isMainShotBtn)
         {
-            if (!shotRifle.ShotCheck())
+            if (!rifleShot.ShotCheck())
             {
                 // 射撃不可
                 return;
             }
 
-            if (!shotRifle.isBackShot)
+            if (!rifleShot.isBackShot)
             {
                 animator.SetTrigger("BeumRifleShot");
                 animator.SetLayerWeight(beumRifleLayerIndex, 1);
@@ -245,10 +244,10 @@ public class Gundam : BaseMs
     /// <summary>
     /// ビームライフル攻撃が終わった時の処理
     /// </summary>
-    IEnumerator BeumRifleShotFailed()
+    private IEnumerator BeumRifleShotFailed()
     {
         yield return new WaitForSeconds(0.8f);
-        shotRifle.Failed();
+        rifleShot.Failed();
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
     }
 

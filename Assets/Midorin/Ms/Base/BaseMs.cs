@@ -180,6 +180,15 @@ public class BaseMs : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// ダメージを与える
+    /// </summary>
+    /// <param name="damage"></param>
+    public virtual void Damage(int damage)
+    {
+        _hp -= damage;
+    }
+
     #region ブースト関係
 
     /// <summary>

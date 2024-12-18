@@ -46,25 +46,6 @@ public class GundamRifleShot : BaseMsParts
     public bool isBackShot
     { get; private set; }
 
-    /// <summary>
-    /// 初期処理
-    /// </summary>
-    public override bool Initalize()
-    {
-        base.Initalize();
-        mainMs.uiArmedValue.Add(amo);
-
-        // 初期回転を保存
-        if (spineBone != null)
-        {
-            initialRotation = spineBone.localRotation;
-        }
-
-        amo = amoMax;
-
-        return true;
-    }
-
     #region イベント
 
     private void Update()
@@ -92,6 +73,32 @@ public class GundamRifleShot : BaseMsParts
     }
 
     #endregion
+
+    /// <summary>
+    /// 初期化
+    /// </summary>
+    /// <returns>
+    /// true    初期化成功
+    /// faklse  初期化失敗
+    /// </returns>
+    public override bool Initalize()
+    {
+        if (!base.Initalize())
+        {
+            return false;
+        }
+        mainMs.uiArmedValue.Add(amo);
+
+        // 初期回転を保存
+        if (spineBone != null)
+        {
+            initialRotation = spineBone.localRotation;
+        }
+
+        amo = amoMax;
+
+        return true;
+    }
 
     /// <summary>
     /// 上半身をターゲットの方向に向ける
