@@ -9,6 +9,8 @@ public class TargetSetter : MonoBehaviour
     [Header("使用するバーチャルカメラ")]
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
 
+    [SerializeField] private RifleBullet rifleBulletPrefab;
+
     /// <summary> 注視対象リスト </summary>
     private List<Transform> targetList;
 
@@ -52,12 +54,13 @@ public class TargetSetter : MonoBehaviour
         {
             ChangeTarget();
         }
+
     }
 
     /// <summary>
     /// 注視対象を変更する
     /// </summary>
-    void ChangeTarget()
+    private void ChangeTarget()
     {
         // --------------------------
         // 要素番号の変更
@@ -81,7 +84,7 @@ public class TargetSetter : MonoBehaviour
     /// nullチェック用関数
     /// </summary>
     /// <returns> Nullならtrue </returns>
-    bool NullCheck()
+    private bool NullCheck()
     {
         if (!virtualCamera)
         {
@@ -99,7 +102,7 @@ public class TargetSetter : MonoBehaviour
     /// <summary>
     /// 注視対象配列を初期化する
     /// </summary>
-    void InitTargetList()
+    private void InitTargetList()
     {
         // 注視対象配列の初期化
         targetList = new List<Transform>();
@@ -114,6 +117,17 @@ public class TargetSetter : MonoBehaviour
             {
                 targetList.Add(ms.transform);
             }
+        }
+    }
+
+    /// <summary>
+    /// 注視対象用プロパティ
+    /// </summary>
+    public Transform Target
+    {
+        get
+        {
+            return virtualCamera.LookAt;
         }
     }
 }
