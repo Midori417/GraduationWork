@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// カメラ管理コンポーネント
+/// </summary>
 public class CameraManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField, Header("メインカメラ")]
+    private GameObject _mainCamera;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // メインカメラ
+    public GameObject mainCamera
+    { get { return _mainCamera; } }
 }

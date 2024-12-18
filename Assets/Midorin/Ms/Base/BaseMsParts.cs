@@ -22,6 +22,9 @@ public class BaseMsParts : MonoBehaviour
     protected Animator Animator 
     { get { return _animator; } }
 
+    protected Transform targetMs
+    { get { return _mainMs.targetMs.transform; } }
+
     /// <summary>
     /// ‰Šú‰»
     /// </summary>

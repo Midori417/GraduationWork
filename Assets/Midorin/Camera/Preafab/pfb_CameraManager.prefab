@@ -57,7 +57,6 @@ GameObject:
   - component: {fileID: 2976882775775432740}
   - component: {fileID: 5060820521513299941}
   - component: {fileID: 6462394998492914402}
-  - component: {fileID: 1217465867614382783}
   - component: {fileID: 3787409659486177285}
   m_Layer: 0
   m_Name: Main Camera
@@ -74,8 +73,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6366785935204368784}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.02549018, y: 0.0000000016470849, z: -4.1998134e-11, w: 0.9996751}
-  m_LocalPosition: {x: -0.000000032909586, y: 10.689638, z: -9.987005}
+  m_LocalRotation: {x: -0.0011538309, y: -0.000000016168677, z: -1.8655934e-11, w: 0.99999934}
+  m_LocalPosition: {x: 0.00000048505933, y: 13.005385, z: -16.99996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -140,21 +139,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6366785935204368784}
   m_Enabled: 1
---- !u!114 &1217465867614382783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6366785935204368784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2510ea61296a8394b9c86f9516575460, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  virtualCamera: {fileID: 6120217246572985811}
-  targetList:
-  - {fileID: 0}
 --- !u!114 &3787409659486177285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,17 +231,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ad980451443d70438faac0bc6c235a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: 0, y: 7.34, z: 0}
+  m_TrackedObjectOffset: {x: 0, y: 4, z: -2}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
-  m_XDamping: 1
-  m_YDamping: 1
-  m_ZDamping: 1
+  m_XDamping: 0.5
+  m_YDamping: 0.5
+  m_ZDamping: 0.1
   m_TargetMovementOnly: 1
   m_ScreenX: 0.5
   m_ScreenY: 0.5
-  m_CameraDistance: 10
+  m_CameraDistance: 15
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
   m_DeadZoneDepth: 0
@@ -330,8 +314,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8549877267738516714}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.02549018, y: 0.0000000016470849, z: -4.1998134e-11, w: 0.9996751}
-  m_LocalPosition: {x: -0.000000032909586, y: 10.689638, z: -9.987005}
+  m_LocalRotation: {x: -0.0011538309, y: -0.000000016168677, z: -1.8655934e-11, w: 0.99999934}
+  m_LocalPosition: {x: 0.00000048505933, y: 13.005385, z: -16.99996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

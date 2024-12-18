@@ -7,13 +7,13 @@ using UnityEngine;
 /// </summary>
 public class BaseMs : MonoBehaviour
 {
-    [SerializeField, Header("自身のセインター位置")]
+    [SerializeField, Header("自身のセンター位置")]
     private Transform _center;
 
-    [SerializeField, Header("自身のカメラ")]
+    // 毎カメラ
     private Transform _myCamera;
 
-    [SerializeField, Header("ターゲット機体")]
+    // ターゲット機体
     private BaseMs _targetMs;
 
     // 地面判定コンポーネント
@@ -204,4 +204,22 @@ public class BaseMs : MonoBehaviour
     }
 
     #endregion
+
+    /// <summary>
+    /// ターゲット機体を設定
+    /// </summary>
+    /// <param name="target"></param>
+    public void SetTargetMs(BaseMs target)
+    {
+        _targetMs = target;
+    }
+
+    /// <summary>
+    /// 自身のカメラを設定
+    /// </summary>
+    /// <param name="myCameraTrs"></param>
+    public void SetMyCamera(Transform myCameraTrs)
+    {
+        _myCamera = myCameraTrs;
+    }
 }

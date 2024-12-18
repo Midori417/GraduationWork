@@ -2,13 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LockHead : MonoBehaviour
+public class LockHead : BaseMsParts
 {
     [SerializeField, Header("頭ボーン")]
     private Transform headBone;
-
-    [SerializeField, Header("ターゲット")]
-    private Transform target;
 
     [SerializeField, Header("回転速度")]
     private float rotationSpeed = 0.05f;
@@ -22,20 +19,28 @@ public class LockHead : MonoBehaviour
     // 初期回転を保存する変数
     private Quaternion initialRotation;
 
-    void Start()
+    /// <summary>
+    /// 初期化処理
+    /// </summary>
+    public override bool Initalize()
     {
         // 初期回転を保存
         if (headBone != null)
         {
             initialRotation = headBone.localRotation;
+            return true;
         }
+        return false;
     }
 
-    void LateUpdate()
+    /// <summary>
+    /// 処理
+    /// </summary>
+    public void Process()
     {
-        if (target != null && headBone != null)
+        if (targetMs != null && headBone != null)
         {
-            Vector3 directionToTarget = target.position - headBone.position;
+            Vector3 directionToTarget = targetMs.position - headBone.position;
             Vector3 localDirection = headBone.parent.InverseTransformDirection(directionToTarget);
 
             // ターゲット方向の回転を計算

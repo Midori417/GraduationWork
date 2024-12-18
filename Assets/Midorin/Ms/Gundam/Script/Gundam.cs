@@ -10,6 +10,9 @@ public class Gundam : BaseMs
     [SerializeField, Header("true動きを止める")]
     private bool isStop = false;
 
+    [SerializeField, Header("頭の処理")]
+    private LockHead lockHead;
+
     [SerializeField, Header("移動コンポーネント")]
     private MsMove move;
 
@@ -66,6 +69,7 @@ public class Gundam : BaseMs
         isMainShotBtn = Input.GetKeyDown(KeyCode.Mouse0);
         isSubShotBtn = Input.GetKeyDown(KeyCode.Alpha1);
 
+        lockHead.Process();
         BoostCharge();
 
         if (!isStop)
@@ -91,6 +95,7 @@ public class Gundam : BaseMs
         ComponentCheck();
 
         rb.drag = 0.1f;
+        lockHead.Initalize();
         move.Initalize();
         shotRifle.Initalize();
 
@@ -106,6 +111,7 @@ public class Gundam : BaseMs
     protected override bool ComponentCheck()
     {
         if (!base.ComponentCheck()) return false;
+        if (!lockHead) return false;
         if (!move) return false;
         if (!shotRifle) return false;
 
@@ -137,7 +143,6 @@ public class Gundam : BaseMs
 
         if (move.isDash || move.isJump)
         {
-            Debug.Log("A");
             eff_roketFire.Play();
         }
         else

@@ -7,14 +7,12 @@ using UnityEngine;
 /// </summary>
 public class HumanPilot : BasePilot
 {
-    [SerializeField, Header("©g‚Ì‹@‘Ì")]
-    private BaseMs myMs;
-
     [SerializeField, Header("UI")]
     private UIManager uiManager;
 
     void Start()
     {
+        base.Initialize();
         uiManager = GetComponentInChildren<UIManager>();
     }
 
