@@ -80,6 +80,7 @@ GameObject:
   - component: {fileID: 6235139701845051674}
   - component: {fileID: 4240836231859876430}
   - component: {fileID: 4966024530628579308}
+  - component: {fileID: 6406546123508786477}
   m_Layer: 0
   m_Name: pfb_Gundam
   m_TagString: MS
@@ -191,8 +192,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _center: {fileID: 6178711139368531833}
-  _myCamera: {fileID: 0}
-  _targetMs: {fileID: 0}
   _hp: 600
   boostParamater:
     chargeSpeed: 100
@@ -200,6 +199,7 @@ MonoBehaviour:
     overHeartChargeLockTime: 0.5
   uiArmedValue: 
   isStop: 0
+  lockHead: {fileID: 6235139701845051674}
   move: {fileID: 4240836231859876430}
   shotRifle: {fileID: 4966024530628579308}
   beumRifle: {fileID: 6540569978845907171}
@@ -218,7 +218,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   headBone: {fileID: 5616057820443872920}
-  target: {fileID: 0}
   rotationSpeed: 0.8
   maxHorizontalAngle: 75
   maxVerticalAngle: 45
@@ -261,11 +260,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc35b3e443a655f4fbbf145742278031, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: -4104332489870500713, guid: 625ba462f36baa84a8685dad9a342a03, type: 3}
   shotPos: {x: 0, y: 0, z: 0}
   amoMax: 999
   interval: 1
   spineBone: {fileID: 466701653090196231}
+--- !u!114 &6406546123508786477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130403658863983141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2510ea61296a8394b9c86f9516575460, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  virtualCamera: {fileID: 0}
+  rifleBulletPrefab: {fileID: 0}
 --- !u!1 &286263149433171680
 GameObject:
   m_ObjectHideFlags: 0

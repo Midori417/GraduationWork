@@ -24,6 +24,7 @@ public class LockHead : BaseMsParts
     /// </summary>
     public override bool Initalize()
     {
+        base.Initalize();
         // ‰Šú‰ñ“]‚ğ•Û‘¶
         if (headBone != null)
         {

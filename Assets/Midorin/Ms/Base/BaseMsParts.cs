@@ -23,7 +23,22 @@ public class BaseMsParts : MonoBehaviour
     { get { return _animator; } }
 
     protected Transform targetMs
-    { get { return _mainMs.targetMs.transform; } }
+    { 
+        get
+        {
+            if(!_mainMs)
+            {
+                Debug.LogError("メイン機体が不明");
+                return null;
+            }
+            if(!_mainMs.targetMs)
+            {
+                Debug.LogError("ターゲット機体が不明");
+                return null;
+            }
+            return _mainMs.targetMs.transform;
+        }
+    }
 
     /// <summary>
     /// 初期化
