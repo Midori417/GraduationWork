@@ -9,8 +9,6 @@ public class TargetSetter : MonoBehaviour
     [Header("使用するバーチャルカメラ")]
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
 
-    [SerializeField] private RifleBullet rifleBulletPrefab;
-
     /// <summary> 注視対象リスト </summary>
     private List<Transform> targetList;
 

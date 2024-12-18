@@ -2,6 +2,7 @@ using Cinemachine.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -31,11 +32,15 @@ public class RifleBullet : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // 射撃対象を取得する
-        target = FindObjectOfType<TargetSetter>().Target;
-
         // 一定時間後に削除
         Destroy(gameObject, destroyTime);
+
+        // nullチェック
+        if(!target)
+        {
+            Debug.Log("射撃対象が見つかりません。");
+            return;
+        }
 
         // 対象がいる方向
         transform.LookAt(target.position);
@@ -46,8 +51,7 @@ public class RifleBullet : MonoBehaviour
     {
         // nullチェック
         if (!target)
-        {
-            Debug.Log("射撃対象が見つかりません。TargetSetterが存在しない可能性があります。");
+        {        
             return;
         }
 
@@ -72,5 +76,13 @@ public class RifleBullet : MonoBehaviour
 
         // 向いている方向に進む
         transform.position += transform.forward * speed * Time.deltaTime;
+    }
+
+    /// <summary>
+    /// 射撃対象用プロパティ
+    /// </summary>
+    public Transform Target
+    {
+        set { target = value; }
     }
 }
