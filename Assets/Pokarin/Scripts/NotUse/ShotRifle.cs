@@ -72,7 +72,7 @@ public class RifleShot : MonoBehaviour
         if (bulletPrefab && bulletSpawner)
         {
             RifleBullet bullet = Instantiate(bulletPrefab, bulletSpawner.position, Quaternion.identity);
-            bullet.target = virtualCamera.LookAt;
+            //bullet.target = virtualCamera.LookAt;
         }
     }
 }

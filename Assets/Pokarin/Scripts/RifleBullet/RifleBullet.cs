@@ -11,23 +11,29 @@ public class RifleBullet : MonoBehaviour
     [Header("速度")]
     [SerializeField] private float speed;
 
+    /// <summary> 射撃から弾が消えるまでの時間 </summary>
     [Header("射撃から弾が消えるまでの時間")]
     [SerializeField] private float destroyTime;
 
+    /// <summary> 追尾性能(%) </summary>
+    [Header("追尾性能(%)")]
+    [SerializeField, Range(0, 100.0f)] private float homingPercent;
+
     /// <summary> 射撃対象 </summary>
-    [NonSerialized] public Transform target;
+    private Transform target;
 
-    private Vector3 position;
+    /// <summary> homingAngle度以下の位置に射撃対象がいるなら追尾する </summary>
+    private const float homingAngle = 1.0f;
 
-    private float maxAcceleration = 100.0f;
-
-    private Vector3 velocity;
-
-    private float period = 10.0f;
+    /// <summary> %の最大値 </summary>
+    private const float percentMax = 100.0f;
 
     // Start is called before the first frame update
     void Start()
     {
+        // 射撃対象を取得する
+        target = FindObjectOfType<TargetSetter>().Target;
+
         // 一定時間後に削除
         Destroy(gameObject, destroyTime);
 
@@ -38,25 +44,33 @@ public class RifleBullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var acceleration = Vector3.zero;
-        var diff = target.position - position;
-
-        //速度velocityの物体がperiod秒後にdiff進むための加速度
-        acceleration += (diff - velocity * period) * 2f / (period * period);
-
-        if (acceleration.magnitude > maxAcceleration)
+        // nullチェック
+        if (!target)
         {
-            acceleration = acceleration.normalized * maxAcceleration;
+            Debug.Log("射撃対象が見つかりません。TargetSetterが存在しない可能性があります。");
+            return;
         }
 
-        period -= Time.deltaTime;
+        // 射撃対象までの向きベクトル
+        Vector3 direction = target.position - transform.position;
 
-        if (period < 0f)
-            return;
+        // 射撃対象までの角度
+        float angleDiff = Vector3.Angle(transform.forward, direction);
 
-        velocity += acceleration * Time.deltaTime;
-        position += velocity * Time.deltaTime;
-        transform.position = position;
+        // 射撃対象の方向を向いたときのクォータニオン
+        Quaternion rotateTarget = Quaternion.LookRotation(direction);
 
+        // 角度が一定以下なら射撃対象に向かって回転させる
+        if (angleDiff <= homingAngle)
+        {
+            // 追尾性能(割合)
+            float homingRatio = homingPercent / percentMax;
+
+            // 追尾性能(割合)分の回転をさせる
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotateTarget, homingRatio);
+        }
+
+        // 向いている方向に進む
+        transform.position += transform.forward * speed * Time.deltaTime;
     }
 }
