@@ -10,9 +10,6 @@ public class MsMove : BaseMsParts
     // 自身のカメラ
     private Transform myCamera;
 
-    [SerializeField]
-    private AudioSource se_AudioSource;
-
     /// <summary>
     /// 移動パラメータ
     /// </summary>
@@ -92,11 +89,6 @@ public class MsMove : BaseMsParts
         }
     }
 
-    [SerializeField, Header("ブースト使用開始音")]
-    private AudioClip se_boostStart;
-    [SerializeField, Header("着地音")]
-    private AudioClip se_landing;
-
     /// <summary>
     /// 初期処理
     /// </summary>
@@ -113,7 +105,6 @@ public class MsMove : BaseMsParts
     /// </summary>
     public void Landing()
     {
-        se_AudioSource.PlayOneShot(se_landing);
         rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, jumpParamater.inertia);
     }
 
@@ -182,10 +173,6 @@ public class MsMove : BaseMsParts
                     rb.velocity = transform.forward * moveParamater.speed + new Vector3(0, rb.velocity.y, 0);
                 }
                 rb.velocity = new Vector3(rb.velocity.x, jumpParamater.power, rb.velocity.z);
-
-                // 開始時に一度だけサウンド
-                if(!jumpParamater.isNow)
-                { }
 
                 jumpParamater.isNow = true;
 
