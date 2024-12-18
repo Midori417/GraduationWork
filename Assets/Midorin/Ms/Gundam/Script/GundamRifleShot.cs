@@ -27,9 +27,6 @@ public class GundamRifleShot : BaseMsParts
     // ターゲット
     private Transform target;
 
-    // trueなら射撃可能
-    private bool isShotOk = true;
-
     // trueなら行動中
     private bool isNow = false;
 
@@ -136,7 +133,7 @@ public class GundamRifleShot : BaseMsParts
     void BackLookRotaion()
     {
         // ターゲット方向の回転を計算
-        Vector3 directionToTarget = transform.position - target.position;
+        Vector3 directionToTarget = Vector3.Scale(transform.position - target.position, new Vector3(1, 0, 1));
         Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
         transform.rotation = targetRotation;
         rb.velocity = Vector3.zero;
@@ -153,13 +150,7 @@ public class GundamRifleShot : BaseMsParts
     {
         // 射撃不可条件
         // 射撃不可 弾が0以下 インターバルが0以上
-        if (!isShotOk || amo <= 0)
-        {
-            return false;
-        }
-
-        // バグってるので救済そち（あとでけしたい）
-        if (isNow)
+        if (isNow || amo <= 0)
         {
             return false;
         }
@@ -183,7 +174,6 @@ public class GundamRifleShot : BaseMsParts
             }
         }
 
-        isShotOk = false;
         // 射撃行動中
         isNow = true;
 
@@ -213,27 +203,19 @@ public class GundamRifleShot : BaseMsParts
 
                 // 弾を生成
                 RifleBullet bullet = Instantiate(bulletPrefab, pos, rot);
+                bullet.Target = target;
             }
             else
             {
-                RifleBullet bullet = Instantiate(bulletPrefab, spineBone);
+                // 自身の機体のセンターを代入
+                Transform center = mainMs.center;
+                Quaternion rot = transform.rotation;
+                Vector3 pos = center.position + rot * shotPos;
+                RifleBullet bullet = Instantiate(bulletPrefab, pos, rot);
             }
-            // インターバルコルーチン起動
-            StartCoroutine("ShotInterval");
-
             // 弾を減らす
             amo--;
         }
-    }
-
-    /// <summary>
-    /// 射撃インターバル
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator ShotInterval()
-    {
-        yield return new WaitForSeconds(interval);
-        isShotOk = true;
     }
 
     /// <summary>

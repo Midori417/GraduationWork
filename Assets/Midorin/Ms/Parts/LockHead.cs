@@ -37,7 +37,7 @@ public class LockHead : BaseMsParts
     /// <summary>
     /// ˆ—
     /// </summary>
-    public void Process()
+    void LateUpdate()
     {
         if (targetMs != null && headBone != null)
         {

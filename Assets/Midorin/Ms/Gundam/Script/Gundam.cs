@@ -16,7 +16,7 @@ public class Gundam : BaseMs
     [SerializeField, Header("移動コンポーネント")]
     private MsMove move;
 
-    [SerializeField, Header("ビームライフルコンポネント")]
+    [SerializeField, Header("ビームライフルコンポーネント")]
     private GundamRifleShot shotRifle;
 
     [SerializeField, Header("ビームライフルオブジェクト")]
@@ -37,9 +37,6 @@ public class Gundam : BaseMs
 
     // ビームライフル攻撃レイヤーインデックス
     int beumRifleLayerIndex = 0;
-
-    float beumRifleShotTime;
-    float beumRifleShotBackTime;
 
     #region イベント
 
@@ -69,14 +66,12 @@ public class Gundam : BaseMs
         isMainShotBtn = Input.GetKeyDown(KeyCode.Mouse0);
         isSubShotBtn = Input.GetKeyDown(KeyCode.Alpha1);
 
-        lockHead.Process();
         BoostCharge();
 
         if (!isStop)
         {
             Move();
             BeumRifle();
-            Bazooka();
         }
 
         RoketFireControl();
@@ -255,32 +250,6 @@ public class Gundam : BaseMs
         yield return new WaitForSeconds(0.8f);
         shotRifle.Failed();
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
-    }
-
-    #endregion
-
-    #region バズーカ
-
-    /// <summary>
-    /// バズーカ処理
-    /// </summary>
-    void Bazooka()
-    {
-        if(isSubShotBtn)
-        {
-            animator.SetTrigger("BazookaShot");
-            beumRifle.SetActive(false);
-            bazooka.SetActive(true);
-        }
-    }
-
-    /// <summary>
-    /// Bazooka終了処理
-    /// </summary>
-    public void BazookaFailed()
-    {
-        beumRifle.SetActive(true);
-        bazooka.SetActive(false);
     }
 
     #endregion
