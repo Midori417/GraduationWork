@@ -24,7 +24,21 @@ public class HumanPilot : BasePilot
             return;
         }
 
+        ControlUpdate();
         UIUpdate();
+    }
+
+    /// <summary>
+    /// 入力コントール
+    /// </summary>
+    void ControlUpdate()
+    {
+        // 仮キー入力
+        myMs.moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        myMs.isJumpBtn = Input.GetKey(KeyCode.Space);
+        myMs.isDashBtn = Input.GetKey(KeyCode.LeftShift);
+        myMs.isMainShotBtn = Input.GetKeyDown(KeyCode.Mouse0);
+        myMs.isSubShotBtn = Input.GetKeyDown(KeyCode.Alpha1);
     }
 
     /// <summary>

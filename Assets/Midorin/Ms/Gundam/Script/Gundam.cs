@@ -28,25 +28,10 @@ public class Gundam : BaseMs
     [SerializeField, Header("バーニアエフェクト")]
     private ParticleSystem eff_roketFire;
 
-    // 仮入力
-    Vector2 moveAxis;
-    bool isJumpBtn;
-    bool isDashBtn;
-    bool isMainShotBtn;
-    bool isSubShotBtn;
-
     // ビームライフル攻撃レイヤーインデックス
     int beumRifleLayerIndex = 0;
 
     #region イベント
-
-    /// <summary>
-    /// Updateより前に実行する
-    /// </summary>
-    private void Start()
-    {
-        Initialize();
-    }
 
     /// <summary>
     /// 毎フレーム実行
@@ -58,13 +43,6 @@ public class Gundam : BaseMs
             Debug.LogError("必要なコンポーネント足りません");
             return;
         }
-
-        // 仮キー入力
-        moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        isJumpBtn = Input.GetKey(KeyCode.Space);
-        isDashBtn = Input.GetKey(KeyCode.LeftShift);
-        isMainShotBtn = Input.GetKeyDown(KeyCode.Mouse0);
-        isSubShotBtn = Input.GetKeyDown(KeyCode.Alpha1);
 
         BoostCharge();
 
@@ -83,7 +61,7 @@ public class Gundam : BaseMs
     /// <summary>
     /// 初期化する
     /// </summary>
-    protected override void Initialize()
+    public override void Initialize()
     {
         base.Initialize();
         ComponentCheck();
@@ -209,6 +187,7 @@ public class Gundam : BaseMs
         move.Landing();
         animator.SetTrigger("Landing");
         Stop();
+        Invoke("Go", 1);
     }
 
     #endregion
@@ -237,16 +216,15 @@ public class Gundam : BaseMs
             {
                 animator.SetTrigger("BeumRifleShotBack");
             }
-            StartCoroutine("BeumRifleShotFailed");
+            Invoke("BeumRifleShotFailed", 0.8f);
         }
     }
 
     /// <summary>
     /// ビームライフル攻撃が終わった時の処理
     /// </summary>
-    private IEnumerator BeumRifleShotFailed()
+    void BeumRifleShotFailed()
     {
-        yield return new WaitForSeconds(0.8f);
         rifleShot.Failed();
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
     }

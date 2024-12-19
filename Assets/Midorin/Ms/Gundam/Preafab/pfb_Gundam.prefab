@@ -207,14 +207,18 @@ MonoBehaviour:
   _center: {fileID: 6178711139368531833}
   _hp: 600
   boostParamater:
-    chargeSpeed: 100
     chargeLockTime: 0.2
     overHeartChargeLockTime: 0.5
+  moveAxis: {x: 0, y: 0}
+  isJumpBtn: 0
+  isDashBtn: 0
+  isMainShotBtn: 0
+  isSubShotBtn: 0
   uiArmedValue: 
   isStop: 0
   lockHead: {fileID: 6235139701845051674}
   move: {fileID: 4240836231859876430}
-  shotRifle: {fileID: 4966024530628579308}
+  rifleShot: {fileID: 4966024530628579308}
   beumRifle: {fileID: 6540569978845907171}
   bazooka: {fileID: 673071238241667363}
   eff_roketFire: {fileID: 2700942672427607012}
@@ -254,13 +258,11 @@ MonoBehaviour:
     speed: 1
     rotationSpeed: 5
     useBoost: 20
-    isNow: 0
     inertia: 0.23
   dashParamater:
     speed: 40
     rotationSpeed: 2
     useBoost: 20
-    isNow: 0
 --- !u!114 &4966024530628579308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,7 +276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: -4104332489870500713, guid: 625ba462f36baa84a8685dad9a342a03, type: 3}
-  shotPos: {x: 0, y: 0, z: 0}
+  shotPos: {x: 0, y: 0, z: 5}
   amoMax: 999
   interval: 1
   spineBone: {fileID: 466701653090196231}

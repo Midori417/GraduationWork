@@ -29,5 +29,7 @@ public class BasePilot : MonoBehaviour
     {
         _myMs.SetMyCamera(_myCameraManager.mainCamera.transform);
         _myMs.SetTargetMs(taregetMs);
+
+        _myMs.Initialize();
     }
 }

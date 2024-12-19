@@ -39,9 +39,6 @@ public class BaseMs : MonoBehaviour
         public float current01
         { get { return Mathf.Clamp01((max - (max - current)) / max); } }
 
-        [Header("チャージ速度")]
-        public float chargeSpeed;
-
         // チャージタイマー
         private float chargeTimer;
 
@@ -81,7 +78,7 @@ public class BaseMs : MonoBehaviour
             else
             {
                 // エネルギーを回復する
-                current += chargeSpeed * Time.deltaTime;
+                current = max;
             }
 
             // 値を補正
@@ -122,6 +119,13 @@ public class BaseMs : MonoBehaviour
     [SerializeField, Header("ブーストパラメータ")]
     private BoostParamater boostParamater;
 
+    // 仮入力
+    public Vector2 moveAxis;
+    public bool isJumpBtn;
+    public bool isDashBtn;
+    public bool isMainShotBtn;
+    public bool isSubShotBtn;
+
     #region  他に伝える
 
     public Rigidbody rb
@@ -157,7 +161,7 @@ public class BaseMs : MonoBehaviour
     /// <summary>
     /// 初期化
     /// </summary>
-    protected virtual void Initialize()
+    public  virtual void Initialize()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
