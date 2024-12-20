@@ -69,12 +69,12 @@ public class LockHead : BaseMsParts
             if (Mathf.Abs(eulerAngles.y) > maxHorizontalAngle || Mathf.Abs(eulerAngles.x) > maxVerticalAngle)
             {
                 // 正面（初期回転）に補完して戻す
-                smoothRotation = Quaternion.Slerp(oldRotataion, initialRotation, rotationSpeed);
+                smoothRotation = Quaternion.Slerp(oldRotataion, initialRotation, rotationSpeed * Time.deltaTime);
             }
             else
             {
                 // 現在の回転からターゲット回転への補完
-                smoothRotation = Quaternion.Slerp(oldRotataion, targetRotation, rotationSpeed);
+                smoothRotation = Quaternion.Slerp(oldRotataion, targetRotation, rotationSpeed * Time.deltaTime);
             }
 
             // 回転を適用

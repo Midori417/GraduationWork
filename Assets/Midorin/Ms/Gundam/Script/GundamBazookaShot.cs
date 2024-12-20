@@ -43,8 +43,6 @@ public class GundamBazookaShot : BaseMsAmoParts
         rb.velocity = Vector3.zero;
     }
 
-
-
     /// <summary>
     /// ‰Šú‰»
     /// </summary>

@@ -108,7 +108,7 @@ public class GundamRifleShot : BaseMsAmoParts
                 targetRot = targetRotation;
 
                 // 現在の回転からターゲット回転への補完
-                Quaternion smoothRotation = Quaternion.Slerp(oldRotation, targetRotation, rotationSpeed);
+                Quaternion smoothRotation = Quaternion.Slerp(oldRotation, targetRotation, rotationSpeed * Time.deltaTime);
 
                 // 回転を適用
                 spineBone.localRotation = smoothRotation;
@@ -117,7 +117,7 @@ public class GundamRifleShot : BaseMsAmoParts
         }
         else
         {
-            Quaternion smoothRotation = Quaternion.Slerp(oldRotation, initialRotation, rotationSpeed);
+            Quaternion smoothRotation = Quaternion.Slerp(oldRotation, initialRotation, rotationSpeed * Time.deltaTime);
             spineBone.localRotation = smoothRotation;
             oldRotation = spineBone.localRotation;
         }
