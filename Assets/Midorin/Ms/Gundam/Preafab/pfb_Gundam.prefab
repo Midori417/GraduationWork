@@ -206,7 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _center: {fileID: 6178711139368531833}
-  _hp: 600
+  _hpMax: 600
   boostParamater:
     chargeLockTime: 0.2
     overHeartChargeLockTime: 0.5

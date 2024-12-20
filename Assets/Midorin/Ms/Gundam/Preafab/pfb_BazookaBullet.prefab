@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 50
-  destroyTime: 5
+  destroyTime: 10
   homingPercent: 50
 --- !u!114 &6397794088632679883
 MonoBehaviour:

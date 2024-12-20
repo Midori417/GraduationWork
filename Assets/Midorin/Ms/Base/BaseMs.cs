@@ -23,8 +23,11 @@ public class BaseMs : MonoBehaviour
         private set;
     }
 
-    [SerializeField, Header("体力")]
-    protected int _hp;
+    // 体力
+    private int _hp;
+
+    [SerializeField, Header("最大体力")]
+    private int _hpMax;
 
     [System.Serializable]
     private struct BoostParamater
@@ -149,6 +152,10 @@ public class BaseMs : MonoBehaviour
     public int hp
     { get { return _hp; } }
 
+    // 最大体力
+    public int hpMax
+    { get { return _hpMax; } }
+
     // 現在のエネルギーの割合(0～1)
     public float boost01
     { get { return boostParamater.current01; } }
@@ -168,6 +175,9 @@ public class BaseMs : MonoBehaviour
         groundCheck = GetComponentInChildren<GroundCheck>();
 
         boostParamater.Initialize();
+
+        // 体力を設定
+        _hp = hpMax;
     }
 
     /// <summary>
@@ -191,6 +201,7 @@ public class BaseMs : MonoBehaviour
     public virtual void Damage(int damage)
     {
         _hp -= damage;
+        _hp = Mathf.Clamp(_hp, 0, hpMax);
     }
 
     #region ブースト関係
