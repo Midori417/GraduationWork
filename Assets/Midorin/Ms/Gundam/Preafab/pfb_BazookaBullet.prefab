@@ -117,6 +117,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2959680175326449463}
   - component: {fileID: -9183468177779130930}
+  - component: {fileID: 6397794088632679883}
   m_Layer: 0
   m_Name: pfb_BazookaBullet
   m_TagString: Untagged
@@ -152,6 +153,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94af458b5ebf28946b7cafbfa6ea2a89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 50
   destroyTime: 5
-  homingPercent: 10
+  homingPercent: 50
+--- !u!114 &6397794088632679883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2677364784809444316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c507ea36eb22165478041758d2b442c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 110

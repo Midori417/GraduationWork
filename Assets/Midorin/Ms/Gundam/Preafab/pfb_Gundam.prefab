@@ -282,6 +282,7 @@ MonoBehaviour:
   shotPos: {x: 0, y: 0, z: 5}
   interval: 1
   spineBone: {fileID: 466701653090196231}
+  rotationSpeed: 0.1
 --- !u!114 &7796402938391180800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,7 +295,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92bd5a6bd606066408c9ccd8649c1f7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amoMax: 5
+  amoMax: 999
+  bulletPrefab: {fileID: -9183468177779130930, guid: b11211e3148b2aa4a9b32a36cc2c3797, type: 3}
+  shotPos: {x: 0, y: 0, z: 5}
 --- !u!1 &286263149433171680
 GameObject:
   m_ObjectHideFlags: 0

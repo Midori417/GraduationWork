@@ -167,8 +167,8 @@ public class GundamRifleShot : BaseMsAmoParts
         {
             // ターゲット方向を計算
             Vector3 directioToTarget = transform.position - target.position;
-            float dot = Vector3.Dot(directioToTarget, transform.forward);
-            if (dot > 0)
+            float dot = Vector3.Dot(directioToTarget.normalized, transform.forward);
+            if (dot > 0.5f)
             {
                 isBackShot = true;
             }

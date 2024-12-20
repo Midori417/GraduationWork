@@ -36,6 +36,8 @@ public class CpuPilot : BasePilot
 
         MainShot,
 
+        SubShot,
+
         Max,
     }
 
@@ -52,8 +54,8 @@ public class CpuPilot : BasePilot
         moveAxiss.Add(Vector2.down);
         moveAxiss.Add(new Vector2(1, 1));
         moveAxiss.Add(new Vector2(-1, 1));
-        moveAxiss.Add(new Vector2(-1, -1));
-        moveAxiss.Add(new Vector2(1, -1));
+        //moveAxiss.Add(new Vector2(-1, -1));
+        //moveAxiss.Add(new Vector2(1, -1));
 
         // èâä˙çsìÆ
         MoveAxisProsess();
@@ -105,12 +107,16 @@ public class CpuPilot : BasePilot
         AttackActionState state = (AttackActionState)Random.Range(0, (int)AttackActionState.Max);
 
         myMs.isMainShotBtn = false;
+        myMs.isSubShotBtn = false;
         switch (state)
         {
             case AttackActionState.None:
                 break;
             case AttackActionState.MainShot:
                 myMs.isMainShotBtn = true;
+                break;
+            case AttackActionState.SubShot:
+                myMs.isSubShotBtn = true;
                 break;
         }
 

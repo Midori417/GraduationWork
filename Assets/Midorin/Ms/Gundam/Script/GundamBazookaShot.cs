@@ -19,6 +19,32 @@ public class GundamBazookaShot : BaseMsAmoParts
     // ターゲット
     private Transform target;
 
+    private void LateUpdate()
+    {
+        if(isNow)
+        {
+            LookRotaion();
+        }
+    }
+
+    /// <summary>
+    /// ターゲットの方向に向ける
+    /// </summary>
+    void LookRotaion()
+    {
+        if (!target)
+        {
+            return;
+        }
+        // ターゲット方向の回転を計算
+        Vector3 directionToTarget = Vector3.Scale(target.position - transform.position, new Vector3(1, 0, 1));
+        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+        transform.rotation = targetRotation;
+        rb.velocity = Vector3.zero;
+    }
+
+
+
     /// <summary>
     /// 初期化
     /// </summary>

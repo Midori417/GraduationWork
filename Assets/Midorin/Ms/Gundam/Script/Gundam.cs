@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -227,6 +228,14 @@ public class Gundam : BaseMs
     }
 
     /// <summary>
+    /// ビームライフルの弾を生成
+    /// </summary>
+    public void BeumRifleCreateBullet()
+    {
+        rifleShot.CreateBullet();
+    }
+
+    /// <summary>
     /// ビームライフル攻撃が終わった時の処理
     /// </summary>
     void BeumRifleShotFailed()
@@ -253,15 +262,25 @@ public class Gundam : BaseMs
 
             animator.SetTrigger("BazookaShot");
             Invoke("BazookaFailed", 0.8f);
+            bazooka.SetActive(true);
         }
+    }
+
+    /// <summary>
+    /// バズーカの弾を生成
+    /// </summary>
+    public void BazookaCreateBullet()
+    {
+        bazookaShot.CreateBullet();
     }
 
     /// <summary>
     /// バズーカの終了処理
     /// </summary>
-    void BazookaFailed()
+    private void BazookaFailed()
     {
         bazookaShot.Failed();
+        bazooka.SetActive(false);
     }
 
     #endregion

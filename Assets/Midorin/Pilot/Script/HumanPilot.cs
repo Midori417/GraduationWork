@@ -38,7 +38,7 @@ public class HumanPilot : BasePilot
         myMs.isJumpBtn = Input.GetKey(KeyCode.Space);
         myMs.isDashBtn = Input.GetKey(KeyCode.LeftShift);
         myMs.isMainShotBtn = Input.GetKeyDown(KeyCode.Mouse0);
-        myMs.isSubShotBtn = Input.GetKeyDown(KeyCode.Alpha1);
+        myMs.isSubShotBtn = Input.GetKeyDown(KeyCode.E);
     }
 
     /// <summary>

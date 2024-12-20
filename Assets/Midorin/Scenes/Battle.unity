@@ -172,9 +172,9 @@ MonoBehaviour:
   _myCameraManager: {fileID: 2081611234}
   _myMs: {fileID: 1716325578}
   targetPilot: {fileID: 109595500}
-  moveTimer: 0
-  moveActionTimer: 0
-  attackActionTimer: 0
+  moveTimer: 3
+  moveActionTimer: 2
+  attackActionTimer: 0.5
 --- !u!1 &109595497
 GameObject:
   m_ObjectHideFlags: 0
@@ -556,18 +556,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4966024530628579308, guid: 82eade99d75cc4d419ca2f2a8abfb03c, type: 3}
-      propertyPath: rotationSpeed
-      value: 0.01
-      objectReference: {fileID: 0}
     - target: {fileID: 6406546123508786477, guid: 82eade99d75cc4d419ca2f2a8abfb03c, type: 3}
       propertyPath: virtualCamera
       value: 
       objectReference: {fileID: 1202952213}
-    - target: {fileID: 7796402938391180800, guid: 82eade99d75cc4d419ca2f2a8abfb03c, type: 3}
-      propertyPath: amoMax
-      value: 999
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
