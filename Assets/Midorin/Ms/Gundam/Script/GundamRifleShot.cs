@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GundamRifleShot : BaseMsParts
+/// <summary>
+/// ガンダムのビームライフル武装
+/// </summary>
+public class GundamRifleShot : BaseMsAmoParts
 {
     /// <summary> 弾用プレハブ </summary>
     [Header("弾用プレハブ")]
@@ -11,12 +14,6 @@ public class GundamRifleShot : BaseMsParts
     /// <summary> 弾生成位置 </summary>
     [Header("弾生成位置")]
     [SerializeField] private Vector3 shotPos;
-
-    // 現在の弾
-    private int amo;
-
-    [SerializeField, Header("最大弾")]
-    private int amoMax;
 
     [SerializeField, Header("発射インターバル")]
     private float interval;
@@ -33,7 +30,7 @@ public class GundamRifleShot : BaseMsParts
     // trueなら元の角度に戻る
     private bool returnRotaion = false;
 
-    // 回転速度
+    [SerializeField, Header("回転速度")]
     private float rotationSpeed = 0;
 
     // ターゲットの角度
@@ -42,19 +39,14 @@ public class GundamRifleShot : BaseMsParts
     // 初期回転を保存する変数
     private Quaternion initialRotation;
 
+    // 前回フレーム時の回転
+    private Quaternion oldRotation;
+
     // バックショット
     public bool isBackShot
     { get; private set; }
 
     #region イベント
-
-    private void Update()
-    {
-        if (mainMs)
-        {
-            mainMs.uiArmedValue[0] = amo;
-        }
-    }
 
     private void LateUpdate()
     {
@@ -87,7 +79,6 @@ public class GundamRifleShot : BaseMsParts
         {
             return false;
         }
-        mainMs.uiArmedValue.Add(amo);
 
         // 初期回転を保存
         if (spineBone != null)
@@ -117,20 +108,18 @@ public class GundamRifleShot : BaseMsParts
                 targetRot = targetRotation;
 
                 // 現在の回転からターゲット回転への補完
-                rotationSpeed += 5 * Time.deltaTime;
-                rotationSpeed = Mathf.Clamp01(rotationSpeed);
-                Quaternion smoothRotation = Quaternion.Slerp(spineBone.localRotation, targetRotation, rotationSpeed);
+                Quaternion smoothRotation = Quaternion.Slerp(oldRotation, targetRotation, rotationSpeed);
 
                 // 回転を適用
                 spineBone.localRotation = smoothRotation;
+                oldRotation = spineBone.localRotation;
             }
         }
         else
         {
-            rotationSpeed += 5 * Time.deltaTime;
-            rotationSpeed = Mathf.Clamp01(rotationSpeed);
-            Quaternion smoothRotation = Quaternion.Slerp(targetRot, initialRotation, rotationSpeed);
+            Quaternion smoothRotation = Quaternion.Slerp(oldRotation, initialRotation, rotationSpeed);
             spineBone.localRotation = smoothRotation;
+            oldRotation = spineBone.localRotation;
         }
     }
 
@@ -139,6 +128,10 @@ public class GundamRifleShot : BaseMsParts
     /// </summary>
     void BackLookRotaion()
     {
+        if (!target)
+        {
+            return;
+        }
         // ターゲット方向の回転を計算
         Vector3 directionToTarget = Vector3.Scale(transform.position - target.position, new Vector3(1, 0, 1));
         Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
@@ -166,11 +159,11 @@ public class GundamRifleShot : BaseMsParts
         if (mainMs.targetMs)
         {
             target = mainMs.targetMs.center;
-            // 回転速度をリセット
-            rotationSpeed = 0;
+            oldRotation = spineBone.localRotation;
         }
 
         // バックショットか判定
+        if (target)
         {
             // ターゲット方向を計算
             Vector3 directioToTarget = transform.position - target.position;
@@ -232,7 +225,6 @@ public class GundamRifleShot : BaseMsParts
     public void ReturnRotation()
     {
         returnRotaion = true;
-        rotationSpeed = 0;
     }
 
     /// <summary>

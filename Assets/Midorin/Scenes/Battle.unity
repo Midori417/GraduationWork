@@ -259,17 +259,6 @@ Transform:
   - {fileID: 83655092}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &301789050 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7203012698839513264, guid: e6734b60cea141444919387b50b2522e, type: 3}
-  m_PrefabInstance: {fileID: 661458780718452373}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &662789262
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,10 +556,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4966024530628579308, guid: 82eade99d75cc4d419ca2f2a8abfb03c, type: 3}
+      propertyPath: rotationSpeed
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 6406546123508786477, guid: 82eade99d75cc4d419ca2f2a8abfb03c, type: 3}
       propertyPath: virtualCamera
       value: 
       objectReference: {fileID: 1202952213}
+    - target: {fileID: 7796402938391180800, guid: 82eade99d75cc4d419ca2f2a8abfb03c, type: 3}
+      propertyPath: amoMax
+      value: 999
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1674,10 +1671,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 109595499}
     m_Modifications:
-    - target: {fileID: 117290751937694500, guid: e6734b60cea141444919387b50b2522e, type: 3}
-      propertyPath: txt_ArmedValue
-      value: 
-      objectReference: {fileID: 301789050}
     - target: {fileID: 2662163317272685299, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_Name
       value: pfb_UIManager

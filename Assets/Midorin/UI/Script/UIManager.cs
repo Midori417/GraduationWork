@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
     private Text txt_Hp;
 
     [SerializeField, Header("武装の弾")]
-    private Text txt_ArmedValue;
+    private List<Text> txt_ArmedValues;
 
     /// <summary>
     /// ブーストゲージの設定
@@ -33,11 +33,11 @@ public class UIManager : MonoBehaviour
     /// 武装の残弾を設定
     /// </summary>
     /// <param name="value"></param>
-    public void ArmedValue(int _value)
+    public void ArmedValue(int index, int _value)
     {
-        if(txt_ArmedValue)
+        if (txt_ArmedValues[index])
         {
-            txt_ArmedValue.text = _value.ToString();
+            txt_ArmedValues[index].text = _value.ToString();
         }
     }
 

@@ -81,6 +81,7 @@ GameObject:
   - component: {fileID: 6235139701845051674}
   - component: {fileID: 4240836231859876430}
   - component: {fileID: 4966024530628579308}
+  - component: {fileID: 7796402938391180800}
   m_Layer: 0
   m_Name: pfb_Gundam
   m_TagString: MS
@@ -214,11 +215,12 @@ MonoBehaviour:
   isDashBtn: 0
   isMainShotBtn: 0
   isSubShotBtn: 0
-  uiArmedValue: 
+  uiArmed: []
   isStop: 0
   lockHead: {fileID: 6235139701845051674}
   move: {fileID: 4240836231859876430}
   rifleShot: {fileID: 4966024530628579308}
+  bazookaShot: {fileID: 7796402938391180800}
   beumRifle: {fileID: 6540569978845907171}
   bazooka: {fileID: 673071238241667363}
   eff_roketFire: {fileID: 2700942672427607012}
@@ -275,11 +277,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc35b3e443a655f4fbbf145742278031, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  amoMax: 999
   bulletPrefab: {fileID: -4104332489870500713, guid: 625ba462f36baa84a8685dad9a342a03, type: 3}
   shotPos: {x: 0, y: 0, z: 5}
-  amoMax: 999
   interval: 1
   spineBone: {fileID: 466701653090196231}
+--- !u!114 &7796402938391180800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130403658863983141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92bd5a6bd606066408c9ccd8649c1f7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amoMax: 5
 --- !u!1 &286263149433171680
 GameObject:
   m_ObjectHideFlags: 0

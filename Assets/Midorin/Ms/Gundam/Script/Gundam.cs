@@ -19,6 +19,9 @@ public class Gundam : BaseMs
     [SerializeField, Header("ビームライフルコンポーネント")]
     private GundamRifleShot rifleShot;
 
+    [SerializeField, Header("バズーカコンポーネント")]
+    private GundamBazookaShot bazookaShot;
+
     [SerializeField, Header("ビームライフルオブジェクト")]
     private GameObject beumRifle;
 
@@ -50,6 +53,7 @@ public class Gundam : BaseMs
         {
             MoveProsess();
             BeumRifleProcess();
+            BazookaProsess();
         }
 
         RoketFireControl();
@@ -69,6 +73,7 @@ public class Gundam : BaseMs
         lockHead.Initalize();
         move.Initalize();
         rifleShot.Initalize();
+        bazookaShot.Initalize();
 
         // レイヤー番号を取得
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
@@ -85,6 +90,7 @@ public class Gundam : BaseMs
         if (!lockHead) return false;
         if (!move) return false;
         if (!rifleShot) return false;
+        if (!bazookaShot) return false;
 
         return true;
     }
@@ -107,7 +113,7 @@ public class Gundam : BaseMs
     /// </summary>
     void RoketFireControl()
     {
-        if(!eff_roketFire)
+        if (!eff_roketFire)
         {
             return;
         }
@@ -227,6 +233,35 @@ public class Gundam : BaseMs
     {
         rifleShot.Failed();
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
+    }
+
+    #endregion
+
+    #region バズーカ
+
+    /// <summary>
+    /// バズーカ処理
+    /// </summary>
+    private void BazookaProsess()
+    {
+        if(isSubShotBtn)
+        {
+            if(!bazookaShot.ShotCheck())
+            {
+                return;
+            }
+
+            animator.SetTrigger("BazookaShot");
+            Invoke("BazookaFailed", 0.8f);
+        }
+    }
+
+    /// <summary>
+    /// バズーカの終了処理
+    /// </summary>
+    void BazookaFailed()
+    {
+        bazookaShot.Failed();
     }
 
     #endregion

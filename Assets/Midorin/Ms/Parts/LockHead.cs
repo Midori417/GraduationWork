@@ -19,6 +19,9 @@ public class LockHead : BaseMsParts
     // 初期回転を保存する変数
     private Quaternion initialRotation;
 
+    // 前回フレーム時の回転
+    private Quaternion oldRotataion;
+
     /// <summary>
     /// 初期化
     /// </summary>
@@ -36,6 +39,7 @@ public class LockHead : BaseMsParts
             return false;
         }
         initialRotation = headBone.localRotation;
+        oldRotataion = headBone.localRotation;
         return true;
     }
 
@@ -65,16 +69,17 @@ public class LockHead : BaseMsParts
             if (Mathf.Abs(eulerAngles.y) > maxHorizontalAngle || Mathf.Abs(eulerAngles.x) > maxVerticalAngle)
             {
                 // 正面（初期回転）に補完して戻す
-                smoothRotation = Quaternion.Slerp(headBone.localRotation, initialRotation, rotationSpeed);
+                smoothRotation = Quaternion.Slerp(oldRotataion, initialRotation, rotationSpeed);
             }
             else
             {
                 // 現在の回転からターゲット回転への補完
-                smoothRotation = Quaternion.Slerp(headBone.localRotation, targetRotation, rotationSpeed);
+                smoothRotation = Quaternion.Slerp(oldRotataion, targetRotation, rotationSpeed);
             }
 
             // 回転を適用
             headBone.localRotation = smoothRotation;
+            oldRotataion = headBone.localRotation;
         }
     }
 }

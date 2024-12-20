@@ -154,7 +154,7 @@ public class BaseMs : MonoBehaviour
     { get { return boostParamater.current01; } }
 
     // UI‚É•\Ž¦‚·‚é’e
-    public List<int> uiArmedValue;
+    public List<BaseMsAmoParts> uiArmed;
 
     #endregion
 
