@@ -16,15 +16,16 @@ public class RifleBullet : MonoBehaviour
     [Header("射撃から弾が消えるまでの時間")]
     [SerializeField] private float destroyTime;
 
+    /// <summary> 追尾可能な角度 </summary>
+    [Header("追尾可能な角度(度数法)")]
+    [SerializeField, Range(0, 180.0f)] private float homingAngle;
+
     /// <summary> 追尾性能(%) </summary>
-    [Header("追尾性能(%)")]
+    [Header("追尾性能(%), 100%で追尾可能な角度分回転して追尾する")]
     [SerializeField, Range(0, 100.0f)] private float homingPercent;
 
     /// <summary> 射撃対象 </summary>
     private Transform target;
-
-    /// <summary> homingAngle度以下の位置に射撃対象がいるなら追尾する </summary>
-    private const float homingAngle = 1.0f;
 
     /// <summary> %の最大値 </summary>
     private const float percentMax = 100.0f;
@@ -42,13 +43,16 @@ public class RifleBullet : MonoBehaviour
             return;
         }
 
-        // 対象がいる方向
+        // 射撃対象がいる方向に向ける
         transform.LookAt(target.position);
     }
 
     // Update is called once per frame
     void Update()
     {
+        // 向いている方向に進む
+        transform.position += transform.forward * speed * Time.deltaTime;
+
         // nullチェック
         if (!target)
         {        
@@ -73,9 +77,6 @@ public class RifleBullet : MonoBehaviour
             // 追尾性能(割合)分の回転をさせる
             transform.rotation = Quaternion.Slerp(transform.rotation, rotateTarget, homingRatio);
         }
-
-        // 向いている方向に進む
-        transform.position += transform.forward * speed * Time.deltaTime;
     }
 
     /// <summary>
