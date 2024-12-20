@@ -121,6 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 80
   destroyTime: 3
+  homingAngle: 1
   homingPercent: 30
 --- !u!114 &-1150294115761352523
 MonoBehaviour:
@@ -135,3 +136,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 75
+  isDead: 0
+  pfb_eff_hit: {fileID: 0}
