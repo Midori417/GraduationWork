@@ -556,14 +556,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4966024530628579308, guid: 82eade99d75cc4d419ca2f2a8abfb03c, type: 3}
-      propertyPath: rotationSpeed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6235139701845051674, guid: 82eade99d75cc4d419ca2f2a8abfb03c, type: 3}
-      propertyPath: maxHorizontalAngle
-      value: 90
-      objectReference: {fileID: 0}
     - target: {fileID: 6406546123508786477, guid: 82eade99d75cc4d419ca2f2a8abfb03c, type: 3}
       propertyPath: virtualCamera
       value: 
