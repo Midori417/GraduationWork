@@ -208,6 +208,11 @@ public class Gundam : BaseMs
     {
         if (isMainShotBtn)
         {
+            if(bazookaShot.isNow)
+            {
+                return;
+            }
+
             if (!rifleShot.ShotCheck())
             {
                 // 射撃不可

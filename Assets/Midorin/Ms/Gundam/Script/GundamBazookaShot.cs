@@ -7,17 +7,26 @@ using UnityEngine;
 /// </summary>
 public class GundamBazookaShot : BaseMsAmoParts
 {
-    [SerializeField]
+    [SerializeField, Header("弾のプレハブ")]
     private RifleBullet bulletPrefab;
 
-    [SerializeField]
+    [SerializeField, Header("弾生成位置")]
     private Vector3 shotPos;
 
+    [SerializeField, Header("インターバル")]
+    private float interval = 0;
+
+    // trueなら射撃可能
+    private bool isShotOk = true;
+
     // 行動中か
-    private bool isNow = false;
+    private bool _isNow = false;
 
     // ターゲット
     private Transform target;
+
+    public bool isNow
+    { get { return _isNow; } }
 
     private void LateUpdate()
     {
@@ -73,7 +82,7 @@ public class GundamBazookaShot : BaseMsAmoParts
     {
         // 射撃不可条件
         // 射撃不可 弾が0以下 インターバルが0以上
-        if (isNow || amo <= 0)
+        if (!isShotOk || amo <= 0)
         {
             return false;
         }
@@ -85,7 +94,8 @@ public class GundamBazookaShot : BaseMsAmoParts
         }
 
         // 射撃行動中
-        isNow = true;
+        _isNow = true;
+        isShotOk = false;
 
         // 射撃
         return true;
@@ -132,6 +142,16 @@ public class GundamBazookaShot : BaseMsAmoParts
     /// </summary>
     public void Failed()
     {
-        isNow = false;
+        _isNow = false;
+
+        Invoke("Interval", interval);
+    }
+
+    /// <summary>
+    /// インターバル処理
+    /// </summary>
+    void Interval()
+    {
+        isShotOk = true;
     }
 }

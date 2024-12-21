@@ -132,7 +132,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 50
   destroyTime: 10
-  homingPercent: 50
+  homingAngle: 4
+  homingPercent: 25
 --- !u!114 &6397794088632679883
 MonoBehaviour:
   m_ObjectHideFlags: 0

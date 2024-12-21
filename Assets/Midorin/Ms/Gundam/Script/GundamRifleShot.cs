@@ -15,8 +15,11 @@ public class GundamRifleShot : BaseMsAmoParts
     [Header("弾生成位置")]
     [SerializeField] private Vector3 shotPos;
 
-    [SerializeField, Header("発射インターバル")]
+    [SerializeField, Header("インターバル")]
     private float interval;
+
+    // trueなら射撃可能
+    private bool isShotOk = true;
 
     [SerializeField, Header("腹ボーン")]
     private Transform spineBone;
@@ -25,16 +28,13 @@ public class GundamRifleShot : BaseMsAmoParts
     private Transform target;
 
     // trueなら行動中
-    private bool isNow = false;
+    private bool _isNow = false;
 
     // trueなら元の角度に戻る
     private bool returnRotaion = false;
 
     [SerializeField, Header("回転速度")]
     private float rotationSpeed = 0;
-
-    // ターゲットの角度
-    private Quaternion targetRot = Quaternion.identity;
 
     // 初期回転を保存する変数
     private Quaternion initialRotation;
@@ -46,12 +46,15 @@ public class GundamRifleShot : BaseMsAmoParts
     public bool isBackShot
     { get; private set; }
 
+    public bool isNow
+    { get { return _isNow; } }
+
     #region イベント
 
     private void LateUpdate()
     {
         // 行動中
-        if (isNow)
+        if (_isNow)
         {
             if (!isBackShot)
             {
@@ -105,7 +108,6 @@ public class GundamRifleShot : BaseMsAmoParts
 
                 // ターゲット方向の回転を計算
                 Quaternion targetRotation = Quaternion.LookRotation(localDirection);
-                targetRot = targetRotation;
 
                 // 現在の回転からターゲット回転への補完
                 Quaternion smoothRotation = Quaternion.Slerp(oldRotation, targetRotation, rotationSpeed * Time.deltaTime);
@@ -150,7 +152,7 @@ public class GundamRifleShot : BaseMsAmoParts
     {
         // 射撃不可条件
         // 射撃不可 弾が0以下 インターバルが0以上
-        if (isNow || amo <= 0)
+        if (!isShotOk || amo <= 0)
         {
             return false;
         }
@@ -175,7 +177,8 @@ public class GundamRifleShot : BaseMsAmoParts
         }
 
         // 射撃行動中
-        isNow = true;
+        _isNow = true;
+        isShotOk = false;
 
         // 射撃
         return true;
@@ -235,6 +238,15 @@ public class GundamRifleShot : BaseMsAmoParts
         returnRotaion = false;
         target = null;
         isBackShot = false;
-        isNow = false;
+        _isNow = false;
+        Invoke("Interval", interval);
+    }
+
+    /// <summary>
+    /// インターバル処理
+    /// </summary>
+    void Interval()
+    {
+        isShotOk = true;
     }
 }
