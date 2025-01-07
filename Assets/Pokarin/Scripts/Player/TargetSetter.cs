@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
+// --------------------------------
+// ※プレイヤー用
+// --------------------------------
+
 public class TargetSetter : MonoBehaviour
 {
     /// <summary> バーチャルカメラ </summary>
