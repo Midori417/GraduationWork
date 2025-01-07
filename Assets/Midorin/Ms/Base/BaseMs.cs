@@ -198,7 +198,7 @@ public class BaseMs : MonoBehaviour
     /// ƒ_ƒ[ƒW‚ğ—^‚¦‚é
     /// </summary>
     /// <param name="damage"></param>
-    public virtual void Damage(int damage)
+    public virtual void Damage(int damage, Vector3 bulletPos)
     {
         _hp -= damage;
         _hp = Mathf.Clamp(_hp, 0, hpMax);

@@ -125,10 +125,45 @@ public class Gundam : BaseMs
         }
         else
         {
-            // 既に存在しているパーティクルは消さないで放出だけ止める
-            //eff_roketFire.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             eff_roketFire.Stop();
         }
+    }
+
+    /// <summary>
+    /// ダメージを与える
+    /// </summary>
+    /// <param name="damage"></param>
+    public override void Damage(int damage, Vector3 bulletPos)
+    {
+        base.Damage(damage, bulletPos);
+
+        Vector3 directionToTarget = Vector3.Scale(transform.position - bulletPos, new Vector3(1, 0, 1));
+        float dot = Vector3.Dot(directionToTarget.normalized, transform.forward);
+        rb.velocity = Vector3.zero;
+        if (dot > 0)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+            transform.rotation = targetRotation;
+            animator.SetInteger("DamageValue", 2);
+        }
+        else
+        {
+            directionToTarget = Vector3.Scale(bulletPos - transform.position, new Vector3(1, 0, 1));
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+            transform.rotation = targetRotation;
+            animator.SetInteger("DamageValue", 1);
+        }
+        animator.SetTrigger("Damage");
+        Stop();
+    }
+
+    /// <summary>
+    /// ダメージアニメーションの終了
+    /// </summary>
+    void DamageFailde()
+    {
+        animator.SetInteger("DamageValue", 0);
+        Go();
     }
 
     #region 行動のコントロール
@@ -208,7 +243,7 @@ public class Gundam : BaseMs
     {
         if (isMainShotBtn)
         {
-            if(bazookaShot.isNow)
+            if (bazookaShot.isNow)
             {
                 return;
             }
@@ -258,9 +293,9 @@ public class Gundam : BaseMs
     /// </summary>
     private void BazookaProsess()
     {
-        if(isSubShotBtn)
+        if (isSubShotBtn)
         {
-            if(!bazookaShot.ShotCheck())
+            if (!bazookaShot.ShotCheck())
             {
                 return;
             }
