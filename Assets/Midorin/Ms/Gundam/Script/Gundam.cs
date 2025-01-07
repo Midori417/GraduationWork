@@ -42,21 +42,6 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
-        //if (!ComponentCheck())
-        //{
-        //    Debug.LogError("必要なコンポーネント足りません");
-        //    return;
-        //}
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            animator.SetBool("Test", true);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            animator.SetBool("Test", false);
-        }
-
-
         BoostCharge();
 
         if (!isStop)
