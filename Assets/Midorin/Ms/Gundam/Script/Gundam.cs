@@ -42,11 +42,20 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
-        if (!ComponentCheck())
+        //if (!ComponentCheck())
+        //{
+        //    Debug.LogError("必要なコンポーネント足りません");
+        //    return;
+        //}
+        if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            Debug.LogError("必要なコンポーネント足りません");
-            return;
+            animator.SetBool("Test", true);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            animator.SetBool("Test", false);
+        }
+
 
         BoostCharge();
 
@@ -71,13 +80,17 @@ public class Gundam : BaseMs
         base.Initialize();
         ComponentCheck();
 
-        lockHead.Initalize();
+        if (lockHead)
+            lockHead.Initalize();
         move.Initalize();
-        rifleShot.Initalize();
-        bazookaShot.Initalize();
+        if (rifleShot)
+            rifleShot.Initalize();
+        if (bazookaShot)
+            bazookaShot.Initalize();
 
         // レイヤー番号を取得
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
+        if(bazooka)
         bazooka.SetActive(false);
     }
 
@@ -88,10 +101,11 @@ public class Gundam : BaseMs
     protected override bool ComponentCheck()
     {
         if (!base.ComponentCheck()) return false;
-        if (!lockHead) return false;
+        if (!lockHead)
+        {
+            Debug.LogError("頭のコンポネントないよ");
+        }
         if (!move) return false;
-        if (!rifleShot) return false;
-        if (!bazookaShot) return false;
 
         return true;
     }
@@ -241,6 +255,11 @@ public class Gundam : BaseMs
     /// </summary>
     private void BeumRifleProcess()
     {
+        if (!rifleShot)
+        {
+            return;
+        }
+
         if (isMainShotBtn)
         {
             if (bazookaShot.isNow)
@@ -272,6 +291,7 @@ public class Gundam : BaseMs
     /// </summary>
     public void BeumRifleCreateBullet()
     {
+
         rifleShot.CreateBullet();
     }
 
@@ -293,6 +313,11 @@ public class Gundam : BaseMs
     /// </summary>
     private void BazookaProsess()
     {
+        if (!bazookaShot)
+        {
+            return;
+        }
+
         if (isSubShotBtn)
         {
             if (!bazookaShot.ShotCheck())

@@ -1,34 +1,34 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletCollision : MonoBehaviour
 {
-    [SerializeField, Header("—^‚¦‚éƒ_ƒ[ƒW")]
+    [SerializeField, Header("ä¸ãˆã‚‹ãƒ€ãƒ¡ãƒ¼ã‚¸")]
     private int damage;
 
-    [SerializeField, Header("ƒ_ƒEƒ“’l")]
+    [SerializeField, Header("ãƒ€ã‚¦ãƒ³å€¤")]
     private float downValue;
 
-    [SerializeField, Header("Õ“Ë‚µ‚½‚Æ‚«‚É©g‚ğ”j‰ó‚·‚é‚©")]
+    [SerializeField, Header("è¡çªã—ãŸã¨ãã«è‡ªèº«ã‚’ç ´å£Šã™ã‚‹ã‹")]
     private bool isDead = false;
 
-    [SerializeField, Header("Õ“Ë‚ÌƒGƒtƒFƒNƒg")]
+    [SerializeField, Header("è¡çªæ™‚ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ")]
     private GameObject pfb_eff_hit;
 
     /// <summary>
-    /// Õ“Ë‚µ‚½‚Æ‚«‚Éˆ—
+    /// è¡çªã—ãŸã¨ãã«å‡¦ç†
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        // ƒGƒtƒFƒNƒg‚ğ¶¬
+        // ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ
         if(pfb_eff_hit)
         {
             Instantiate(pfb_eff_hit, transform.position, transform.rotation);
         }
 
-        // ‹@‘Ì‚ÉÕ“Ë‚µ‚½‚çƒ_ƒ[ƒW‚ğ—^‚¦‚é
+        // æ©Ÿä½“ã«è¡çªã—ãŸã‚‰ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã‚‹
         if (other.gameObject.tag == "MS")
         {
             other.GetComponent<BaseMs>().Damage(damage, transform.position);
@@ -38,7 +38,7 @@ public class BulletCollision : MonoBehaviour
             }
         }
 
-        // Œš•¨‚ÉÕ“Ë‚µ‚½‚ç©g‚ğ”j‰ó
+        // å»ºç‰©ã«è¡çªã—ãŸã‚‰è‡ªèº«ã‚’ç ´å£Š
         if(other.gameObject.tag == "Ground" || other.gameObject.tag == "Building")
         {
             Destroy(gameObject);

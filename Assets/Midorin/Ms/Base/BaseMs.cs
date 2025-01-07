@@ -188,7 +188,11 @@ public class BaseMs : MonoBehaviour
     {
         if (!rb) return false;
         if (!animator) return false;
-        if (!groundCheck) return false;
+        if (!groundCheck)
+        {
+            Debug.LogError("地面判定コンポーネントがない");
+            return false;
+        }
         if (!center) return false;
 
         return true;
