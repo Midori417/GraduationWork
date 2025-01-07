@@ -6,6 +6,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+// --------------------------------------
+// ※ビームライフルの弾プレハブ用
+// --------------------------------------
+
 public class RifleBullet : MonoBehaviour
 {
     /// <summary> 速度 </summary>

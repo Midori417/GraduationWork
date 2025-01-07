@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// -------------------------------------
+// ※敵移動テスト用
+// ※Pokarin以外、使用不可
+// -------------------------------------
+
 public class TargetMove : MonoBehaviour
 {
     [Header("移動速度")]
@@ -26,6 +31,16 @@ public class TargetMove : MonoBehaviour
         if(Input.GetKey(KeyCode.L))
         {
             position.x += speed * Time.deltaTime;
+        }
+        
+        if(Input.GetKey(KeyCode.U))
+        {
+            position.y -= speed * Time.deltaTime;
+        }
+
+        if(Input.GetKey(KeyCode.O))
+        {
+            position.y += speed * Time.deltaTime;
         }
 
         transform.position = position;
