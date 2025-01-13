@@ -13,22 +13,46 @@ public class BasePilot : MonoBehaviour
     [SerializeField, Header("自身の機体")]
     private BaseMs _myMs;
 
+    // 敵チームのパイロット
+    private List<BasePilot> enemyTeamPilots = new List<BasePilot>();
+
     [SerializeField, Header("ターゲットパイロット")]
     private BasePilot targetPilot;
 
     public BaseMs myMs
     { get { return _myMs; } }
 
-    public BaseMs taregetMs
+    public BaseMs targetMs
     { get { return targetPilot.myMs; } }
+
+    /// <summary>
+    /// 機体を設定
+    /// BattleManagerで呼び出す
+    /// </summary>
+    /// <param name="myMs"></param>
+    public void SetMyMs(BaseMs myMs)
+    {
+        _myMs = myMs;
+    }
+
+    /// <summary>
+    /// エネミーチームに追加
+    /// </summary>
+    /// <param name="enemyPilot"></param>
+    public void SetEnemyPilot(BasePilot enemyPilot)
+    {
+        enemyTeamPilots.Add(enemyPilot);
+    }
 
     /// <summary>
     /// 初期化処理
     /// </summary>
-    protected virtual void Initialize()
+    public virtual void Initialize()
     {
         _myMs.SetMyCamera(_myCameraManager.mainCamera.transform);
-        _myMs.SetTargetMs(taregetMs);
+
+        targetPilot = enemyTeamPilots[0];
+        _myMs.SetTargetMs(targetMs);
 
         _myMs.Initialize();
     }

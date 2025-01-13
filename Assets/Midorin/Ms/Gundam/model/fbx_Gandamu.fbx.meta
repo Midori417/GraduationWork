@@ -3,37 +3,7 @@ guid: 4864e6f5a4650c64ba341fbb01f0023c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat_Blue
-    second: {fileID: 2100000, guid: d05b659c0a964b0459265824d0201f82, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat_BlueSky
-    second: {fileID: 2100000, guid: 579b201bf8325b24d98fe3577f5cb704, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat_Gree
-    second: {fileID: 2100000, guid: 608a70dcf9e08d44f9be29ec40275cf6, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat_Red
-    second: {fileID: 2100000, guid: 48da15014a87bd04db024e83103438cf, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat_White
-    second: {fileID: 2100000, guid: 3ddafce25f3c5a54ea475dd393c5555d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat_Yellow
-    second: {fileID: 2100000, guid: 0108cd313a60ba54aaabc862b6fb4fae, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -129,7 +99,7 @@ ModelImporter:
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

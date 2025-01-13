@@ -66,7 +66,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c507ea36eb22165478041758d2b442c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 110
+  hitTimer: 0.1
+  damage: -110
   downValue: 6
   isDead: 1
   pfb_eff_hit: {fileID: 0}

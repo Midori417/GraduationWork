@@ -7,6 +7,9 @@ using UnityEngine;
 /// </summary>
 public class CpuPilot : BasePilot
 {
+    [SerializeField, Header("trueÇ»ÇÁã@ëÃÇé~ÇﬂÇÈ")]
+    private bool isStopMs = false;
+
     private List<Vector2> moveAxiss = new List<Vector2>();
 
     [SerializeField, Header("à⁄ìÆï˚å¸êÿÇËë÷Ç¶éûä‘")]
@@ -44,8 +47,6 @@ public class CpuPilot : BasePilot
 
     void Start()
     {
-        base.Initialize();
-
         // âºëzé≤Çí«â¡
         moveAxiss.Add(Vector2.zero);
         moveAxiss.Add(Vector2.right);
@@ -68,10 +69,16 @@ public class CpuPilot : BasePilot
     /// </summary>
     void MoveAxisProsess()
     {
-        int index = Random.Range(0, moveAxiss.Count);
+        if (!isStopMs)
+        {
+            int index = Random.Range(0, moveAxiss.Count);
 
-        myMs.moveAxis = moveAxiss[index];
-
+            myMs.moveAxis = moveAxiss[index];
+        }
+        else
+        {
+            myMs.moveAxis = Vector2.zero;
+        }
         Invoke("MoveAxisProsess", moveTimer);
     }
 
@@ -80,22 +87,29 @@ public class CpuPilot : BasePilot
     /// </summary>
     void MoveActionProsess()
     {
-        MoveActionState state = (MoveActionState)Random.Range(0, (int)MoveActionState.Max);
-
-        myMs.isDashBtn = false;
-        myMs.isJumpBtn = false;
-        switch (state)
+        if (!isStopMs)
         {
-            case MoveActionState.None:
-                break;
-            case MoveActionState.Dash:
-                myMs.isDashBtn = true;
-                break;
-            case MoveActionState.Jump:
-                myMs.isJumpBtn = true;
-                break;
-        }
+            MoveActionState state = (MoveActionState)Random.Range(0, (int)MoveActionState.Max);
 
+            myMs.isDashBtn = false;
+            myMs.isJumpBtn = false;
+            switch (state)
+            {
+                case MoveActionState.None:
+                    break;
+                case MoveActionState.Dash:
+                    myMs.isDashBtn = true;
+                    break;
+                case MoveActionState.Jump:
+                    myMs.isJumpBtn = true;
+                    break;
+            }
+        }
+        else
+        {
+            myMs.isDashBtn = false;
+            myMs.isJumpBtn = false;
+        }
         Invoke("MoveActionProsess", moveActionTimer);
     }
 
@@ -104,23 +118,29 @@ public class CpuPilot : BasePilot
     /// </summary>
     void AttackActionProsess()
     {
-        AttackActionState state = (AttackActionState)Random.Range(0, (int)AttackActionState.Max);
-
-        myMs.isMainShotBtn = false;
-        myMs.isSubShotBtn = false;
-        switch (state)
+        if (!isStopMs)
         {
-            case AttackActionState.None:
-                break;
-            case AttackActionState.MainShot:
-                myMs.isMainShotBtn = true;
-                break;
-            case AttackActionState.SubShot:
-                myMs.isSubShotBtn = true;
-                break;
-        }
+            AttackActionState state = (AttackActionState)Random.Range(0, (int)AttackActionState.Max);
 
+            myMs.isMainShotBtn = false;
+            myMs.isSubShotBtn = false;
+            switch (state)
+            {
+                case AttackActionState.None:
+                    break;
+                case AttackActionState.MainShot:
+                    myMs.isMainShotBtn = true;
+                    break;
+                case AttackActionState.SubShot:
+                    myMs.isSubShotBtn = true;
+                    break;
+            }
+        }
+        else
+        {
+            myMs.isMainShotBtn = false;
+            myMs.isSubShotBtn = false;
+        }
         Invoke("AttackActionProsess", attackActionTimer);
     }
-
 }

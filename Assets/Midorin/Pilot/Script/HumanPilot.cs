@@ -12,7 +12,6 @@ public class HumanPilot : BasePilot
 
     void Start()
     {
-        base.Initialize();
         uiManager = GetComponentInChildren<UIManager>();
     }
 

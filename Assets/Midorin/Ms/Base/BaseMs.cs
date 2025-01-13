@@ -29,6 +29,12 @@ public class BaseMs : MonoBehaviour
     [SerializeField, Header("最大体力")]
     private int _hpMax;
 
+    // ダウン値
+    protected float downValue = 0;
+
+    // trueならダウン中
+    protected bool isDown = false;
+
     [System.Serializable]
     private struct BoostParamater
     {
@@ -202,10 +208,11 @@ public class BaseMs : MonoBehaviour
     /// ダメージを与える
     /// </summary>
     /// <param name="damage"></param>
-    public virtual void Damage(int damage, Vector3 bulletPos)
+    public virtual void Damage(int damage, int _downValue, Vector3 bulletPos)
     {
-        _hp -= damage;
+        _hp += damage;
         _hp = Mathf.Clamp(_hp, 0, hpMax);
+        this.downValue += _downValue;
     }
 
     #region ブースト関係

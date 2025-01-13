@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class BulletCollision : MonoBehaviour
 {
+    [SerializeField, Header("生成から衝突可能までの時間")]
+    private float hitTimer = 0.1f;
+
+    private bool isHit = false;
+
     [SerializeField, Header("与えるダメージ")]
     private int damage;
 
     [SerializeField, Header("ダウン値")]
-    private float downValue;
+    private int downValue;
 
     [SerializeField, Header("衝突したときに自身を破壊するか")]
     private bool isDead = false;
@@ -16,12 +21,27 @@ public class BulletCollision : MonoBehaviour
     [SerializeField, Header("衝突時のエフェクト")]
     private GameObject pfb_eff_hit;
 
+    private void Start()
+    {
+        Invoke("HitStart", hitTimer);
+    }
+
+    void HitStart()
+    {
+        isHit = true;
+    }
+
     /// <summary>
     /// 衝突したときに処理
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
+        if(!isHit)
+        {
+            return;
+        }
+
         // エフェクトを生成
         if(pfb_eff_hit)
         {
@@ -29,9 +49,9 @@ public class BulletCollision : MonoBehaviour
         }
 
         // 機体に衝突したらダメージを与える
-        if (other.gameObject.tag == "MS")
+        if (other.gameObject.tag == "MsCollision")
         {
-            other.GetComponent<BaseMs>().Damage(damage, transform.position);
+            other.GetComponent<MsDamageCheck>().Damage(damage, downValue, transform.position);
             if(isDead)
             {
                 Destroy(gameObject);
