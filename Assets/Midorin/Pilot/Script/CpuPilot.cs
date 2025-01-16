@@ -58,10 +58,27 @@ public class CpuPilot : BasePilot
         //moveAxiss.Add(new Vector2(-1, -1));
         //moveAxiss.Add(new Vector2(1, -1));
 
+    }
+
+    /// <summary>
+    /// プレイ
+    /// </summary>
+    public override void StartProsess()
+    {
+        base.StartProsess();
+
         // 初期行動
         MoveAxisProsess();
         Invoke("MoveActionProsess", moveActionTimer);
         Invoke("AttackActionProsess", attackActionTimer);
+    }
+
+    /// <summary>
+    /// ストップ
+    /// </summary>
+    public override void StopProsess()
+    {
+        base.StopProsess();
     }
 
     /// <summary>

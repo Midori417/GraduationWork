@@ -187,21 +187,36 @@ public class BaseMs : MonoBehaviour
     }
 
     /// <summary>
-    /// 必要なコンポーネントがあるか
+    ///処理に必要なものがそろっているかチェック
     /// </summary>
-    /// <returns></returns>
-    protected virtual bool ComponentCheck()
+    /// <returns>
+    /// false そろっている
+    /// true そろっていない
+    /// </returns>
+    protected virtual bool ProsessCheck()
     {
-        if (!rb) return false;
-        if (!animator) return false;
+        if (!rb)
+        {
+            Debug.LogError("Rigidbodyが存在しません");
+            return true;
+        }
+        if (!animator)
+        {
+            Debug.LogError("Animatorが存在しません");
+            return true;
+        }
         if (!groundCheck)
         {
-            Debug.LogError("地面判定コンポーネントがない");
-            return false;
+            Debug.LogError("GroundCheckが存在しません");
+            return true;
         }
-        if (!center) return false;
+        if (!center)
+        {
+            Debug.LogError("Centerが存在しません");
+            return true;
+        }
 
-        return true;
+        return false;
     }
 
     /// <summary>
@@ -213,6 +228,21 @@ public class BaseMs : MonoBehaviour
         _hp += damage;
         _hp = Mathf.Clamp(_hp, 0, hpMax);
         this.downValue += _downValue;
+    }
+
+    /// <summary>
+    /// 破壊されているかチェック
+    /// </summary>
+    /// <returns>
+    /// true 破壊されている
+    /// </returns>
+    public bool DestroyCheck()
+    {
+        if(hp <= 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     #region ブースト関係

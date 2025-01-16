@@ -43,9 +43,6 @@ public class Gundam : BaseMs
     [SerializeField, Header("ビームライフルオブジェクト")]
     private GameObject beumRifle;
 
-    [SerializeField, Header("バズーカオブジェクト")]
-    private GameObject bazooka;
-
     [SerializeField, Header("バーニアエフェクト")]
     private ParticleSystem eff_roketFire;
 
@@ -59,10 +56,12 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
-    }
+        if (DestroyCheck())
+        {
+            // 破壊された
+            return;
+        }
 
-    private void FixedUpdate()
-    {
         BoostCharge();
 
         if (!isStopMove)
@@ -75,11 +74,10 @@ public class Gundam : BaseMs
         {
             rb.useGravity = true;
         }
+
         DownProsess();
-
-        RoketFireControl();
-        AnimUpdate();
-
+        RoketEffControl();
+        AnimationProsess();
     }
 
     #endregion
@@ -90,44 +88,48 @@ public class Gundam : BaseMs
     public override void Initialize()
     {
         base.Initialize();
-        ComponentCheck();
+        ProsessCheck();
 
-        if (lockHead)
-            lockHead.Initalize();
-        move.Initalize();
-        if (rifleShot)
-            rifleShot.Initalize();
-        if (bazookaShot)
-            bazookaShot.Initalize();
         if (msDamageCheck)
             msDamageCheck.Initalize();
 
         // レイヤー番号を取得
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
-        if (bazooka)
-            bazooka.SetActive(false);
     }
 
     /// <summary>
-    /// 必要なコンポーネントがあるか
+    ///処理に必要なものがそろっているかチェック
     /// </summary>
-    /// <returns></returns>
-    protected override bool ComponentCheck()
+    /// <returns>
+    /// false そろっている
+    /// true そろっていない
+    /// </returns>
+    protected override bool ProsessCheck()
     {
-        if (!base.ComponentCheck()) return false;
-        if (!lockHead)
+        // 必ず必要なもの
+        if (!base.ProsessCheck()) return true;
+        if (!move)
         {
-            Debug.LogError("頭のコンポネントないよ");
+            Debug.LogError("移動コンポーネントが存在しません");
+            return true;
         }
-        if (!move) return false;
+        else move.Initalize();
 
-        return true;
+        // 存在しなくても大丈夫なもの
+        if (!lockHead) Debug.LogWarning("LockHead存在しません");
+        else lockHead.Initalize();
+        if (!rifleShot) Debug.LogWarning("RifleShot存在しません");
+        else rifleShot.Initalize();
+        if (!bazookaShot) Debug.LogWarning("Bazooka存在しません");
+        else bazookaShot.Initalize();
+
+        return false;
     }
 
     /// <summary>
-    /// アニメータに伝える変数の更新
+    /// アニメーションの処理
     /// </summary>
-    void AnimUpdate()
+    void AnimationProsess()
     {
         // アニメータ変数処理
         float speed = new Vector2(rb.velocity.x, rb.velocity.z).magnitude;
@@ -140,7 +142,7 @@ public class Gundam : BaseMs
     /// <summary>
     /// ロケットエフェクトコントロール
     /// </summary>
-    void RoketFireControl()
+    void RoketEffControl()
     {
         if (!eff_roketFire)
         {
@@ -293,30 +295,20 @@ public class Gundam : BaseMs
     /// </summary>
     void MoveProsess()
     {
-        // 地面ついているときのみ
-        if (groundCheck.isGround)
-        {
-            move.Move(moveAxis);
-        }
+        // 地面移動処理
+        if (groundCheck.isGround) move.GroundMove(moveAxis);
 
-        if (!move.isDash)
-        {
-            move.Jump(moveAxis, isJumpBtn);
-        }
+        // ジャンプ処理
+        if (!move.isDash) move.Jump(moveAxis, isJumpBtn);
 
-        // ダッシュが終わったとき地面についていたら着地する
-        if (move.isDash && !isDashBtn && groundCheck.isGround)
-        {
-            Landing();
-        }
+        // ダッシュが終わったとき地面についていたら着地処理をする
+        if (move.isDash && !isDashBtn && groundCheck.isGround) Landing();
 
+        // ダッシュ処理
         move.Dash(moveAxis, isDashBtn);
 
-        // 着地した瞬間
-        if (groundCheck.isGround && !groundCheck.oldIsGround)
-        {
-            Landing();
-        }
+        // 着地処理
+        if (groundCheck.isGround && !groundCheck.oldIsGround) Landing();
 
         // ダッシュとジャンプ中は重力の影響を受けない
         rb.useGravity = (!move.isDash) && (!move.isJump);
@@ -342,50 +334,54 @@ public class Gundam : BaseMs
     /// </summary>
     private void BeumRifleProcess()
     {
-        if (!rifleShot)
-        {
-            return;
-        }
+        // ライフル射撃機能が存在しないので処理を行わない
+        if (!rifleShot) return;
 
+        // 射撃入力あれば処理をする
         if (isMainShotBtn)
         {
-            if (bazookaShot.isNow)
-            {
-                return;
-            }
-
-            if (!rifleShot.ShotCheck())
-            {
-                // 射撃不可
-                return;
-            }
+            // falseなら射撃不可
+            if (!BeumRifleShotCheck()) return;
 
             if (!rifleShot.isBackShot)
             {
                 animator.SetTrigger("BeumRifleShot");
                 animator.SetLayerWeight(beumRifleLayerIndex, 1);
             }
-            else
-            {
-                animator.SetTrigger("BeumRifleShotBack");
-            }
+            else animator.SetTrigger("BeumRifleShotBack");
+
             Invoke("BeumRifleShotFailed", 0.8f);
         }
     }
 
     /// <summary>
-    /// ビームライフルの弾を生成
+    /// 射撃が可能かチェック
     /// </summary>
-    public void BeumRifleCreateBullet()
+    /// <returns>
+    /// true 射撃可能
+    /// false 射撃不可
+    /// </returns>
+    private bool BeumRifleShotCheck()
     {
+        if (bazookaShot.isNow) return false;
+        if (!rifleShot.ShotCheck()) return false;
 
+        return true;
+    }
+
+    /// <summary>
+    /// ビームライフルの弾を生成
+    /// アニメーションイベントで呼び出す
+    /// </summary>
+    private void BeumRifleCreateBullet()
+    {
         rifleShot.CreateBullet();
     }
 
     /// <summary>
     /// ビームライフル攻撃が終わった時の処理
     /// </summary>
-    void BeumRifleShotFailed()
+    private void BeumRifleShotFailed()
     {
         rifleShot.Failed();
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
@@ -400,10 +396,8 @@ public class Gundam : BaseMs
     /// </summary>
     private void BazookaProsess()
     {
-        if (!bazookaShot)
-        {
-            return;
-        }
+        // バズーカ射撃機能が存在しないので処理を行わない
+        if (!bazookaShot) return;
 
         if (isSubShotBtn)
         {
@@ -414,14 +408,14 @@ public class Gundam : BaseMs
 
             animator.SetTrigger("BazookaShot");
             Invoke("BazookaFailed", 0.8f);
-            bazooka.SetActive(true);
         }
     }
 
     /// <summary>
     /// バズーカの弾を生成
+    /// アニメーションイベントで呼び出す
     /// </summary>
-    public void BazookaCreateBullet()
+    private void BazookaCreateBullet()
     {
         bazookaShot.CreateBullet();
     }
@@ -432,7 +426,6 @@ public class Gundam : BaseMs
     private void BazookaFailed()
     {
         bazookaShot.Failed();
-        bazooka.SetActive(false);
     }
 
     #endregion
