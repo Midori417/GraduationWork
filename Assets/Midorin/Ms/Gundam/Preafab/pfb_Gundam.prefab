@@ -187,7 +187,6 @@ MonoBehaviour:
   bazookaShot: {fileID: 7796402938391180800}
   msDamageCheck: {fileID: 3561129602989544280}
   beumRifle: {fileID: 6540569978845907171}
-  bazooka: {fileID: 673071238241667363}
   eff_roketFire: {fileID: 2700942672427607012}
 --- !u!114 &6235139701845051674
 MonoBehaviour:
@@ -261,6 +260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amoMax: 999
+  bazooka: {fileID: 673071238241667363}
   bulletPrefab: {fileID: -9183468177779130930, guid: b11211e3148b2aa4a9b32a36cc2c3797, type: 3}
   shotPos: {x: 0, y: 0, z: 5}
   interval: 0

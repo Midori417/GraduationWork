@@ -193,30 +193,28 @@ public class BaseMs : MonoBehaviour
     /// false ‚»‚ë‚Á‚Ä‚¢‚é
     /// true ‚»‚ë‚Á‚Ä‚¢‚È‚¢
     /// </returns>
-    protected virtual bool ProsessCheck()
+    protected virtual void ProsessCheck()
     {
         if (!rb)
         {
             Debug.LogError("Rigidbody‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
-            return true;
+            return;
         }
         if (!animator)
         {
             Debug.LogError("Animator‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
-            return true;
+            return;
         }
         if (!groundCheck)
         {
             Debug.LogError("GroundCheck‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
-            return true;
+            return;
         }
         if (!center)
         {
             Debug.LogError("Center‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
-            return true;
+            return;
         }
-
-        return false;
     }
 
     /// <summary>

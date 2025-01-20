@@ -37,7 +37,7 @@ public class Gundam : BaseMs
     [SerializeField, Header("バズーカコンポーネント")]
     private GundamBazookaShot bazookaShot;
 
-    [SerializeField]
+    [SerializeField, Header("ダメージ検出コンポーネント")]
     private MsDamageCheck msDamageCheck;
 
     [SerializeField, Header("ビームライフルオブジェクト")]
@@ -90,9 +90,6 @@ public class Gundam : BaseMs
         base.Initialize();
         ProsessCheck();
 
-        if (msDamageCheck)
-            msDamageCheck.Initalize();
-
         // レイヤー番号を取得
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
     }
@@ -100,18 +97,15 @@ public class Gundam : BaseMs
     /// <summary>
     ///処理に必要なものがそろっているかチェック
     /// </summary>
-    /// <returns>
-    /// false そろっている
-    /// true そろっていない
-    /// </returns>
-    protected override bool ProsessCheck()
+    protected override void ProsessCheck()
     {
         // 必ず必要なもの
-        if (!base.ProsessCheck()) return true;
+        base.ProsessCheck();
+
         if (!move)
         {
             Debug.LogError("移動コンポーネントが存在しません");
-            return true;
+            return;
         }
         else move.Initalize();
 
@@ -122,8 +116,8 @@ public class Gundam : BaseMs
         else rifleShot.Initalize();
         if (!bazookaShot) Debug.LogWarning("Bazooka存在しません");
         else bazookaShot.Initalize();
-
-        return false;
+        if (!msDamageCheck) Debug.LogWarning("MsDamageChackが存在しません");
+        else msDamageCheck.Initalize();
     }
 
     /// <summary>
