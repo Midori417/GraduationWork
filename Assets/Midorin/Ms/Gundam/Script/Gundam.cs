@@ -59,12 +59,12 @@ public class Gundam : BaseMs
         if (DestroyCheck())
         {
             // 破壊された
-            return;
+            //return;
         }
 
         BoostCharge();
 
-        if (!isStopMove)
+        if (!isStopMove && !isDown)
         {
             MoveProsess();
             BeumRifleProcess();
@@ -151,6 +151,12 @@ public class Gundam : BaseMs
         {
             eff_roketFire.Stop();
         }
+
+        // ダウン中は止める
+        if (isDown)
+        {
+            eff_roketFire.Stop();
+        }
     }
 
     #region ダメージ
@@ -161,13 +167,14 @@ public class Gundam : BaseMs
     /// <param name="damage"></param>
     public override void Damage(int damage, int _downValue, Vector3 bulletPos)
     {
-        if (!isDamageOk)
-            return;
+        // falseならダメージは通らない
+        if (!isDamageOk)return;
+
         base.Damage(damage, _downValue, bulletPos);
 
+        rb.velocity = Vector3.zero;
         Vector3 directionToTarget = Vector3.Scale(transform.position - bulletPos, new Vector3(1, 0, 1));
         float dot = Vector3.Dot(directionToTarget.normalized, transform.forward);
-        rb.velocity = Vector3.zero;
         if (dot > 0)
         {
             // 背面から
@@ -186,19 +193,19 @@ public class Gundam : BaseMs
         // ダウン値が5いかならよろけ
         if (downValue < 5)
         {
+            // 後ろに後退
             rb.AddForce(directionToTarget * 10.0f, ForceMode.Impulse);
             animator.SetTrigger("Damage");
             Stop();
         }
         else
         {
-            rb.AddForce(directionToTarget * 20.0f, ForceMode.Impulse);
-            rb.AddForce(Vector3.up * 20.0f, ForceMode.Impulse);
-            animator.SetTrigger("Down");
+            //rb.AddForce(directionToTarget * 20.0f, ForceMode.Impulse);
+            //rb.AddForce(Vector3.up * 20.0f, ForceMode.Impulse);
+            //animator.SetTrigger("Down");
             downValue = 0;
-            isDown = true;
-            isDamageOk = false;
-            Stop();
+            //isDown = true;
+            //isDamageOk = false;
         }
     }
 
@@ -218,12 +225,12 @@ public class Gundam : BaseMs
     {
         if (isDown)
         {
-            if (groundCheck)
+            if (groundCheck.isGround)
             {
                 Invoke("StandingOk", standingOkTime);
                 Invoke("StandingProsess", autoStandingTime);
+                StandingOk();
             }
-            StandingProsess();
         }
     }
 
@@ -240,16 +247,14 @@ public class Gundam : BaseMs
     /// </summary>
     void StandingProsess()
     {
-        if (isStandingOk)
+        if (!isStandingOk) return;
+
+        if (moveAxis != Vector2.zero)
         {
-            if (moveAxis != Vector2.zero)
-            {
-                Invoke("InvincibleRemoved", invincibleTime);
-                animator.SetTrigger("Standing");
-                isDown = false;
-                isStandingOk = false;
-                Go();
-            }
+            animator.SetTrigger("Standing");
+            isDown = false;
+            isStandingOk = false;
+            Invoke("InvincibleRemoved", invincibleTime);
         }
     }
 
@@ -296,7 +301,7 @@ public class Gundam : BaseMs
         if (!move.isDash) move.Jump(moveAxis, isJumpBtn);
 
         // ダッシュが終わったとき地面についていたら着地処理をする
-        if (move.isDash && !isDashBtn && groundCheck.isGround) Landing();
+        //if (move.isDash && !isDashBtn && groundCheck.isGround) Landing();
 
         // ダッシュ処理
         move.Dash(moveAxis, isDashBtn);
