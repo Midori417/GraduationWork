@@ -8,22 +8,8 @@ using UnityEngine;
 /// </summary>
 public class Gundam : BaseMs
 {
+    // trueなら動きを止める
     private bool isStopMove = false;
-
-    // trueなら立ち上がり可能
-    private bool isStandingOk = false;
-
-    [SerializeField, Header("着地してから立ち上がり可能時間")]
-    private float standingOkTime = 0;
-
-    [SerializeField, Header("着地してから自動的に立ち上がる時間")]
-    private float autoStandingTime = 5;
-
-    [SerializeField, Header("攻撃食らってからの無敵時間")]
-    private float invincibleTime;
-
-    // trueならダメージを受ける
-    private bool isDamageOk = true;
 
     [SerializeField, Header("頭の処理")]
     private LockHead lockHead;
@@ -44,7 +30,25 @@ public class Gundam : BaseMs
     private GameObject beumRifle;
 
     [SerializeField, Header("バーニアエフェクト")]
-    private ParticleSystem eff_roketFire;
+    private GameObject eff_roketFire;
+
+    [SerializeField, Header("バーニア位置")]
+    private Transform rokeFireTrs;
+
+    private GameObject roketFire;
+
+    // trueならダメージを受ける
+    private bool isDamageOk = true;
+
+    // trueなら立ち上がること可能
+    private bool isStandingOk = false;
+
+    [SerializeField, Header("ダウン着地してから立ち上がり可能になるまでの時間")]
+    private float standingTime = 0;
+    private float standingTimer = 0;
+
+    [SerializeField, Header("無敵時間")]
+    private float invincibleTime = 0;
 
     // ビームライフル攻撃レイヤーインデックス
     int beumRifleLayerIndex = 0;
@@ -70,12 +74,10 @@ public class Gundam : BaseMs
             BeumRifleProcess();
             BazookaProsess();
         }
-        else
-        {
-            rb.useGravity = true;
-        }
 
         DownProsess();
+        StandingProsess();
+
         RoketEffControl();
         AnimationProsess();
     }
@@ -129,8 +131,16 @@ public class Gundam : BaseMs
         float speed = new Vector2(rb.velocity.x, rb.velocity.z).magnitude;
         animator.SetFloat("Speed", speed);
         animator.SetBool("IsGround", groundCheck.isGround);
-        animator.SetBool("Jump", move.isJump);
-        animator.SetBool("Dash", move.isDash);
+        if (!isDown)
+        {
+            animator.SetBool("Jump", move.isJump);
+            animator.SetBool("Dash", move.isDash);
+        }
+        else
+        {
+            animator.SetBool("Jump", false);
+            animator.SetBool("Dash", false);
+        }
     }
 
     /// <summary>
@@ -138,24 +148,30 @@ public class Gundam : BaseMs
     /// </summary>
     void RoketEffControl()
     {
-        if (!eff_roketFire)
-        {
-            return;
-        }
+        if (!eff_roketFire || !rokeFireTrs) return;
 
         if (move.isDash || move.isJump)
         {
-            eff_roketFire.Play();
+            if (!roketFire)
+            {
+                roketFire = Instantiate(eff_roketFire, rokeFireTrs);
+            }
         }
         else
         {
-            eff_roketFire.Stop();
+            if (roketFire)
+            {
+                Destroy(roketFire);
+            }
         }
 
         // ダウン中は止める
         if (isDown)
         {
-            eff_roketFire.Stop();
+            if (roketFire)
+            {
+                Destroy(roketFire);
+            }
         }
     }
 
@@ -167,12 +183,11 @@ public class Gundam : BaseMs
     /// <param name="damage"></param>
     public override void Damage(int damage, int _downValue, Vector3 bulletPos)
     {
-        // falseならダメージは通らない
-        if (!isDamageOk)return;
+        // falseならダメージ処理を行わない
+        if (!isDamageOk) return;
 
         base.Damage(damage, _downValue, bulletPos);
 
-        rb.velocity = Vector3.zero;
         Vector3 directionToTarget = Vector3.Scale(transform.position - bulletPos, new Vector3(1, 0, 1));
         float dot = Vector3.Dot(directionToTarget.normalized, transform.forward);
         if (dot > 0)
@@ -180,7 +195,7 @@ public class Gundam : BaseMs
             // 背面から
             Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
             transform.rotation = targetRotation;
-            animator.SetInteger("DamageValue", 2);
+            animator.SetInteger("DamageDirection", 2);
         }
         else
         {
@@ -188,9 +203,9 @@ public class Gundam : BaseMs
             Vector3 reverseDirectionToTarget = directionToTarget * -1.0f;
             Quaternion targetRotation = Quaternion.LookRotation(reverseDirectionToTarget);
             transform.rotation = targetRotation;
-            animator.SetInteger("DamageValue", 1);
+            animator.SetInteger("DamageDirection", 1);
         }
-        // ダウン値が5いかならよろけ
+        // ダウン値が5以上ならダウン状態
         if (downValue < 5)
         {
             // 後ろに後退
@@ -200,72 +215,63 @@ public class Gundam : BaseMs
         }
         else
         {
-            //rb.AddForce(directionToTarget * 20.0f, ForceMode.Impulse);
-            //rb.AddForce(Vector3.up * 20.0f, ForceMode.Impulse);
-            //animator.SetTrigger("Down");
-            downValue = 0;
-            //isDown = true;
-            //isDamageOk = false;
+            rb.AddForce(Vector3.up * 10, ForceMode.Impulse);
+            rb.AddForce(directionToTarget * 20, ForceMode.Impulse);
+            Stop();
+            rb.useGravity = true;
+            animator.SetTrigger("Down");
+            // 無敵化
+            isDamageOk = false;
+            isDown = true;
+            standingTimer = standingTime;
         }
     }
 
     /// <summary>
-    /// ダメージアニメーションの終了
+    /// ダウン状態処理
     /// </summary>
-    void DamageFailde()
+    private void DownProsess()
     {
-        animator.SetInteger("DamageValue", 0);
-        Go();
-    }
+        // ダウン状態でなければ処理しない
+        if (!isDown) return;
 
-    /// <summary>
-    /// ダウン中
-    /// </summary>
-    void DownProsess()
-    {
-        if (isDown)
+        // 着地してから一定時間たてば立ち上がり可能
+        if (groundCheck.isGround)
         {
-            if (groundCheck.isGround)
+            standingTimer -= Time.deltaTime;
+            if(standingTimer <= 0)
             {
-                Invoke("StandingOk", standingOkTime);
-                Invoke("StandingProsess", autoStandingTime);
-                StandingOk();
+                isStandingOk = true;
             }
         }
     }
 
     /// <summary>
-    /// 立ち上がり可能
-    /// </summary>
-    void StandingOk()
-    {
-        isStandingOk = true;
-    }
-
-    /// <summary>
     /// 立ち上がり処理
     /// </summary>
-    void StandingProsess()
+    private void StandingProsess()
     {
+        // 立ち上がり可能じゃなければ処理をしない
         if (!isStandingOk) return;
 
+        // 移動入力があれば立ち上がる
         if (moveAxis != Vector2.zero)
         {
             animator.SetTrigger("Standing");
+            Invoke("RemoveInvincible", invincibleTime);
             isDown = false;
             isStandingOk = false;
-            Invoke("InvincibleRemoved", invincibleTime);
         }
     }
 
     /// <summary>
     /// 無敵解除
     /// </summary>
-    void InvincibleRemoved()
+    private void RemoveInvincible()
     {
         isDamageOk = true;
     }
-
+   
     #endregion
 
     #region 行動のコントロール
@@ -276,6 +282,7 @@ public class Gundam : BaseMs
     public void Stop()
     {
         isStopMove = true;
+        rb.velocity = Vector3.zero;
     }
 
     /// <summary>
@@ -300,9 +307,6 @@ public class Gundam : BaseMs
         // ジャンプ処理
         if (!move.isDash) move.Jump(moveAxis, isJumpBtn);
 
-        // ダッシュが終わったとき地面についていたら着地処理をする
-        //if (move.isDash && !isDashBtn && groundCheck.isGround) Landing();
-
         // ダッシュ処理
         move.Dash(moveAxis, isDashBtn);
 
@@ -311,6 +315,7 @@ public class Gundam : BaseMs
 
         // ダッシュとジャンプ中は重力の影響を受けない
         rb.useGravity = (!move.isDash) && (!move.isJump);
+
     }
 
     /// <summary>
@@ -318,9 +323,9 @@ public class Gundam : BaseMs
     /// </summary>
     void Landing()
     {
-        move.Landing();
-        animator.SetTrigger("Landing");
         Stop();
+        animator.SetTrigger("Landing");
+        move.Landing();
         Invoke("Go", 1);
     }
 

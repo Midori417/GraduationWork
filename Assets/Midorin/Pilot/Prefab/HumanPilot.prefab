@@ -47,8 +47,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myCameraManager: {fileID: 9054387444070557481}
-  _myMs: {fileID: 0}
   targetPilot: {fileID: 0}
+  _isProsess: 0
   uiManager: {fileID: 8108585148236462874}
 --- !u!1001 &1904374109454734985
 PrefabInstance:
@@ -118,6 +118,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: pfb_CameraManager
       objectReference: {fileID: 0}
+    - target: {fileID: 8505366715175040664, guid: 991fed602e78a254e886419c64651952, type: 3}
+      propertyPath: m_CameraDistance
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8505366715175040664, guid: 991fed602e78a254e886419c64651952, type: 3}
+      propertyPath: m_TrackedObjectOffset.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9075616522220614139, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -161,13 +169,51 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8549877267738516714, guid: 991fed602e78a254e886419c64651952, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2482487443717007396}
   m_SourcePrefab: {fileID: 100100000, guid: 991fed602e78a254e886419c64651952, type: 3}
 --- !u!4 &7466584511763982194 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9075616522220614139, guid: 991fed602e78a254e886419c64651952, type: 3}
   m_PrefabInstance: {fileID: 1904374109454734985}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7839348833602357859 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8549877267738516714, guid: 991fed602e78a254e886419c64651952, type: 3}
+  m_PrefabInstance: {fileID: 1904374109454734985}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2482487443717007396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7839348833602357859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e501d18bb52cf8c40b1853ca4904654f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CollideAgainst:
+    serializedVersion: 2
+    m_Bits: 65
+  m_IgnoreTag: 
+  m_TransparentLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_MinimumDistanceFromTarget: 1
+  m_AvoidObstacles: 1
+  m_DistanceLimit: 5
+  m_MinimumOcclusionTime: 0
+  m_CameraRadius: 0.1
+  m_Strategy: 1
+  m_MaximumEffort: 4
+  m_SmoothingTime: 0
+  m_Damping: 0
+  m_DampingWhenOccluded: 0
+  m_OptimalTargetDistance: 0
 --- !u!114 &9054387444070557481 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7478815702750933408, guid: 991fed602e78a254e886419c64651952, type: 3}
