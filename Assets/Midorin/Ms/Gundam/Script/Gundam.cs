@@ -37,9 +37,6 @@ public class Gundam : BaseMs
     private Transform rokeFireTrs;
     private GameObject roketFire;
 
-    // trueならダメージを受ける
-    private bool isDamageOk = true;
-
     // trueなら立ち上がること可能
     private bool isStandingOk = false;
 
@@ -53,7 +50,8 @@ public class Gundam : BaseMs
     [SerializeField, Header("死亡エフェクト")]
     private GameObject pfb_eff_Dead;
 
-    Material[] mats;
+    [SerializeField, Header("体力なくなってから爆発までの時間")]
+    private float destroyTimer;
 
     // ビームライフル攻撃レイヤーインデックス
     int beumRifleLayerIndex = 0;
@@ -68,17 +66,9 @@ public class Gundam : BaseMs
         if (DestroyCheck())
         {
             // 破壊された
-            //return;
+            return;
         }
         BoostCharge();
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            foreach (Material mat in meshRenderer.materials)
-            {
-                mat.EnableKeyword("_EMISSION");
-            }
-        }
 
         if (!isStopMove && !isDown)
         {
@@ -104,18 +94,10 @@ public class Gundam : BaseMs
         base.Initialize();
         ProsessCheck();
 
-        mats = new Material[meshRenderer.materials.Length];
-
-        for (int i = 0; i < meshRenderer.materials.Length; i++)
-        {
-            mats[i] = new Material(meshRenderer.materials[i]);
-            meshRenderer.materials[i] = mats[i];
-        }
-
-
         // レイヤー番号を取得
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
     }
+
 
     /// <summary>
     ///処理に必要なものがそろっているかチェック
@@ -198,16 +180,30 @@ public class Gundam : BaseMs
 
     #region ダメージ
 
+
+    /// <summary>
+    /// 破壊処理
+    /// </summary>
+    private void DestroyEffect()
+    {
+        var obj = Instantiate(pfb_eff_Dead, transform.position, transform.rotation);
+        Destroy(obj, 2);
+        MeshRemove();
+        gameObject.SetActive(false);
+    }
+
     /// <summary>
     /// ダメージを与える
     /// </summary>
     /// <param name="damage"></param>
-    public override void Damage(int damage, int _downValue, Vector3 bulletPos)
+    public override bool Damage(int damage, int _downValue, Vector3 bulletPos)
     {
-        // falseならダメージ処理を行わない
-        if (!isDamageOk) return;
+        if (!base.Damage(damage, _downValue, bulletPos))
+        {
+            // ダメージ受けない
+            return false;
+        }
 
-        base.Damage(damage, _downValue, bulletPos);
 
         Vector3 directionToTarget = Vector3.Scale(transform.position - bulletPos, new Vector3(1, 0, 1));
         float dot = Vector3.Dot(directionToTarget.normalized, transform.forward);
@@ -226,6 +222,23 @@ public class Gundam : BaseMs
             transform.rotation = targetRotation;
             animator.SetInteger("DamageDirection", 1);
         }
+
+        // hpが0以下なら破壊判定する
+        if(hp <= 0)
+        {
+            rb.AddForce(Vector3.up * 10, ForceMode.Impulse);
+            rb.AddForce(directionToTarget * 20, ForceMode.Impulse);
+            animator.SetTrigger("Down");
+            MeshDamage();
+            Invoke("DestroyEffect", destroyTimer);
+            isDamageOk = false;
+            rb.useGravity = true;
+
+            return true;
+        }
+
+        MeshDamage();
+        Invoke("MeshRemove", 0.2f);
 
         // ダウン値が5以上ならダウン状態
         if (downValue < 5)
@@ -247,6 +260,8 @@ public class Gundam : BaseMs
             isDown = true;
             standingTimer = standingTime;
         }
+
+        return true;
     }
 
     /// <summary>
@@ -277,7 +292,7 @@ public class Gundam : BaseMs
         if (!isStandingOk) return;
 
         // 移動入力があれば立ち上がる
-        if (moveAxis != Vector2.zero)
+        if (moveAxis != Vector2.zero || standingTimer < - 3)
         {
             animator.SetTrigger("Standing");
             Invoke("RemoveInvincible", invincibleTime);

@@ -32,6 +32,12 @@ public class BasePilot : MonoBehaviour
     protected bool isProsess
     { get { return _isProsess; } }
 
+    // trueなら機体のリムーブ可能
+    private bool isRemoveMs = false;
+
+    //[SerializeField, Header("復活時間")]
+    private float removeTime = 5;
+
     #region 処理コントロール関数
 
     /// <summary>
@@ -72,6 +78,31 @@ public class BasePilot : MonoBehaviour
         }
 
         _myCameraManager.Initialize(myMs.center, enemyMses);
+    }
+
+    /// <summary>
+    /// 破壊された機体の処理
+    /// </summary>
+    protected void DestoryMsProsess()
+    {
+        if (myMs.hp <= 0)
+        {
+            if (!isRemoveMs)
+            {
+                isRemoveMs = true;
+                Invoke("RemoveMs", removeTime);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 機体を復元
+    /// </summary>
+    private void RemoveMs()
+    {
+        myMs.Remove();
+        isRemoveMs = false;
+        myMs.gameObject.SetActive(true);
     }
 
     /// <summary>

@@ -19,19 +19,18 @@ public class BaseMsParts : MonoBehaviour
 
     protected Rigidbody rb
     { get { return _rb; } }
-    protected Animator Animator 
-    { get { return _animator; } }
+
 
     protected Transform targetMs
-    { 
+    {
         get
         {
-            if(!_mainMs)
+            if (!_mainMs)
             {
                 Debug.LogError("メイン機体が不明");
                 return null;
             }
-            if(!_mainMs.targetMs)
+            if (!_mainMs.targetMs)
             {
                 Debug.LogError("ターゲット機体が不明");
                 return null;
@@ -45,11 +44,12 @@ public class BaseMsParts : MonoBehaviour
     /// </summary>
     /// <returns>
     /// true    初期化成功
-    /// faklse  初期化失敗
+    /// false  初期化失敗
     /// </returns>
-    public virtual bool Initalize() 
+    public virtual bool Initalize()
     {
-        _mainMs = GetComponent<Gundam>();
+        if (!mainMs) _mainMs = GetComponent<Gundam>();
+
         if (!mainMs)
         {
             _mainMs = GetComponentInParent<Gundam>();
@@ -60,8 +60,7 @@ public class BaseMsParts : MonoBehaviour
                 return false;
             }
         }
-        _rb = GetComponent<Rigidbody>();
-        _animator = GetComponent<Animator>();
+        if (!rb) _rb = GetComponent<Rigidbody>();
 
         return true;
     }

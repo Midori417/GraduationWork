@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -135,6 +136,9 @@ public class BaseMs : MonoBehaviour
     public bool isMainShotBtn;
     public bool isSubShotBtn;
 
+    // trueならダメージを受ける
+    protected bool isDamageOk = true;
+
     #region  他に伝える
 
     public Rigidbody rb
@@ -178,15 +182,56 @@ public class BaseMs : MonoBehaviour
     /// </summary>
     public virtual void Initialize()
     {
-        rb = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
-        groundCheck = GetComponentInChildren<GroundCheck>();
-        meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        if (!rb) rb = GetComponent<Rigidbody>();
+        if (!animator) animator = GetComponent<Animator>();
+        if (!groundCheck) groundCheck = GetComponentInChildren<GroundCheck>();
+        if (!meshRenderer)
+        {
+            meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+            // メッシュレンダラーマテリアルを複製
+            Material[] mats = new Material[meshRenderer.materials.Length];
+            for (int i = 0; i < meshRenderer.materials.Length; i++)
+            {
+                mats[i] = new Material(meshRenderer.materials[i]);
+                meshRenderer.materials[i] = mats[i];
+            }
+        }
 
         boostParamater.Initialize();
 
         // 体力を設定
         _hp = hpMax;
+    }
+
+    /// <summary>
+    /// 復活処理
+    /// </summary>
+    public virtual void Remove()
+    {
+        Initialize();
+        isDamageOk = true;
+    }
+
+    /// <summary>
+    /// メッシュ赤発光
+    /// </summary>
+    protected void MeshDamage()
+    {
+        foreach (Material mat in meshRenderer.materials)
+        {
+            mat.EnableKeyword("_EMISSION");
+        }
+    }
+
+    /// <summary>
+    /// メッシュを元に戻す
+    /// </summary>
+    protected void MeshRemove()
+    {
+        foreach (Material mat in meshRenderer.materials)
+        {
+            mat.DisableKeyword("_EMISSION");
+        }
     }
 
     /// <summary>
@@ -224,11 +269,15 @@ public class BaseMs : MonoBehaviour
     /// ダメージを与える
     /// </summary>
     /// <param name="damage"></param>
-    public virtual void Damage(int damage, int _downValue, Vector3 bulletPos)
+    public virtual bool Damage(int damage, int _downValue, Vector3 bulletPos)
     {
+        // ダメージ処理不可
+        if (!isDamageOk) return false;
+
         _hp += damage;
         _hp = Mathf.Clamp(_hp, 0, hpMax);
         this.downValue += _downValue;
+        return true;
     }
 
     /// <summary>

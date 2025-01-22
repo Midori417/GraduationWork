@@ -35,6 +35,11 @@ public class UIManager : MonoBehaviour
     /// <param name="value"></param>
     public void ArmedValue(int index, int _value)
     {
+        if(txt_ArmedValues.Count-1 < index)
+        {
+            return;
+        }
+
         if (txt_ArmedValues[index])
         {
             txt_ArmedValues[index].text = _value.ToString();
@@ -49,7 +54,7 @@ public class UIManager : MonoBehaviour
     {
         if (txt_Hp)
         {
-            txt_Hp.text = value.ToString("000");
+            txt_Hp.text = value.ToString();
         }
     }
 }

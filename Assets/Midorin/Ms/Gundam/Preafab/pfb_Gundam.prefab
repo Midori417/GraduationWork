@@ -188,12 +188,8 @@ MonoBehaviour:
   rokeFireTrs: {fileID: 8323923346082398726}
   standingTime: 0.5
   invincibleTime: 1
-  pfb_eff_Dead: {fileID: 0}
-  materials:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  pfb_eff_Dead: {fileID: 8602677898691735879, guid: a18d3476372bd644aad42d9561f8ee32, type: 3}
+  destroyTimer: 2
 --- !u!114 &6235139701845051674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,7 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc35b3e443a655f4fbbf145742278031, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amoMax: 999
+  amoMax: 7
   bulletPrefab: {fileID: -4104332489870500713, guid: 5727acbdd6d6bb744b4ed534a2779770, type: 3}
   shotPos: {x: 0, y: 0, z: 5}
   interval: 0.5
@@ -265,7 +261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92bd5a6bd606066408c9ccd8649c1f7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amoMax: 999
+  amoMax: 3
   bazooka: {fileID: 673071238241667363}
   bulletPrefab: {fileID: -9183468177779130930, guid: b11211e3148b2aa4a9b32a36cc2c3797, type: 3}
   shotPos: {x: 0, y: 0, z: 5}

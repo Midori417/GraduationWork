@@ -10,6 +10,7 @@ public class HumanPilot : BasePilot
     [SerializeField, Header("UI")]
     private UIManager uiManager;
 
+
     #region イベント
 
     void Start()
@@ -63,6 +64,8 @@ public class HumanPilot : BasePilot
     /// </summary>
     void MsSetControl()
     {
+        DestoryMsProsess();
+
         // 仮キー入力
         myMs.moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         myMs.isJumpBtn = Input.GetKey(KeyCode.Space);
@@ -76,14 +79,14 @@ public class HumanPilot : BasePilot
     /// </summary>
     void UIProsess()
     {
-        if(!uiManager)
+        if (!uiManager)
         {
             return;
         }
         uiManager.BoostGauge(myMs.boost01);
         uiManager.Hp(myMs.hp);
 
-        for(int i = 0; i < myMs.uiArmed.Count; i++)
+        for (int i = 0; i < myMs.uiArmed.Count; i++)
         {
             uiManager.ArmedValue(i, myMs.uiArmed[i].amo);
         }

@@ -44,6 +44,7 @@ public class CpuPilot : BasePilot
         Max,
     }
 
+    #region イベント
 
     void Start()
     {
@@ -55,10 +56,13 @@ public class CpuPilot : BasePilot
         moveAxiss.Add(Vector2.down);
         moveAxiss.Add(new Vector2(1, 1));
         moveAxiss.Add(new Vector2(-1, 1));
-        //moveAxiss.Add(new Vector2(-1, -1));
-        //moveAxiss.Add(new Vector2(1, -1));
-
     }
+
+    private void Update()
+    {
+        DestoryMsProsess();
+    }
+    #endregion
 
     /// <summary>
     /// プレイ
