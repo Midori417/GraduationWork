@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -34,7 +35,6 @@ public class Gundam : BaseMs
 
     [SerializeField, Header("バーニア位置")]
     private Transform rokeFireTrs;
-
     private GameObject roketFire;
 
     // trueならダメージを受ける
@@ -49,6 +49,11 @@ public class Gundam : BaseMs
 
     [SerializeField, Header("無敵時間")]
     private float invincibleTime = 0;
+
+    [SerializeField, Header("死亡エフェクト")]
+    private GameObject pfb_eff_Dead;
+
+    Material[] mats;
 
     // ビームライフル攻撃レイヤーインデックス
     int beumRifleLayerIndex = 0;
@@ -65,8 +70,15 @@ public class Gundam : BaseMs
             // 破壊された
             //return;
         }
-
         BoostCharge();
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            foreach (Material mat in meshRenderer.materials)
+            {
+                mat.EnableKeyword("_EMISSION");
+            }
+        }
 
         if (!isStopMove && !isDown)
         {
@@ -91,6 +103,15 @@ public class Gundam : BaseMs
     {
         base.Initialize();
         ProsessCheck();
+
+        mats = new Material[meshRenderer.materials.Length];
+
+        for (int i = 0; i < meshRenderer.materials.Length; i++)
+        {
+            mats[i] = new Material(meshRenderer.materials[i]);
+            meshRenderer.materials[i] = mats[i];
+        }
+
 
         // レイヤー番号を取得
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
@@ -205,6 +226,7 @@ public class Gundam : BaseMs
             transform.rotation = targetRotation;
             animator.SetInteger("DamageDirection", 1);
         }
+
         // ダウン値が5以上ならダウン状態
         if (downValue < 5)
         {
@@ -239,7 +261,7 @@ public class Gundam : BaseMs
         if (groundCheck.isGround)
         {
             standingTimer -= Time.deltaTime;
-            if(standingTimer <= 0)
+            if (standingTimer <= 0)
             {
                 isStandingOk = true;
             }
@@ -271,7 +293,8 @@ public class Gundam : BaseMs
     {
         isDamageOk = true;
     }
-   
+
+
     #endregion
 
     #region 行動のコントロール

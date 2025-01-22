@@ -141,6 +141,8 @@ public class BaseMs : MonoBehaviour
     { get; private set; }
     public Animator animator
     { get; private set; }
+    public SkinnedMeshRenderer meshRenderer
+    { get; private set; }
 
     // ©g‚ÌƒJƒƒ‰
     public Transform myCamera
@@ -174,11 +176,12 @@ public class BaseMs : MonoBehaviour
     /// <summary>
     /// ‰Šú‰»
     /// </summary>
-    public  virtual void Initialize()
+    public virtual void Initialize()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         groundCheck = GetComponentInChildren<GroundCheck>();
+        meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
 
         boostParamater.Initialize();
 
@@ -236,7 +239,7 @@ public class BaseMs : MonoBehaviour
     /// </returns>
     public bool DestroyCheck()
     {
-        if(hp <= 0)
+        if (hp <= 0)
         {
             return true;
         }

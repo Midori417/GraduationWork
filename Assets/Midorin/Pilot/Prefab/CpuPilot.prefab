@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myCameraManager: {fileID: 5055779101882152996}
-  _myMs: {fileID: 0}
   targetPilot: {fileID: 0}
+  _isProsess: 1
   isStopMs: 0
   moveTimer: 3
   moveActionTimer: 2

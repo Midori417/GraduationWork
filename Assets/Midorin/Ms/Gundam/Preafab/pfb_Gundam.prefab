@@ -188,6 +188,12 @@ MonoBehaviour:
   rokeFireTrs: {fileID: 8323923346082398726}
   standingTime: 0.5
   invincibleTime: 1
+  pfb_eff_Dead: {fileID: 0}
+  materials:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &6235139701845051674
 MonoBehaviour:
   m_ObjectHideFlags: 0

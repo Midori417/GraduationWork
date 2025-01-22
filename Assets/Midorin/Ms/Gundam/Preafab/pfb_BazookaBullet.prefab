@@ -70,7 +70,8 @@ MonoBehaviour:
   damage: -110
   downValue: 6
   isDead: 1
-  pfb_eff_hit: {fileID: 0}
+  pfb_eff_hit: {fileID: 124326666274685267, guid: bfe24e59628a9e94e82d729ec9f5d564, type: 3}
+  hit_eff_destroyTimer: 1
 --- !u!136 &2124124335741476796
 CapsuleCollider:
   m_ObjectHideFlags: 0
