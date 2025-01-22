@@ -175,6 +175,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pfb_Map01
       objectReference: {fileID: 0}
+    - target: {fileID: 4343984444295239348, guid: cee263e083aa00141a0ba11e8c6bf527, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -292,7 +296,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1311207196
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -430,6 +434,10 @@ PrefabInstance:
     - target: {fileID: 2949710467403729705, guid: 0d7ea09ad401cb142ba50970c3dabc79, type: 3}
       propertyPath: m_Name
       value: pfb_Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 2949710467403729705, guid: 0d7ea09ad401cb142ba50970c3dabc79, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
