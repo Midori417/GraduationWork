@@ -54,7 +54,7 @@ public class Gundam : BaseMs
     private float destroyTimer;
 
     // ビームライフル攻撃レイヤーインデックス
-    int beumRifleLayerIndex = 0;
+    int beumRifleLayerIndex = -1;
 
     #region イベント
 
@@ -95,7 +95,10 @@ public class Gundam : BaseMs
         ProsessCheck();
 
         // レイヤー番号を取得
-        beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
+        if (beumRifleLayerIndex == -1)
+        {
+            beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
+        }
     }
 
 
@@ -224,7 +227,7 @@ public class Gundam : BaseMs
         }
 
         // hpが0以下なら破壊判定する
-        if(hp <= 0)
+        if (hp <= 0)
         {
             rb.AddForce(Vector3.up * 10, ForceMode.Impulse);
             rb.AddForce(directionToTarget * 20, ForceMode.Impulse);
@@ -233,6 +236,8 @@ public class Gundam : BaseMs
             Invoke("DestroyEffect", destroyTimer);
             isDamageOk = false;
             rb.useGravity = true;
+
+            if (roketFire) Destroy(roketFire);
 
             return true;
         }
@@ -246,6 +251,7 @@ public class Gundam : BaseMs
             // 後ろに後退
             rb.AddForce(directionToTarget * 10.0f, ForceMode.Impulse);
             animator.SetTrigger("Damage");
+            downValue = 0;
             Stop();
         }
         else
@@ -292,7 +298,7 @@ public class Gundam : BaseMs
         if (!isStandingOk) return;
 
         // 移動入力があれば立ち上がる
-        if (moveAxis != Vector2.zero || standingTimer < - 3)
+        if (moveAxis != Vector2.zero || standingTimer < -3)
         {
             animator.SetTrigger("Standing");
             Invoke("RemoveInvincible", invincibleTime);
@@ -300,15 +306,6 @@ public class Gundam : BaseMs
             isStandingOk = false;
         }
     }
-
-    /// <summary>
-    /// 無敵解除
-    /// </summary>
-    private void RemoveInvincible()
-    {
-        isDamageOk = true;
-    }
-
 
     #endregion
 

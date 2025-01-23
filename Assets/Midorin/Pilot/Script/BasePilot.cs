@@ -32,6 +32,9 @@ public class BasePilot : MonoBehaviour
     protected bool isProsess
     { get { return _isProsess; } }
 
+    // 復活位置
+    private List<Transform> removePos = new List<Transform>();
+
     // trueなら機体のリムーブ可能
     private bool isRemoveMs = false;
 
@@ -100,6 +103,13 @@ public class BasePilot : MonoBehaviour
     /// </summary>
     private void RemoveMs()
     {
+        // 復活位置
+        if (removePos.Count > 0)
+        {
+            int index = Random.Range(0, removePos.Count);
+            myMs.transform.SetPositionAndRotation(removePos[index].position, removePos[index].rotation);
+        }
+
         myMs.Remove();
         isRemoveMs = false;
         myMs.gameObject.SetActive(true);
@@ -131,5 +141,14 @@ public class BasePilot : MonoBehaviour
     public void SetEnemyPilot(BasePilot enemyPilot)
     {
         enemyTeamPilots.Add(enemyPilot);
+    }
+
+    /// <summary>
+    /// 復活位置を設定
+    /// </summary>
+    /// <param name="transforms"></param>
+    public void SetRemovePos(List<Transform> transforms)
+    {
+        removePos = transforms;
     }
 }

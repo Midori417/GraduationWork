@@ -19,6 +19,9 @@ public class GundamBazookaShot : BaseMsAmoParts
     [SerializeField, Header("インターバル")]
     private float interval = 0;
 
+    [SerializeField, Header("リロードタイム")]
+    private float reloadTime = 0;
+
     // trueなら射撃可能
     private bool isShotOk = true;
 
@@ -35,6 +38,14 @@ public class GundamBazookaShot : BaseMsAmoParts
         {
             LookRotaion();
         }
+    }
+
+    /// <summary>
+    /// リロード処理
+    /// </summary>
+    private void ReloadProsess()
+    {
+        amo = amoMax;
     }
 
     /// <summary>
@@ -71,6 +82,8 @@ public class GundamBazookaShot : BaseMsAmoParts
         else Debug.LogWarning("BazookaObjectが存在しません");
 
         amo = amoMax;
+        isNow = false;
+        isShotOk = true;
 
         return true;
     }
@@ -139,6 +152,10 @@ public class GundamBazookaShot : BaseMsAmoParts
             }
             // 弾を減らす
             amo--;
+            if(amo <= 0)
+            {
+                Invoke("ReloadProsess", reloadTime);
+            }
         }
     }
 

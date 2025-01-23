@@ -251,10 +251,10 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-
-        // パイロットの初期化
+        // パイロットの初期化と復活位置の設定
         foreach (BasePilot pilot in battlePilots)
         {
+            pilot.SetRemovePos(mapManager.responTrs);
             pilot.Initialize();
         }
     }

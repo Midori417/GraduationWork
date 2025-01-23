@@ -27,9 +27,6 @@ public class GundamRifleShot : BaseMsAmoParts
     // ターゲット
     private Transform target;
 
-    // trueなら行動中
-    private bool _isNow = false;
-
     // trueなら元の角度に戻る
     private bool returnRotaion = false;
 
@@ -42,19 +39,25 @@ public class GundamRifleShot : BaseMsAmoParts
     // 前回フレーム時の回転
     private Quaternion oldRotation;
 
+    [SerializeField, Header("一発の弾がリロードされるまでの時間")]
+    private float reloadTime = 0;
+
+    // リロードタイマー
+    private float reloadTimer = 0;
+
     // バックショット
     public bool isBackShot
     { get; private set; }
 
     public bool isNow
-    { get { return _isNow; } }
+    { get; private set; }
 
     #region イベント
 
     private void LateUpdate()
     {
         // 行動中
-        if (_isNow)
+        if (isNow)
         {
             if (!isBackShot)
             {
@@ -65,9 +68,30 @@ public class GundamRifleShot : BaseMsAmoParts
                 BackLookRotaion();
             }
         }
+        ReloadProsess();
     }
 
     #endregion
+
+    /// <summary>
+    /// リロード処理
+    /// </summary>
+    private void ReloadProsess()
+    {
+        if (amo < amoMax && reloadTimer <= 0)
+        {
+            reloadTimer = reloadTime;
+        }
+        if(reloadTimer > 0)
+        {
+            reloadTimer -= Time.deltaTime;
+            if(reloadTimer<=0)
+            {
+                reloadTimer = 0;
+                amo++;
+            }
+        }
+    }
 
     /// <summary>
     /// 初期化
@@ -90,6 +114,9 @@ public class GundamRifleShot : BaseMsAmoParts
         }
 
         amo = amoMax;
+        isNow = false;
+        isShotOk = true;
+        isBackShot = false;
 
         return true;
     }
@@ -177,7 +204,7 @@ public class GundamRifleShot : BaseMsAmoParts
         }
 
         // 射撃行動中
-        _isNow = true;
+        isNow = true;
         isShotOk = false;
 
         // 射撃
@@ -238,7 +265,7 @@ public class GundamRifleShot : BaseMsAmoParts
         returnRotaion = false;
         target = null;
         isBackShot = false;
-        _isNow = false;
+        isNow = false;
         Invoke("Interval", interval);
     }
 

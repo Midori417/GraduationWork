@@ -210,6 +210,15 @@ public class BaseMs : MonoBehaviour
     {
         Initialize();
         isDamageOk = true;
+        Invoke("RemoveInvincible", 2);
+    }
+
+    /// <summary>
+    /// ñ≥ìGâèú
+    /// </summary>
+    protected void RemoveInvincible()
+    {
+        isDamageOk = true;
     }
 
     /// <summary>

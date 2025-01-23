@@ -6,7 +6,7 @@ AvatarMask:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: avaterMask_gundam_head
+  m_Name: avaterMask_gundam_sable
   m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
   m_Elements:
   - m_Path: 
@@ -39,10 +39,6 @@ AvatarMask:
     m_Weight: 0
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest
     m_Weight: 0
-  - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/BeumSable.L
-    m_Weight: 0
-  - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/BeumSable.R
-    m_Weight: 0
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Neck
     m_Weight: 0
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Neck/Head
@@ -50,19 +46,19 @@ AvatarMask:
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Neck/Head/Head_end
     m_Weight: 0
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L/UpperArm.L
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L/UpperArm.L/JointArm.L
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L/UpperArm.L/JointArm.L/JointArm.L_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L/UpperArm.L/LowerArm.L
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L/UpperArm.L/LowerArm.L/Hand.L
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L/UpperArm.L/LowerArm.L/Hand.L/Hand.Armed.L
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L/UpperArm.L/LowerArm.L/Hand.L/Hand.Armed.L/Hand.Armed.L_end
     m_Weight: 0
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L/UpperArm.L/LowerArm.L/Hand.L/Hand.Armed.L/Shield
@@ -108,18 +104,20 @@ AvatarMask:
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.L/UpperArm.L/LowerArm.L/Hand.L/Thumb1.L/Thumb2.L/Thumb3.L/Thumb3.L_end
     m_Weight: 0
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.R
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.R/UpperArm.R
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.R/UpperArm.R/JointArm.R
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.R/UpperArm.R/JointArm.R/JointArm.R_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.R/UpperArm.R/LowerArm.R
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.R/UpperArm.R/LowerArm.R/Hand.R
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.R/UpperArm.R/LowerArm.R/Hand.R/Hand.Armed.R
+    m_Weight: 1
+  - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.R/UpperArm.R/LowerArm.R/Hand.R/Hand.Armed.R/Bazooka
     m_Weight: 0
   - m_Path: MSFrame/Hips/Spine/Chest/UpperChest/Shoulder.R/UpperArm.R/LowerArm.R/Hand.R/Hand.Armed.R/BeumRifle
     m_Weight: 0
