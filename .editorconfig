@@ -1,0 +1,3 @@
+root = tru
+[*.{cs}]
+charset = utf-8-bom
