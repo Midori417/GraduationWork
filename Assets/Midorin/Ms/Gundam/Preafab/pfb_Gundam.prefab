@@ -164,6 +164,7 @@ GameObject:
   - component: {fileID: 4240836231859876430}
   - component: {fileID: 4966024530628579308}
   - component: {fileID: 7796402938391180800}
+  - component: {fileID: 2199590866511519244}
   m_Layer: 0
   m_Name: pfb_Gundam
   m_TagString: MS
@@ -261,13 +262,16 @@ MonoBehaviour:
   isDashBtn: 0
   isMainShotBtn: 0
   isSubShotBtn: 0
+  isMainAttackBtn: 0
   uiArmed: []
   lockHead: {fileID: 6235139701845051674}
   move: {fileID: 4240836231859876430}
   rifleShot: {fileID: 4966024530628579308}
   bazookaShot: {fileID: 7796402938391180800}
+  sableAttack: {fileID: 2199590866511519244}
   msDamageCheck: {fileID: 3561129602989544280}
   beumRifle: {fileID: 6540569978845907171}
+  sable: {fileID: 0}
   eff_roketFire: {fileID: 3214491207756231049, guid: 174aa200640317c4581d3a07d808112e, type: 3}
   rokeFireTrs: {fileID: 8323923346082398726}
   standingTime: 0.5
@@ -352,6 +356,22 @@ MonoBehaviour:
   shotPos: {x: 0, y: 0, z: 5}
   interval: 1
   reloadTime: 3
+--- !u!114 &2199590866511519244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130403658863983141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e88c1363f7346449a7d6890aaafc6ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 50
+  maxMoveTime: 1
+  attackDistance: 10
+  interval: 1
 --- !u!1 &286263149433171680
 GameObject:
   m_ObjectHideFlags: 0

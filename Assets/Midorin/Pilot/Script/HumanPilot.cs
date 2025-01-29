@@ -72,6 +72,7 @@ public class HumanPilot : BasePilot
         myMs.isDashBtn = Input.GetKey(KeyCode.LeftShift);
         myMs.isMainShotBtn = Input.GetKeyDown(KeyCode.Mouse0);
         myMs.isSubShotBtn = Input.GetKeyDown(KeyCode.E);
+        myMs.isMainAttackBtn = Input.GetKeyDown(KeyCode.Mouse1);
     }
 
     /// <summary>

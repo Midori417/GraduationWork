@@ -24,11 +24,17 @@ public class Gundam : BaseMs
     [SerializeField, Header("バズーカコンポーネント")]
     private GundamBazookaShot bazookaShot;
 
+    [SerializeField, Header("サーベル攻撃コンポーネント")]
+    private GundamSableAttack sableAttack;
+
     [SerializeField, Header("ダメージ検出コンポーネント")]
     private MsDamageCheck msDamageCheck;
 
     [SerializeField, Header("ビームライフルオブジェクト")]
     private GameObject beumRifle;
+
+    [SerializeField, Header("サーベルオブジェクト")]
+    private GameObject sable;
 
     [SerializeField, Header("バーニアエフェクト")]
     private GameObject eff_roketFire;
@@ -75,6 +81,7 @@ public class Gundam : BaseMs
             MoveProsess();
             BeumRifleProcess();
             BazookaProsess();
+            SableProsess();
         }
 
         DownProsess();
@@ -122,10 +129,12 @@ public class Gundam : BaseMs
         else lockHead.Initalize();
         if (!rifleShot) Debug.LogWarning("RifleShot存在しません");
         else rifleShot.Initalize();
-        if (!bazookaShot) Debug.LogWarning("Bazooka存在しません");
+        if (!bazookaShot) Debug.LogWarning("BazookaShot存在しません");
         else bazookaShot.Initalize();
         if (!msDamageCheck) Debug.LogWarning("MsDamageChackが存在しません");
         else msDamageCheck.Initalize();
+        if (!sableAttack) Debug.LogWarning("SableAttackが存在しません");
+        else sableAttack.Initalize();
     }
 
     /// <summary>
@@ -182,7 +191,6 @@ public class Gundam : BaseMs
     }
 
     #region ダメージ
-
 
     /// <summary>
     /// 破壊処理
@@ -465,6 +473,22 @@ public class Gundam : BaseMs
     private void BazookaFailed()
     {
         bazookaShot.Failed();
+    }
+
+    #endregion
+
+    #region ビームサーベル
+
+    /// <summary>
+    /// サーベル攻撃処理
+    /// </summary>
+    private void SableProsess()
+    {
+        if (!sableAttack) return;
+
+        if (isMainAttackBtn)
+        {
+        }
     }
 
     #endregion

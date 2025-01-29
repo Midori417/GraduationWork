@@ -135,6 +135,7 @@ public class BaseMs : MonoBehaviour
     public bool isDashBtn;
     public bool isMainShotBtn;
     public bool isSubShotBtn;
+    public bool isMainAttackBtn;
 
     // true‚È‚çƒ_ƒ[ƒW‚ğó‚¯‚é
     protected bool isDamageOk = true;
