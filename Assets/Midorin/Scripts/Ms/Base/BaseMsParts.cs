@@ -1,67 +1,56 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ‹@‘Ìƒp[ƒc‚Ìƒx[ƒXƒRƒ“ƒ|[ƒlƒ“ƒg
+/// æ©Ÿä½“ãƒ‘ãƒ¼ãƒ„ã®ãƒ™ãƒ¼ã‚¹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
 /// </summary>
-public class BaseMsParts : MonoBehaviour
+public class BaseMsParts : BaseGameObject
 {
-    // ƒƒCƒ“‹@‘ÌƒRƒ“ƒ|[ƒlƒ“ƒg
-    private Gundam _mainMs;
+    // ãƒ¡ã‚¤ãƒ³æ©Ÿä½“ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
+    private BaseMs _mainMs;
 
-    private Rigidbody _rb;
-    private Animator _animator;
-
-    // ƒƒCƒ“‹@‘ÌƒRƒ“ƒ|[ƒlƒ“ƒg
-    protected Gundam mainMs
-    { get { return _mainMs; } }
-
+    protected BaseMs mainMs => _mainMs;
     protected Rigidbody rb
-    { get { return _rb; } }
+    {
+        get 
+        {
+            if(mainMs)
+            {
+                return mainMs.rb;
+            }
 
-
+            return null;
+        }
+    }
     protected Transform targetMs
     {
         get
         {
-            if (!_mainMs)
+            if(mainMs)
             {
-                Debug.LogError("ƒƒCƒ“‹@‘Ì‚ª•s–¾");
-                return null;
+                if(mainMs.targetMs)
+                {
+                    return mainMs.targetMs.transform;
+                }
             }
-            if (!_mainMs.targetMs)
-            {
-                Debug.LogError("ƒ^[ƒQƒbƒg‹@‘Ì‚ª•s–¾");
-                return null;
-            }
-            return _mainMs.targetMs.transform;
+            return null;
         }
     }
 
     /// <summary>
-    /// ‰Šú‰»
+    /// åˆæœŸåŒ–
     /// </summary>
-    /// <returns>
-    /// true    ‰Šú‰»¬Œ÷
-    /// false  ‰Šú‰»¸”s
-    /// </returns>
-    public virtual bool Initalize()
+    public virtual void Initalize()
     {
-        if (!mainMs) _mainMs = GetComponent<Gundam>();
+    }
 
-        if (!mainMs)
-        {
-            _mainMs = GetComponentInParent<Gundam>();
-
-            if (!mainMs)
-            {
-                Debug.LogError("ƒƒCƒ“ƒRƒ“ƒ|[ƒlƒ“ƒg‚ªæ“¾‚Å‚«‚Ü‚¹‚ñ");
-                return false;
-            }
-        }
-        if (!rb) _rb = GetComponent<Rigidbody>();
-
-        return true;
+    /// <summary>
+    /// ãƒ¡ã‚¤ãƒ³ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’è¨­å®š
+    /// </summary>
+    /// <param name="mainMs"></param>
+    public void SetMainMs(BaseMs mainMs)
+    {
+        _mainMs = mainMs;
     }
 }

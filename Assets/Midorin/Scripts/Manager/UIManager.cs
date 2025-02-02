@@ -1,60 +1,60 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// UIŠÇ—ƒNƒ‰ƒX
+/// UIç®¡ç†ã‚¯ãƒ©ã‚¹
 /// </summary>
 public class UIManager : MonoBehaviour
 {
-    [SerializeField, Header("ƒu[ƒXƒgƒQ[ƒW")]
-    private Image img_BoostGauge;
+    [SerializeField, Header("ãƒ–ãƒ¼ã‚¹ãƒˆã‚²ãƒ¼ã‚¸")]
+    private Image _imgBoostGauge;
 
-    [SerializeField, Header("©g‚Ì‹@‘Ì‚Ì‘Ì—Í")]
-    private Text txt_Hp;
+    [SerializeField, Header("è‡ªèº«ã®æ©Ÿä½“ã®ä½“åŠ›")]
+    private Text _txtHp;
 
-    [SerializeField, Header("•‘•‚Ì’e")]
-    private List<Text> txt_ArmedValues;
+    [SerializeField, Header("æ­¦è£…ã®å¼¾")]
+    private List<Text> _txtArmedValues;
 
     /// <summary>
-    /// ƒu[ƒXƒgƒQ[ƒW‚Ìİ’è
+    /// ãƒ–ãƒ¼ã‚¹ãƒˆã‚²ãƒ¼ã‚¸ã®è¨­å®š
     /// </summary>
-    /// <param name="value">Œ»İ‚Ìƒu[ƒXƒg—e—Ê(0`1)</param>
+    /// <param name="value">ç¾åœ¨ã®ãƒ–ãƒ¼ã‚¹ãƒˆå®¹é‡(0ï½1)</param>
     public void BoostGauge(float value)
     {
-        if (img_BoostGauge)
+        if (_imgBoostGauge)
         {
-            img_BoostGauge.material.SetFloat("_FillAmount", value);
+            _imgBoostGauge.fillAmount = value;
         }
     }
 
     /// <summary>
-    /// •‘•‚Ìc’e‚ğİ’è
+    /// æ­¦è£…ã®æ®‹å¼¾ã‚’è¨­å®š
     /// </summary>
     /// <param name="value"></param>
     public void ArmedValue(int index, int _value)
     {
-        if(txt_ArmedValues.Count-1 < index)
+        if(_txtArmedValues.Count-1 < index)
         {
             return;
         }
 
-        if (txt_ArmedValues[index])
+        if (_txtArmedValues[index])
         {
-            txt_ArmedValues[index].text = _value.ToString();
+            _txtArmedValues[index].text = _value.ToString();
         }
     }
 
     /// <summary>
-    /// ‘Ì—Í‚Ìİ’è
+    /// ä½“åŠ›ã®è¨­å®š
     /// </summary>
     /// <param name="value"></param>
     public void Hp(int value)
     {
-        if (txt_Hp)
+        if (_txtHp)
         {
-            txt_Hp.text = value.ToString();
+            _txtHp.text = value.ToString();
         }
     }
 }

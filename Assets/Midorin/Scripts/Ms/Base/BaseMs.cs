@@ -1,195 +1,180 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ‹@‘Ì‚ÌŠî–{ƒRƒ“ƒ|[ƒlƒ“ƒg
+/// æ©Ÿä½“ã®åŸºæœ¬ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
 /// </summary>
-public class BaseMs : MonoBehaviour
+public class BaseMs : BaseGameObject
 {
-    [SerializeField, Header("©g‚ÌƒZƒ“ƒ^[ˆÊ’u")]
+    private Rigidbody _rb;
+    private Animator _animator;
+    private SkinnedMeshRenderer _meshRenderer;
+    private GroundCheck _groundCheck;
+
+    [SerializeField, Header("æ©Ÿä½“ã®çœŸã‚“ä¸­")]
     private Transform _center;
 
-    // –ˆƒJƒƒ‰
     private Transform _myCamera;
-
-    // ƒ^[ƒQƒbƒg‹@‘Ì
     private BaseMs _targetMs;
+    private List<BaseMsAmoParts> _uiArmeds = new List<BaseMsAmoParts>();
 
-    // ’n–Ê”»’èƒRƒ“ƒ|[ƒlƒ“ƒg
-    public GroundCheck groundCheck
+    [Serializable]
+    private class HpVariable
     {
-        get;
-        private set;
-    }
+        [HideInInspector, Header("ç¾åœ¨ã®ä½“åŠ›")]
+        public int _current;
 
-    // ‘Ì—Í
-    private int _hp;
-
-    [SerializeField, Header("Å‘å‘Ì—Í")]
-    private int _hpMax;
-
-    // ƒ_ƒEƒ“’l
-    protected float downValue = 0;
-
-    // true‚È‚çƒ_ƒEƒ“’†
-    protected bool isDown = false;
-
-    [System.Serializable]
-    private struct BoostParamater
-    {
-        // ƒGƒlƒ‹ƒM[‚ÌÅ‘å—Ê
-        private static float max = 100;
-
-        // Œ»İ‚ÌƒGƒlƒ‹ƒM[—Ê
-        private float current;
-
-        // Œ»İ‚ÌƒGƒlƒ‹ƒM[‚ÌŠ„‡(0`1)
-        public float current01
-        { get { return Mathf.Clamp01((max - (max - current)) / max); } }
-
-        // ƒ`ƒƒ[ƒWƒ^ƒCƒ}[
-        private float chargeTimer;
-
-        [Header("ƒ`ƒƒ[ƒWƒƒbƒNŠÔ")]
-        public float chargeLockTime;
-
-        [Header("ƒI[ƒo[ƒq[ƒg‚µ‚½‚Æ‚«‚Ìƒ`ƒƒ[ƒWƒƒbƒNŠÔ")]
-        public float overHeartChargeLockTime;
-
-        // true‚È‚çg—p’†
-        private bool isUse;
+        [Header("æœ€å¤§ä½“åŠ›")]
+        public int _max;
 
         /// <summary>
-        /// ƒu[ƒXƒgƒpƒ‰ƒ[ƒ^‚Ì‰Šú‰»
+        /// åˆæœŸåŒ–
+        /// </summary>
+        public void Initialzie()
+        {
+            _current = _max;
+        }
+    }
+    [SerializeField, Header("Hpå¤‰æ•°")]
+    private HpVariable _hp;
+
+    // trueãªã‚‰ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã‚‹
+    protected bool isDamageOk = true;
+
+    // ãƒ€ã‚¦ãƒ³å€¤
+    protected float _downValue = 0;
+
+    // trueãªã‚‰ãƒ€ã‚¦ãƒ³ä¸­
+    protected bool _isDown = false;
+
+    [Serializable]
+    private class BoostVariable
+    {
+        // ã‚¨ãƒãƒ«ã‚®ãƒ¼ã®æœ€å¤§é‡
+        private static float _max = 100;
+
+        // ç¾åœ¨ã®ã‚¨ãƒãƒ«ã‚®ãƒ¼é‡
+        private float _current;
+
+        // ç¾åœ¨ã®ã‚¨ãƒãƒ«ã‚®ãƒ¼ã®å‰²åˆ(0ï½1)
+        public float _current01
+        { get { return Mathf.Clamp01((_max - (_max - _current)) / _max); } }
+
+        // ãƒãƒ£ãƒ¼ã‚¸ã‚¿ã‚¤ãƒãƒ¼
+        private float _chargeTimer;
+
+        [Header("ãƒãƒ£ãƒ¼ã‚¸ãƒ­ãƒƒã‚¯æ™‚é–“")]
+        public float _chargeLockTime;
+
+        [Header("ã‚ªãƒ¼ãƒãƒ¼ãƒ’ãƒ¼ãƒˆã—ãŸã¨ãã®ãƒãƒ£ãƒ¼ã‚¸ãƒ­ãƒƒã‚¯æ™‚é–“")]
+        public float _overHeartChargeLockTime;
+
+        // trueãªã‚‰ä½¿ç”¨ä¸­
+        private bool _isUse;
+
+        /// <summary>
+        /// ãƒ–ãƒ¼ã‚¹ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®åˆæœŸåŒ–
         /// </summary>
         public void Initialize()
         {
-            current = max;
+            _current = _max;
         }
 
         /// <summary>
-        /// ƒ`ƒƒ[ƒWˆ—
+        /// ãƒãƒ£ãƒ¼ã‚¸å‡¦ç†
         /// </summary>
         public void Charge()
         {
-            // g—p’†‚Íƒ`ƒƒ[ƒW‚ğs‚í‚È‚¢
-            if (isUse)
+            // ä½¿ç”¨ä¸­ã¯ãƒãƒ£ãƒ¼ã‚¸ã‚’è¡Œã‚ãªã„
+            if (_isUse)
             {
                 return;
             }
 
-            // ƒ`ƒƒ[ƒWƒ^ƒCƒ}[‚ª0ˆÈã‚ ‚ê‚ÎŒ¸‚ç‚·
-            if (chargeTimer > 0)
+            // ãƒãƒ£ãƒ¼ã‚¸ã‚¿ã‚¤ãƒãƒ¼ãŒ0ä»¥ä¸Šã‚ã‚Œã°æ¸›ã‚‰ã™
+            if (_chargeTimer > 0)
             {
-                chargeTimer -= Time.deltaTime;
+                _chargeTimer -= Time.deltaTime;
             }
             else
             {
-                // ƒGƒlƒ‹ƒM[‚ğ‰ñ•œ‚·‚é
-                current = max;
+                // ã‚¨ãƒãƒ«ã‚®ãƒ¼ã‚’å›å¾©ã™ã‚‹
+                _current = _max;
             }
 
-            // ’l‚ğ•â³
-            chargeTimer = Mathf.Clamp(chargeTimer, 0, overHeartChargeLockTime);
-            current = Mathf.Clamp(current, 0, max);
+            // å€¤ã‚’è£œæ­£
+            _chargeTimer = Mathf.Clamp(_chargeTimer, 0, _overHeartChargeLockTime);
+            _current = Mathf.Clamp(_current, 0, _max);
         }
 
         /// <summary>
-        /// ƒu[ƒXƒg‚ÌÁ”ï
+        /// ãƒ–ãƒ¼ã‚¹ãƒˆã®æ¶ˆè²»
         /// </summary>
-        /// <param name="value">Á”ï—Ê</param>
+        /// <param name="value">æ¶ˆè²»é‡</param>
         public void UseBoost(float value)
         {
-            // 0ˆÈ‰º‚È‚çˆ—‚ğs‚í‚È‚¢
-            if (current <= 0)
+            // 0ä»¥ä¸‹ãªã‚‰å‡¦ç†ã‚’è¡Œã‚ãªã„
+            if (_current <= 0)
             {
                 return;
             }
 
-            // Á”ï
-            current -= value * Time.deltaTime;
+            // æ¶ˆè²»
+            _current -= value * Time.deltaTime;
 
-            // ƒ`ƒƒ[ƒWƒ^ƒCƒ€‚ğ“ü‚ê‚Ä‚¨‚­
-            if (current > 0)
+            // ãƒãƒ£ãƒ¼ã‚¸ã‚¿ã‚¤ãƒ ã‚’å…¥ã‚Œã¦ãŠã
+            if (_current > 0)
             {
-                chargeTimer = chargeLockTime;
+                _chargeTimer = _chargeLockTime;
             }
-            // 0ˆÈ‰º‚È‚çƒI[ƒo[ƒq[ƒgó‘Ô
+            // 0ä»¥ä¸‹ãªã‚‰ã‚ªãƒ¼ãƒãƒ¼ãƒ’ãƒ¼ãƒˆçŠ¶æ…‹
             else
             {
-                chargeTimer = overHeartChargeLockTime;
+                _chargeTimer = _overHeartChargeLockTime;
             }
 
-            // ’l‚ğ•â³
-            current = Mathf.Clamp(current, 0, max);
+            // å€¤ã‚’è£œæ­£
+            _current = Mathf.Clamp(_current, 0, _max);
         }
     }
-    [SerializeField, Header("ƒu[ƒXƒgƒpƒ‰ƒ[ƒ^")]
-    private BoostParamater boostParamater;
+    [SerializeField, Header("ãƒ–ãƒ¼ã‚¹ãƒˆå¤‰æ•°")]
+    private BoostVariable _boost;
 
-    // ‰¼“ü—Í
-    public Vector2 moveAxis;
-    public bool isJumpBtn;
-    public bool isDashBtn;
-    public bool isMainShotBtn;
-    public bool isSubShotBtn;
-    public bool isMainAttackBtn;
+    [HideInInspector]
+    public MsInput _msInput;
 
-    // true‚È‚çƒ_ƒ[ƒW‚ğó‚¯‚é
-    protected bool isDamageOk = true;
+    #region ã‚²ãƒƒã‚¿ãƒ¼
 
-    #region  ‘¼‚É“`‚¦‚é
+    public Rigidbody rb => _rb;
+    public Animator animator => _animator;
+    public SkinnedMeshRenderer meshRenderer => _meshRenderer;
+    protected GroundCheck groundCheck => _groundCheck;
 
-    public Rigidbody rb
-    { get; private set; }
-    public Animator animator
-    { get; private set; }
-    public SkinnedMeshRenderer meshRenderer
-    { get; private set; }
+    public Transform myCamera => _myCamera;
+    public BaseMs targetMs => _targetMs;
+    public Transform center => _center;
+    public int hp => _hp._current;
+    public int hpMax => _hp._max;
+    public float boost01 => _boost._current01;
 
-    // ©g‚ÌƒJƒƒ‰
-    public Transform myCamera
-    { get { return _myCamera; } }
-
-    // ƒ^[ƒQƒbƒg‹@‘Ì
-    public BaseMs targetMs
-    { get { return _targetMs; } }
-
-    // ƒZƒ“ƒ^[
-    public Transform center
-    { get { return _center; } }
-
-    // ‘Ì—Í
-    public int hp
-    { get { return _hp; } }
-
-    // Å‘å‘Ì—Í
-    public int hpMax
-    { get { return _hpMax; } }
-
-    // Œ»İ‚ÌƒGƒlƒ‹ƒM[‚ÌŠ„‡(0`1)
-    public float boost01
-    { get { return boostParamater.current01; } }
-
-    // UI‚É•\¦‚·‚é’e
-    public List<BaseMsAmoParts> uiArmed;
+    public int amoCount => _uiArmeds.Count;
 
     #endregion
 
     /// <summary>
-    /// ‰Šú‰»
+    /// åˆæœŸåŒ–
     /// </summary>
     public virtual void Initialize()
     {
-        if (!rb) rb = GetComponent<Rigidbody>();
-        if (!animator) animator = GetComponent<Animator>();
-        if (!groundCheck) groundCheck = GetComponentInChildren<GroundCheck>();
+        if (!_rb) _rb = GetComponent<Rigidbody>();
+        if (!_animator) _animator = GetComponent<Animator>();
+        if (!_groundCheck) _groundCheck = GetComponentInChildren<GroundCheck>();
         if (!meshRenderer)
         {
-            meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
-            // ƒƒbƒVƒ…ƒŒƒ“ƒ_ƒ‰[ƒ}ƒeƒŠƒAƒ‹‚ğ•¡»
+            _meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+            // ãƒ¡ãƒƒã‚·ãƒ¥ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’è¤‡è£½
             Material[] mats = new Material[meshRenderer.materials.Length];
             for (int i = 0; i < meshRenderer.materials.Length; i++)
             {
@@ -198,14 +183,12 @@ public class BaseMs : MonoBehaviour
             }
         }
 
-        boostParamater.Initialize();
-
-        // ‘Ì—Í‚ğİ’è
-        _hp = hpMax;
+        _hp.Initialzie();
+        _boost.Initialize();
     }
 
     /// <summary>
-    /// •œŠˆˆ—
+    /// å¾©æ´»å‡¦ç†
     /// </summary>
     public virtual void Remove()
     {
@@ -215,7 +198,7 @@ public class BaseMs : MonoBehaviour
     }
 
     /// <summary>
-    /// –³“G‰ğœ
+    /// ç„¡æ•µè§£é™¤
     /// </summary>
     protected void RemoveInvincible()
     {
@@ -223,7 +206,7 @@ public class BaseMs : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒƒbƒVƒ…Ô”­Œõ
+    /// ãƒ¡ãƒƒã‚·ãƒ¥èµ¤ç™ºå…‰
     /// </summary>
     protected void MeshDamage()
     {
@@ -234,7 +217,7 @@ public class BaseMs : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒƒbƒVƒ…‚ğŒ³‚É–ß‚·
+    /// ãƒ¡ãƒƒã‚·ãƒ¥ã‚’å…ƒã«æˆ»ã™
     /// </summary>
     protected void MeshRemove()
     {
@@ -245,56 +228,25 @@ public class BaseMs : MonoBehaviour
     }
 
     /// <summary>
-    ///ˆ—‚É•K—v‚È‚à‚Ì‚ª‚»‚ë‚Á‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
-    /// </summary>
-    /// <returns>
-    /// false ‚»‚ë‚Á‚Ä‚¢‚é
-    /// true ‚»‚ë‚Á‚Ä‚¢‚È‚¢
-    /// </returns>
-    protected virtual void ProsessCheck()
-    {
-        if (!rb)
-        {
-            Debug.LogError("Rigidbody‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
-            return;
-        }
-        if (!animator)
-        {
-            Debug.LogError("Animator‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
-            return;
-        }
-        if (!groundCheck)
-        {
-            Debug.LogError("GroundCheck‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
-            return;
-        }
-        if (!center)
-        {
-            Debug.LogError("Center‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
-            return;
-        }
-    }
-
-    /// <summary>
-    /// ƒ_ƒ[ƒW‚ğ—^‚¦‚é
+    /// ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã‚‹
     /// </summary>
     /// <param name="damage"></param>
     public virtual bool Damage(int damage, int _downValue, Vector3 bulletPos)
     {
-        // ƒ_ƒ[ƒWˆ—•s‰Â
+        // ãƒ€ãƒ¡ãƒ¼ã‚¸å‡¦ç†ä¸å¯
         if (!isDamageOk) return false;
 
-        _hp += damage;
-        _hp = Mathf.Clamp(_hp, 0, hpMax);
-        this.downValue += _downValue;
+        _hp._current += damage;
+        _hp._current = Mathf.Clamp(_hp._current, 0, hpMax);
+        this._downValue += _downValue;
         return true;
     }
 
     /// <summary>
-    /// ”j‰ó‚³‚ê‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+    /// ç ´å£Šã•ã‚Œã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
     /// </summary>
     /// <returns>
-    /// true ”j‰ó‚³‚ê‚Ä‚¢‚é
+    /// true ç ´å£Šã•ã‚Œã¦ã„ã‚‹
     /// </returns>
     public bool DestroyCheck()
     {
@@ -305,10 +257,10 @@ public class BaseMs : MonoBehaviour
         return false;
     }
 
-    #region ƒu[ƒXƒgŠÖŒW
+    #region ãƒ–ãƒ¼ã‚¹ãƒˆé–¢ä¿‚
 
     /// <summary>
-    /// ƒu[ƒXƒgƒGƒlƒ‹ƒM[‚Ìƒ`ƒƒ[ƒW
+    /// ãƒ–ãƒ¼ã‚¹ãƒˆã‚¨ãƒãƒ«ã‚®ãƒ¼ã®ãƒãƒ£ãƒ¼ã‚¸
     /// </summary>
     protected void BoostCharge()
     {
@@ -316,22 +268,23 @@ public class BaseMs : MonoBehaviour
         {
             return;
         }
-        boostParamater.Charge();
+        _boost.Charge();
     }
 
     /// <summary>
-    /// ƒu[ƒXƒg‚ÌÁ”ï
+    /// ãƒ–ãƒ¼ã‚¹ãƒˆã®æ¶ˆè²»
     /// </summary>
-    /// <param name="value">Á”ï—Ê</param>
+    /// <param name="value">æ¶ˆè²»é‡</param>
     public void UseBoost(float value)
     {
-        boostParamater.UseBoost(value);
+        _boost.UseBoost(value);
     }
 
     #endregion
 
     /// <summary>
-    /// ƒ^[ƒQƒbƒg‹@‘Ì‚ğİ’è
+    /// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆæ©Ÿä½“ã‚’è¨­å®š
+    /// ãƒ‘ã‚¤ãƒ­ãƒƒãƒˆã«å‘¼ã³å‡ºã™
     /// </summary>
     /// <param name="target"></param>
     public void SetTargetMs(BaseMs target)
@@ -340,11 +293,31 @@ public class BaseMs : MonoBehaviour
     }
 
     /// <summary>
-    /// ©g‚ÌƒJƒƒ‰‚ğİ’è
+    /// è‡ªèº«ã®ã‚«ãƒ¡ãƒ©ã‚’è¨­å®š
+    /// ãƒ‘ã‚¤ãƒ­ãƒƒãƒˆã§å‘¼ã³å‡ºã™
     /// </summary>
     /// <param name="myCameraTrs"></param>
     public void SetMyCamera(Transform myCameraTrs)
     {
         _myCamera = myCameraTrs;
+    }
+
+    /// <summary>
+    /// UIã«è¡¨ç¤ºã™ã‚‹ãƒ‘ãƒ¼ãƒ„ã‚’è¿½åŠ 
+    /// </summary>
+    /// <param name="amoParts"></param>
+    public void AddAmoParts(BaseMsAmoParts amoParts)
+    {
+        _uiArmeds.Add(amoParts);
+    }
+
+    /// <summary>
+    /// indexã«å¯¾å¿œã—ãŸå¼¾æ•°ã‚’å–å¾—
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public int GetAmo(int index)
+    {
+        return _uiArmeds[index].amo;
     }
 }

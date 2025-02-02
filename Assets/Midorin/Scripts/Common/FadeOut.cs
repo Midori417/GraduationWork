@@ -1,69 +1,69 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// ƒtƒF[ƒhƒAƒEƒg‚µ‚ÄƒV[ƒ“‚ğØ‚è‘Ö‚¦‚é
+/// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆã—ã¦ã‚·ãƒ¼ãƒ³ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
 /// </summary>
 public class FadeOut : MonoBehaviour
 {
-    [SerializeField, Header("ƒtƒF[ƒhƒIƒuƒWƒFƒNƒg")]
-    private Image img;
+    [SerializeField, Header("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ")]
+    private Image _img;
 
-    [SerializeField, Header("ƒtƒF[ƒh‚É‚©‚©‚éŠÔ")]
-    private float fadeDuration = 1.0f;
+    [SerializeField, Header("ãƒ•ã‚§ãƒ¼ãƒ‰ã«ã‹ã‹ã‚‹æ™‚é–“")]
+    private float _fadeDuration = 1.0f;
 
     /// <summary>
-    /// ƒXƒ^[ƒgƒCƒxƒ“ƒg
+    /// ã‚¹ã‚¿ãƒ¼ãƒˆã‚¤ãƒ™ãƒ³ãƒˆ
     /// </summary>
     public void Start()
     {
-        // Nullƒ`ƒFƒbƒN
-        if (!img)
+        // Nullãƒã‚§ãƒƒã‚¯
+        if (!_img)
         {
-            img = GetComponent<Image>();
-            if (!img)
+            _img = GetComponent<Image>();
+            if (!_img)
             {
-                Debug.LogError("ƒCƒ[ƒWƒRƒ“ƒ|[ƒlƒ“ƒg‚ªæ“¾‚Å‚«‚Ä‚È‚¢‚æ");
+                Debug.LogError("ã‚¤ãƒ¡ãƒ¼ã‚¸ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒå–å¾—ã§ãã¦ãªã„ã‚ˆ");
                 return;
             }
         }
-        img.enabled = false;
-        img.color = new Color(0, 0, 0, 0);
+        _img.enabled = false;
+        _img.color = new Color(0, 0, 0, 0);
     }
 
     /// <summary>
-    /// ƒtƒF[ƒhŠJn
+    /// ãƒ•ã‚§ãƒ¼ãƒ‰é–‹å§‹
     /// </summary>
-    /// <param name="name">Ø‚è‘Ö‚¦‚éƒV[ƒ“</param>
+    /// <param name="name">åˆ‡ã‚Šæ›¿ãˆã‚‹ã‚·ãƒ¼ãƒ³</param>
     public void FadeStrt(string name)
     {
         StartCoroutine(FadeOutAndLoadScene(name));
     }
 
     /// <summary>
-    /// ƒtƒF[ƒhŠ®—¹‚µ‚½‚çƒV[ƒ“‚ğØ‚è‘Ö‚¦‚é
+    /// ãƒ•ã‚§ãƒ¼ãƒ‰å®Œäº†ã—ãŸã‚‰ã‚·ãƒ¼ãƒ³ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
     IEnumerator FadeOutAndLoadScene(string name)
     {
-        img.enabled = true;
+        _img.enabled = true;
         float elapsedTime = 0;
-        Color startColor = img.color;
+        Color startColor = _img.color;
         Color endColor = new Color(startColor.r, startColor.g, startColor.b, 1.0f);
 
-        // ƒtƒF[ƒhƒAƒEƒgƒAƒjƒ[ƒVƒ‡ƒ“‚ğÀs
-        while (elapsedTime < fadeDuration)
+        // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å®Ÿè¡Œ
+        while (elapsedTime < _fadeDuration)
         {
             elapsedTime += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsedTime / fadeDuration);
-            img.color = Color.Lerp(startColor, endColor, t);
+            float t = Mathf.Clamp01(elapsedTime / _fadeDuration);
+            _img.color = Color.Lerp(startColor, endColor, t);
             yield return null;
         }
 
-        img.color = endColor;
+        _img.color = endColor;
         SceneManager.LoadScene(name);
     }
 }

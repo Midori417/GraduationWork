@@ -1,28 +1,28 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ƒ^ƒCƒgƒ‹ŠÇ—ƒNƒ‰ƒX
+/// ã‚¿ã‚¤ãƒˆãƒ«ç®¡ç†ã‚¯ãƒ©ã‚¹
 /// </summary>
 public class TitleManager : MonoBehaviour
 {
-    [SerializeField, Header("ƒtƒF[ƒhƒIƒuƒWƒFƒNƒg")]
-    private FadeOut fadeOut;
+    [SerializeField, Header("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ")]
+    private FadeOut _fadeOut;
 
-    [SerializeField, Header("Ø‚è‘Ö‚¦ƒV[ƒ“‚Ì–¼‘O")]
-    private string sceneName;
+    [SerializeField, Header("åˆ‡ã‚Šæ›¿ãˆã‚·ãƒ¼ãƒ³ã®åå‰")]
+    private string _sceneName;
 
     /// <summary>
-    /// pleaseƒ{ƒ^ƒ“‚ğ‰Ÿ‚³‚ê‚½‚Æ‚«‚Ìˆ—
+    /// pleaseãƒœã‚¿ãƒ³ã‚’æŠ¼ã•ã‚ŒãŸã¨ãã®å‡¦ç†
     /// </summary>
     public void PushPleaseButton()
     {
-        if(!fadeOut)
+        if(!_fadeOut)
         {
-            Debug.LogError("ƒtƒF[ƒhƒIƒuƒWƒFƒNƒg‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
+            Debug.LogError("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒå­˜åœ¨ã—ã¾ã›ã‚“");
             return;
         }
-        fadeOut.FadeStrt(sceneName);
+        _fadeOut.FadeStrt(_sceneName);
     }
 }

@@ -1,89 +1,71 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ƒQ[ƒ€‘S‘ÌŠÇ—ƒNƒ‰ƒX
+/// ã‚²ãƒ¼ãƒ å…¨ä½“ç®¡ç†ã‚¯ãƒ©ã‚¹
 /// </summary>
-public class GameManager : MonoBehaviour
+public class GameManager : SingletonBehavior<GameManager>
 {
-    // ƒVƒ“ƒOƒ‹ƒgƒ“ƒNƒ‰ƒX‚É‚·‚é
-    public static GameManager instance
+    // ãƒãƒˆãƒ«æƒ…å ±
+    public BattleInfo _battleInfo
     {
         get;
         private set;
     }
 
-    // ƒoƒgƒ‹î•ñ
-    public BattleInfo battleInfo
-    {
-        get;
-        private set;
-    }
-
-    // ƒ`[ƒ€‚ÌƒRƒXƒg‚ÌÅ‘å’l
+    // ãƒãƒ¼ãƒ ã®ã‚³ã‚¹ãƒˆã®æœ€å¤§å€¤
     public static readonly int teamCostMax = 6000;
 
-    [SerializeField, Header("‹@‘Ì‚ÌƒvƒŒƒnƒu")]
-    private List<BaseMs> _pfb_ms;
+    [SerializeField, Header("æ©Ÿä½“ã®ãƒ—ãƒ¬ãƒãƒ–")]
+    private List<BaseMs> _pfbMs;
 
-    [SerializeField, Header("lŠÔƒpƒCƒƒbƒgƒvƒŒƒnƒu")]
-    private HumanPilot pfb_humanPilot;
+    [SerializeField, Header("äººé–“ãƒ‘ã‚¤ãƒ­ãƒƒãƒˆãƒ—ãƒ¬ãƒãƒ–")]
+    private HumanPilot _pfbHumanPilot;
 
-    [SerializeField, Header("ƒRƒ“ƒsƒ…[ƒ^ƒpƒCƒƒbƒgƒvƒŒƒnƒu")]
-    private CpuPilot pfb_cpuPilot;
-
-    /// <summary>
-    /// ¶¬‚ÌƒCƒxƒ“ƒg
-    /// </summary>
-    private void Awake()
-    {
-        if (!instance)
-        {
-            instance = this;
-        }
-    }
+    [SerializeField, Header("ã‚³ãƒ³ãƒ”ãƒ¥ãƒ¼ã‚¿ãƒ‘ã‚¤ãƒ­ãƒƒãƒˆãƒ—ãƒ¬ãƒãƒ–")]
+    private CpuPilot _pfbCpuPilot;
 
     /// <summary>
-    /// ƒoƒgƒ‹î•ñ‚ğİ’è
+    /// ãƒãƒˆãƒ«æƒ…å ±ã‚’è¨­å®š
     /// </summary>
     /// <param name="_battleInfo"></param>
     public void SetBattleInfo(BattleInfo _battleInfo)
     {
-        battleInfo = _battleInfo;
+        this._battleInfo = _battleInfo;
     }
 
     /// <summary>
-    /// ‹@‘ÌİŒv}‚ğæ“¾
+    /// æ©Ÿä½“è¨­è¨ˆå›³ã‚’å–å¾—
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
     public BaseMs GetMsPrefab(int index)
     {
-        if (_pfb_ms.Count - 1 < index)
+        if (_pfbMs.Count - 1 < index)
         {
             return null; 
         }
-        return _pfb_ms[index];
+        return _pfbMs[index];
     }
 
     /// <summary>
-    /// ƒpƒCƒƒbƒgİŒv}‚ğæ“¾
+    /// ãƒ‘ã‚¤ãƒ­ãƒƒãƒˆè¨­è¨ˆå›³ã‚’å–å¾—
     /// </summary>
     /// <param name="index"></param>
     /// <returns>
-    /// true lŠÔ
+    /// true äººé–“
     /// false CPU
     /// </returns>
     public BasePilot GetPilotPrefab(bool inputType)
     {
         if(inputType)
         {
-            return pfb_humanPilot;
+            return _pfbHumanPilot;
         }
         else
         {
-            return pfb_cpuPilot;
+            return _pfbCpuPilot;
         }
     }
 }

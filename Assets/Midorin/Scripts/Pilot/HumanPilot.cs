@@ -1,95 +1,10 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ‘€ì‚Å‚«‚éƒpƒCƒƒbƒg
+/// æ“ä½œã§ãã‚‹ãƒ‘ã‚¤ãƒ­ãƒƒãƒˆ
 /// </summary>
 public class HumanPilot : BasePilot
 {
-    [SerializeField, Header("UI")]
-    private UIManager uiManager;
-
-
-    #region ƒCƒxƒ“ƒg
-
-    void Start()
-    {
-        if (!uiManager)
-        {
-            uiManager = GetComponentInChildren<UIManager>();
-        }
-        uiManager.gameObject.SetActive(false);
-    }
-
-    void Update()
-    {
-        if (!ProessCheck()) return;
-
-        MsSetControl();
-        UIProsess();
-    }
-
-    #endregion
-
-    /// <summary>
-    /// ˆ—‚ª‰Â”\‚©ƒ`ƒFƒbƒN
-    /// </summary>
-    /// <returns></returns>
-    bool ProessCheck()
-    {
-        if (!isProsess)
-        {
-            return false;
-        }
-        if (!myMs)
-        {
-            Debug.LogError("‹@‘Ì‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
-            return false;
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// ˆ—ŠJn
-    /// </summary>
-    public override void StartProsess()
-    {
-        base.StartProsess();
-        uiManager.gameObject.SetActive(true);
-    }
-
-    /// <summary>
-    /// ‹@‘Ì‚É“ü—Í‚ğ“`‚¦‚é
-    /// </summary>
-    void MsSetControl()
-    {
-        DestoryMsProsess();
-
-        // ‰¼ƒL[“ü—Í
-        myMs.moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        myMs.isJumpBtn = Input.GetKey(KeyCode.Space);
-        myMs.isDashBtn = Input.GetKey(KeyCode.LeftShift);
-        myMs.isMainShotBtn = Input.GetKeyDown(KeyCode.Mouse0);
-        myMs.isSubShotBtn = Input.GetKeyDown(KeyCode.E);
-        myMs.isMainAttackBtn = Input.GetKeyDown(KeyCode.Mouse1);
-    }
-
-    /// <summary>
-    /// UIˆ—
-    /// </summary>
-    void UIProsess()
-    {
-        if (!uiManager)
-        {
-            return;
-        }
-        uiManager.BoostGauge(myMs.boost01);
-        uiManager.Hp(myMs.hp);
-
-        for (int i = 0; i < myMs.uiArmed.Count; i++)
-        {
-            uiManager.ArmedValue(i, myMs.uiArmed[i].amo);
-        }
-    }
 }

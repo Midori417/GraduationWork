@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// パイロットの基底クラス
+/// カメラ管理コンポーネント
 /// </summary>
-public class BasePilot : BaseGameObject
+public class CameraManager : BaseGameObject
 {
 }

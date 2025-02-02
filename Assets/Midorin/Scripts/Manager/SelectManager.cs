@@ -1,40 +1,40 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ‘I‘ğ‰æ–ÊŠÇ—ƒNƒ‰ƒX
+/// é¸æŠç”»é¢ç®¡ç†ã‚¯ãƒ©ã‚¹
 /// </summary>
 public class SelectManager : MonoBehaviour
 {
-    [SerializeField, Header("ƒtƒF[ƒhƒIƒuƒWƒFƒNƒg")]
-    private FadeOut fadeOut;
+    [SerializeField, Header("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ")]
+    private FadeOut _fadeOut;
 
-    [SerializeField, Header("Battleƒ{ƒ^ƒ“‚ğ‚µ‚½‚Æ‚«‚ÌƒV[ƒ“Ø‚è‘Ö‚¦‚Ì–¼‘O")]
-    private string battleBtnSceneName;
+    [SerializeField, Header("Battleãƒœã‚¿ãƒ³ã‚’ã—ãŸã¨ãã®ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆã®åå‰")]
+    private string _battleBtnSceneName;
 
     /// <summary>
-    /// Battleƒ{ƒ^ƒ“‚ğ‘I‘ğ‚µ‚½‚Æ‚«‚Ìˆ—
+    /// Battleãƒœã‚¿ãƒ³ã‚’é¸æŠã—ãŸã¨ãã®å‡¦ç†
     /// </summary>
     public void PushBattle()
     {
-        if (!fadeOut)
+        if (!_fadeOut)
         {
-            Debug.LogError("ƒtƒF[ƒhƒIƒuƒWƒFƒNƒg‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
+            Debug.LogError("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒå­˜åœ¨ã—ã¾ã›ã‚“");
             return;
         }
-        fadeOut.FadeStrt(battleBtnSceneName);
+        _fadeOut.FadeStrt(_battleBtnSceneName);
     }
 
     /// <summary>
-    /// Exitƒ{ƒ^ƒ“‚ª‘I‘ğ‚³‚ê‚½‚Æ‚«‚Ìˆ—
+    /// Exitãƒœã‚¿ãƒ³ãŒé¸æŠã•ã‚ŒãŸã¨ãã®å‡¦ç†
     /// </summary>
     public void PushExit()
     {
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;//ƒQ[ƒ€ƒvƒŒƒCI—¹
+        UnityEditor.EditorApplication.isPlaying = false;//ã‚²ãƒ¼ãƒ ãƒ—ãƒ¬ã‚¤çµ‚äº†
 #else
-    Application.Quit();//ƒQ[ƒ€ƒvƒŒƒCI—¹
+    Application.Quit();//ã‚²ãƒ¼ãƒ ãƒ—ãƒ¬ã‚¤çµ‚äº†
 #endif
     }
 }

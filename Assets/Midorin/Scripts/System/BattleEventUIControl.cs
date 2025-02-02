@@ -1,85 +1,85 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// ƒoƒgƒ‹ƒƒCƒ“UIØ‚è‘Ö‚¦
-/// ‘€ì‚Íƒoƒgƒ‹ƒ}ƒl[ƒWƒƒ‚É‚³‚¹‚é
+/// ãƒãƒˆãƒ«ãƒ¡ã‚¤ãƒ³UIåˆ‡ã‚Šæ›¿ãˆ
+/// æ“ä½œã¯ãƒãƒˆãƒ«ãƒãƒãƒ¼ã‚¸ãƒ£ã«ã•ã›ã‚‹
 /// </summary>
 public class BattleEventUIControl : MonoBehaviour
 {
     [SerializeField, Header("")]
-    private Sprite stanby;
+    private Sprite _stanby;
 
     [SerializeField, Header("")]
-    private Sprite go;
+    private Sprite _go;
 
     [SerializeField, Header("")]
-    private Sprite win;
+    private Sprite _win;
 
     [SerializeField, Header("")]
-    private Sprite lose;
+    private Sprite _lose;
 
-    private Image img;
+    private Image _img;
 
     private void Start()
     {
-        img = GetComponent<Image>();
+        _img = GetComponent<Image>();
 
-        img.enabled = false;
+        _img.enabled = false;
     }
 
     /// <summary>
-    /// ‰æ‘œ‚Ì•\¦‚ÆØ‚è‘Ö‚¦
+    /// ç”»åƒã®è¡¨ç¤ºã¨åˆ‡ã‚Šæ›¿ãˆ
     /// </summary>
     /// <param name="sprite"></param>
     private void ImgChange(Sprite sprite)
     {
         if (!sprite) return;
-        img.enabled = true;
-        img.sprite = sprite;
+        _img.enabled = true;
+        _img.sprite = sprite;
     }
 
-    #region BattleManager‚Å‘€ì‚·‚éŠÖ”
+    #region BattleManagerã§æ“ä½œã™ã‚‹é–¢æ•°
     /// <summary>
-    /// ƒXƒ^ƒ“ƒoƒC
+    /// ã‚¹ã‚¿ãƒ³ãƒã‚¤
     /// </summary>
     public void Stanby()
     {
-        ImgChange(stanby);
+        ImgChange(_stanby);
     }
 
     /// <summary>
-    /// ƒS[
+    /// ã‚´ãƒ¼
     /// </summary>
     public void Go()
     {
-        ImgChange(go);
+        ImgChange(_go);
     }
 
     /// <summary>
-    /// Ÿ—˜
+    /// å‹åˆ©
     /// </summary>
     public void Win()
     {
-        ImgChange(win);
+        ImgChange(_win);
     }
 
     /// <summary>
-    /// ”s–k
+    /// æ•—åŒ—
     /// </summary>
     public void Lose()
     {
-        ImgChange(lose);
+        ImgChange(_lose);
     }
 
     /// <summary>
-    /// ‰æ‘œ‚ğ•\¦‚µ‚È‚¢
+    /// ç”»åƒã‚’è¡¨ç¤ºã—ãªã„
     /// </summary>
     public void NoImg()
     {
-        img.enabled = false;
+        _img.enabled = false;
     }
     #endregion
 }

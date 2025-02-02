@@ -1,8 +1,9 @@
+ï»¿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ƒ`[ƒ€
+/// ãƒãƒ¼ãƒ 
 /// </summary>
 public enum Team
 {
@@ -12,7 +13,7 @@ public enum Team
 }
 
 /// <summary>
-/// ƒvƒŒƒCƒ„[‚Ìƒ^ƒCƒv
+/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¿ã‚¤ãƒ—
 /// </summary>
 public enum PlayerType
 {
@@ -21,7 +22,7 @@ public enum PlayerType
 }
 
 /// <summary>
-/// ‹@‘ÌƒŠƒXƒg
+/// æ©Ÿä½“ãƒªã‚¹ãƒˆ
 /// </summary>
 public enum MsList
 {
@@ -30,36 +31,47 @@ public enum MsList
 }
 
 /// <summary>
-/// ƒpƒCƒƒbƒgî•ñ
+/// ãƒ‘ã‚¤ãƒ­ãƒƒãƒˆæƒ…å ±
 /// </summary>
-[System.Serializable]
+[Serializable]
 public struct PilotInfo
 {
-    // ƒ`[ƒ€ID
+    // ãƒãƒ¼ãƒ ID
     public Team teamId;
 
-    // ƒvƒŒƒCƒ„[ƒ^ƒCƒv
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¿ã‚¤ãƒ—
     public PlayerType playerType;
 
-    // d—l‹@‘Ì
+    // ä»•æ§˜æ©Ÿä½“
     public MsList useMs;
 }
 
 /// <summary>
-/// ƒoƒgƒ‹î•ñ
+/// ãƒãƒˆãƒ«æƒ…å ±
 /// </summary>
-[System.Serializable]
+[Serializable]
 public struct BattleInfo
 {
-    // Ôƒ`[ƒ€‚ÌƒRƒXƒg
+    // èµ¤ãƒãƒ¼ãƒ ã®ã‚³ã‚¹ãƒˆ
     public int teamRedCost;
 
-    // Âƒ`[ƒ€‚ÌƒRƒXƒg
+    // é’ãƒãƒ¼ãƒ ã®ã‚³ã‚¹ãƒˆ
     public int teamBlueCost;
 
-    // §ŒÀŠÔ
+    // åˆ¶é™æ™‚é–“
     public int time;
 
-    // ƒpƒCƒƒbƒgî•ñ”z—ñ
+    // ãƒ‘ã‚¤ãƒ­ãƒƒãƒˆæƒ…å ±é…åˆ—
     public List<PilotInfo> pilotsInfo;
+}
+
+[Serializable]
+public class MsInput
+{
+    public Vector2 _move;
+    public bool _jump;
+    public bool _dash;
+    public bool _mainShot;
+    public bool _subShot;
+    public bool _mainAttack;
 }

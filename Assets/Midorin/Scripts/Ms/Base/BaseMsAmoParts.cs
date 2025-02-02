@@ -1,31 +1,26 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BaseMsAmoParts : BaseMsParts
 {
-    // Œ»İ‚Ì’e
+    // ç¾åœ¨ã®å¼¾
     public int amo
     {
         get;
         protected set;
     }
 
-    [SerializeField, Header("Å‘å’e")]
+    [SerializeField, Header("æœ€å¤§å¼¾")]
     protected int amoMax;
 
     /// <summary>
-    /// ‰Šú‰»
+    /// åˆæœŸåŒ–
     /// </summary>
-    /// <returns></returns>
-    public override bool Initalize()
+    public override void Initalize()
     {
-        if (!base.Initalize())
-        {
-            return false;
-        }
-        mainMs.uiArmed.Add(this);
+        base.Initalize();
 
-        return true;
+        mainMs.AddAmoParts(this);
     }
 }

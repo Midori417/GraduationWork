@@ -1,46 +1,46 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ƒoƒgƒ‹İ’è‰æ–ÊŠÇ—ƒNƒ‰ƒX
+/// ãƒãƒˆãƒ«è¨­å®šç”»é¢ç®¡ç†ã‚¯ãƒ©ã‚¹
 /// </summary>
 public class BattleSettingManager : MonoBehaviour
 {
-    [SerializeField, Header("ƒtƒF[ƒhƒIƒuƒWƒFƒNƒg")]
-    private FadeOut fadeOut;
+    [SerializeField, Header("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ")]
+    private FadeOut _fadeOut;
 
-    [SerializeField, Header("Ø‚è‘Ö‚¦ƒV[ƒ“‚Ì–¼‘O")]
-    private string sceneName;
+    [SerializeField, Header("åˆ‡ã‚Šæ›¿ãˆã‚·ãƒ¼ãƒ³ã®åå‰")]
+    private string _sceneName;
 
-    [SerializeField, Header("Test(escape‚ğ‰Ÿ‚µ‚½‚Æ‚«‚ÌƒV[ƒ“)")]
-    private string escapeSceneName;
+    [SerializeField, Header("Test(escapeã‚’æŠ¼ã—ãŸã¨ãã®ã‚·ãƒ¼ãƒ³)")]
+    private string _escapeSceneName;
 
-    [SerializeField, Header("ƒoƒgƒ‹î•ñ")]
-    private BattleInfo battleInfo;
+    [SerializeField, Header("ãƒãƒˆãƒ«æƒ…å ±")]
+    private BattleInfo _battleInfo;
 
     /// <summary>
-    /// ƒXƒ^[ƒgƒCƒxƒ“ƒg
+    /// ã‚¹ã‚¿ãƒ¼ãƒˆã‚¤ãƒ™ãƒ³ãƒˆ
     /// </summary>
     private void Start()
     {
-        // ƒeƒXƒg
-        battleInfo.teamRedCost = GameManager.teamCostMax;
-        battleInfo.teamBlueCost = GameManager.teamCostMax;
-        battleInfo.time = 5;
+        // ãƒ†ã‚¹ãƒˆ
+        _battleInfo.teamRedCost = GameManager.teamCostMax;
+        _battleInfo.teamBlueCost = GameManager.teamCostMax;
+        _battleInfo.time = 5;
         {
             PilotInfo pilotInfo;
             pilotInfo.teamId = Team.Read;
             pilotInfo.playerType = PlayerType.Human;
             pilotInfo.useMs = MsList.Gundam;
-            battleInfo.pilotsInfo.Add(pilotInfo);
+            _battleInfo.pilotsInfo.Add(pilotInfo);
         }
         {
             PilotInfo pilotInfo;
             pilotInfo.teamId = Team.Blue;
             pilotInfo.playerType = PlayerType.Cpu;
             pilotInfo.useMs = MsList.Gundam;
-            battleInfo.pilotsInfo.Add(pilotInfo);
+            _battleInfo.pilotsInfo.Add(pilotInfo);
         }
 
         {
@@ -48,14 +48,14 @@ public class BattleSettingManager : MonoBehaviour
             pilotInfo.teamId = Team.None;
             pilotInfo.playerType = PlayerType.Cpu;
             pilotInfo.useMs = MsList.Gundam;
-            battleInfo.pilotsInfo.Add(pilotInfo);
+            _battleInfo.pilotsInfo.Add(pilotInfo);
         }
         {
             PilotInfo pilotInfo;
             pilotInfo.teamId = Team.None;
             pilotInfo.playerType = PlayerType.Cpu;
             pilotInfo.useMs = MsList.Gundam;
-            battleInfo.pilotsInfo.Add(pilotInfo);
+            _battleInfo.pilotsInfo.Add(pilotInfo);
         }
 
 
@@ -67,69 +67,69 @@ public class BattleSettingManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒ{ƒ^ƒ“‚ÌXV
+    /// ãƒœã‚¿ãƒ³ã®æ›´æ–°
     /// </summary>
     void BtnUpdate()
     {
-        // ƒeƒXƒg—p
+        // ãƒ†ã‚¹ãƒˆç”¨
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (!fadeOut)
+            if (!_fadeOut)
             {
-                Debug.LogError("ƒtƒF[ƒhƒIƒuƒWƒFƒNƒg‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
+                Debug.LogError("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒå­˜åœ¨ã—ã¾ã›ã‚“");
             }
             else
             {
-                fadeOut.FadeStrt(escapeSceneName);
+                _fadeOut.FadeStrt(_escapeSceneName);
             }
         }
 
     }
 
     /// <summary>
-    /// BattleStartƒ{ƒ^ƒ“‚ğ‰Ÿ‚³‚ê‚½‚Æ‚«‚Ìˆ—
+    /// BattleStartãƒœã‚¿ãƒ³ã‚’æŠ¼ã•ã‚ŒãŸã¨ãã®å‡¦ç†
     /// </summary>
     public void PushBattleStart()
     {
-        if (!fadeOut)
+        if (!_fadeOut)
         {
-            Debug.LogError("ƒtƒF[ƒhƒIƒuƒWƒFƒNƒg‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
+            Debug.LogError("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒå­˜åœ¨ã—ã¾ã›ã‚“");
             return;
         }
 
         if (!BattleInfoCheck())
         {
-            Debug.Log("ƒoƒgƒ‹î•ñ‚ª‘«‚è‚Ä‚È‚¢‚æ");
+            Debug.Log("ãƒãƒˆãƒ«æƒ…å ±ãŒè¶³ã‚Šã¦ãªã„ã‚ˆ");
             return;
         }
 
-        // ƒQ[ƒ€ƒ}ƒl[ƒWƒƒ[‚Éƒoƒgƒ‹î•ñ‚ğ“`‚¦‚é
-        GameManager.instance.SetBattleInfo(battleInfo);
+        // ã‚²ãƒ¼ãƒ ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã«ãƒãƒˆãƒ«æƒ…å ±ã‚’ä¼ãˆã‚‹
+        GameManager.I.SetBattleInfo(_battleInfo);
 
-        fadeOut.FadeStrt(sceneName);
+        _fadeOut.FadeStrt(_sceneName);
     }
 
     /// <summary>
-    /// ƒoƒgƒ‹î•ñ‚ª\•ª‚©
+    /// ãƒãƒˆãƒ«æƒ…å ±ãŒååˆ†ã‹
     /// </summary>
     /// <returns>
-    /// true \•ª
-    /// false •s\•ª
+    /// true ååˆ†
+    /// false ä¸ååˆ†
     /// </returns>
     bool BattleInfoCheck()
     {
-        // 2000ˆÈ‰º‚Ìê‡
-        if (battleInfo.teamBlueCost < 2000 || battleInfo.teamRedCost < 2000)
+        // 2000ä»¥ä¸‹ã®å ´åˆ
+        if (_battleInfo.teamBlueCost < 2000 || _battleInfo.teamRedCost < 2000)
         {
-            Debug.Log("ƒRƒXƒg‚ª‘«‚è‚Ä‚¢‚È‚¢");
+            Debug.Log("ã‚³ã‚¹ãƒˆãŒè¶³ã‚Šã¦ã„ãªã„");
             return false;
         }
         int teamRed = 0;
         int teamBlue = 0;
         bool noMs = false;
-        foreach (PilotInfo pilotInfo in battleInfo.pilotsInfo)
+        foreach (PilotInfo pilotInfo in _battleInfo.pilotsInfo)
         {
-            // oê‚µ‚Ü‚¹‚ñ
+            // å‡ºå ´ã—ã¾ã›ã‚“
             if(pilotInfo.teamId == Team.None)
             {
                 continue;
@@ -150,23 +150,23 @@ public class BattleSettingManager : MonoBehaviour
             }
         }
 
-        // ‹@‘Ì‚ª–¢İ’è‚Ì‚â‚Â‚ª‚¢‚Ü‚·
+        // æ©Ÿä½“ãŒæœªè¨­å®šã®ã‚„ã¤ãŒã„ã¾ã™
         if (noMs)
         {
-            Debug.Log("‹@‘Ì‚ª–¢İ’è");
+            Debug.Log("æ©Ÿä½“ãŒæœªè¨­å®š");
             return false;
         }
 
-        // ƒvƒŒƒCƒ„[‚Ì”‚ª‘«‚è‚Ü‚¹‚ñ
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ•°ãŒè¶³ã‚Šã¾ã›ã‚“
         if (teamRed + teamBlue < 2)
         {
-            Debug.Log("ƒvƒŒƒCƒ„[‚ª‘«‚è‚Ä‚¢‚È‚¢");
+            Debug.Log("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè¶³ã‚Šã¦ã„ãªã„");
             return false;
         }
-        // ƒ`[ƒ€‚Ì•K—vl”‚ª‘«‚è‚Ü‚¹‚ñ
+        // ãƒãƒ¼ãƒ ã®å¿…è¦äººæ•°ãŒè¶³ã‚Šã¾ã›ã‚“
         if(teamBlue < 1 && teamRed < 1)
         {
-            Debug.Log("ƒ`[ƒ€‚É•K—v‚Èl”‚ª‘«‚è‚Ä‚¢‚È‚¢");
+            Debug.Log("ãƒãƒ¼ãƒ ã«å¿…è¦ãªäººæ•°ãŒè¶³ã‚Šã¦ã„ãªã„");
             return false;
         }
 

@@ -2,50 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 弾当たり衝突判定コンポーネント
+/// </summary>
 public class BulletCollision : MonoBehaviour
 {
-    [SerializeField, Header("生成から衝突可能までの時間")]
-    private float hitTimer = 0.1f;
-
-    private bool isHit = false;
-
     [SerializeField, Header("与えるダメージ")]
-    private int damage;
+    private int _atk = 0;
 
     [SerializeField, Header("ダウン値")]
-    private int downValue;
+    private int _down = 0;
 
     [SerializeField, Header("衝突したときに自身を破壊するか")]
-    private bool isDead = false;
+    private bool _isHitDestroy = false;
 
     [SerializeField, Header("衝突時のエフェクト")]
-    private GameObject pfb_eff_hit;
+    private GameObject _pfbEffHit = null;
 
     [SerializeField, Header("生成してからエフェクト消すまで")]
-    private float hit_eff_destroyTimer;
+    private float _hitEffDestroyTimer = 0;
 
-    private void Start()
-    {
-        Invoke("HitStart", hitTimer);
-    }
-
-    void HitStart()
-    {
-        isHit = true;
-    }
-
-    /// <summary>
-    /// ヒットエフェクト生成
-    /// </summary>
-    private void CreteHitEffect()
-    {
-        // エフェクトを生成
-        if (pfb_eff_hit)
-        {
-            var obj =Instantiate(pfb_eff_hit, transform.position, transform.rotation);
-            Destroy(obj, hit_eff_destroyTimer);
-        }
-    }
+    #region イベント関数
 
     /// <summary>
     /// 衝突したときに処理
@@ -53,31 +30,36 @@ public class BulletCollision : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if(!isHit)
-        {
-            return;
-        }
-
+        // エフェクトを生成
+        if (other.CompareTag("MsCollision") || (other.CompareTag("Ground") || other.CompareTag("Building")))
+            CreteHitEffect();
 
         // 機体に衝突したらダメージを与える
-        if (other.gameObject.tag == "MsCollision")
+        if (other.CompareTag("MsCollision"))
         {
-            // エフェクトを生成
-            CreteHitEffect();
-            other.GetComponent<MsDamageCheck>().Damage(damage, downValue, transform.position);
-            if(isDead)
-            {
-                Destroy(gameObject);
-            }
+            //other.GetComponent<MsDamageCheck>().Damage(_atk, _down, transform.position);
+            if (_isHitDestroy) Destroy(gameObject);
         }
 
         // 建物に衝突したら自身を破壊
-        if(other.gameObject.tag == "Ground" || other.gameObject.tag == "Building")
+        if (other.CompareTag("Ground") || other.CompareTag("Building"))
         {
-            // エフェクトを生成
-            CreteHitEffect();
-
             Destroy(gameObject);
+        }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// ヒットエフェクト生成
+    /// </summary>
+    private void CreteHitEffect()
+    {
+        // エフェクトを生成
+        if (_pfbEffHit)
+        {
+            var obj = Instantiate(_pfbEffHit, transform.position, transform.rotation);
+            Destroy(obj, _hitEffDestroyTimer);
         }
     }
 }

@@ -1,60 +1,59 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ƒ}ƒbƒv”ÍˆÍ§ŒÀ‚ğƒIƒuƒWƒFƒNƒg‚ğ¶¬‚·‚é
+/// ãƒãƒƒãƒ—ç¯„å›²åˆ¶é™ã‚’ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹
 /// </summary>
 public class MapRangeLimit : MonoBehaviour
 {
-    [SerializeField, Header("ƒ}ƒbƒvƒTƒCƒY")]
-    private Vector2 mapSize = Vector2.one;
+    [SerializeField, Header("ãƒãƒƒãƒ—ã‚µã‚¤ã‚º")]
+    private Vector2 _mapSize = Vector2.one;
 
-    [SerializeField, Header("•Ç‚ÌİŒv}")]
-    private GameObject wall = null;
+    [SerializeField, Header("å£ã®è¨­è¨ˆå›³")]
+    private GameObject _pfbWall = null;
 
     /// <summary>
-    /// Å‰‚ÉÀs
+    /// Updateã®å‰ã«å‘¼ã³å‡ºã•ã‚Œã‚‹
     /// </summary>
     void Start()
     {
-        Vector2 mapSizeHarf = mapSize / 2;
+        Vector2 mapSizeHarf = _mapSize / 2;
         {
             Vector2 pos = new Vector2(0, mapSizeHarf.y);
-            Vector2 size = new Vector2(mapSize.x, 1);
+            Vector2 size = new Vector2(_mapSize.x, 1);
             CreateMapWall(pos, size);
         }
         {
             Vector2 pos = new Vector2(0, -mapSizeHarf.y);
-            Vector2 size = new Vector2(mapSize.x, 1);
+            Vector2 size = new Vector2(_mapSize.x, 1);
             CreateMapWall(pos, size);
         }
         {
             Vector2 pos = new Vector2(mapSizeHarf.x, 0);
-            Vector2 size = new Vector2(1, mapSize.y);
+            Vector2 size = new Vector2(1, _mapSize.y);
             CreateMapWall(pos, size);
         }
         {
             Vector2 pos = new Vector2(-mapSizeHarf.x, 0);
-            Vector2 size = new Vector2(1, mapSize.y);
+            Vector2 size = new Vector2(1, _mapSize.y);
             CreateMapWall(pos, size);
         }
-
     }
 
     /// <summary>
-    /// •Ç‚ğì¬
+    /// å£ã‚’ä½œæˆ
     /// </summary>
     /// <param name="pos"></param>
     /// <param name="size"></param>
     void CreateMapWall(Vector2 pos, Vector2 size)
     {
-        if (!wall)
+        if (!_pfbWall)
         {
-            Debug.LogError("•Ç‚ÌİŒv}‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢");
+            Debug.LogError("å£ã®è¨­è¨ˆå›³ãŒç™»éŒ²ã•ã‚Œã¦ã„ãªã„");
             return;
         }
-        GameObject obj = Instantiate(wall);
+        GameObject obj = Instantiate(_pfbWall);
         obj.transform.position = new Vector3(pos.x, 0.5f, pos.y);
         obj.transform.localScale = new Vector3(size.x, 1, size.y);
 
