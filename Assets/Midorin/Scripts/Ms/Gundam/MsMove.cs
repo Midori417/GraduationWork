@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,55 +9,46 @@ using UnityEngine;
 public class MsMove : BaseMsParts
 {
     // 自身のカメラ
-    private Transform myCamera;
-
-    /// <summary>
-    /// 移動パラメータ
-    /// </summary>
-    [System.Serializable]
-    private struct MoveParamater
+    private Transform _myCamera;
+    
+    [Serializable]
+    private struct MoveValiable
     {
         [Header("移動速度")]
-        public float speed;
+        public float _speed;
 
         [Header("旋回速度")]
-        public float rotationSpeed;
+        public float _rotationSpeed;
     }
     [SerializeField, Header("移動パラメータ")]
-    private MoveParamater moveParamater;
+    private MoveValiable _move;
 
-    /// <summary>
-    /// ジャンプパラメータ
-    /// </summary>
-    [System.Serializable]
-    private struct JumpParamater
+    [Serializable]
+    private struct JumpValiable
     {
         [Header("ジャンプ力")]
-        public float power;
+        public float _power;
 
         [Header("移動速度")]
-        public float speed;
+        public float _speed;
 
         [Header("旋回速度")]
-        public float rotationSpeed;
+        public float _rotationSpeed;
 
         [Header("ブーストゲージの消費量")]
         public float useBoost;
 
-        [System.NonSerialized, Header("ジャンプ中か")]
+        [HideInInspector, Header("ジャンプ中か")]
         public bool isNow;
 
         [Header("着地時の慣性")]
         public float inertia;
     }
     [SerializeField, Header("ジャンプパラメータ")]
-    private JumpParamater jumpParamater;
+    private JumpValiable _jump;
 
-    /// <summary>
-    /// ダッシュパラメータ
-    /// </summary>
-    [System.Serializable]
-    private struct DashParamater
+   [Serializable]
+    private struct DashValiable
     {
         [Header("移動速度")]
         public float speed;
@@ -67,16 +59,16 @@ public class MsMove : BaseMsParts
         [Header("ブーストゲージの消費量")]
         public float useBoost;
 
-        [System.NonSerialized, Header("ダッシュ中か")]
+        [HideInInspector, Header("ダッシュ中か")]
         public bool isNow;
     }
     [SerializeField, Header("ダッシュパラメータ")]
-    private DashParamater dashParamater;
+    private DashValiable _dash;
 
     #region プロパティ
 
-    public bool isJump => jumpParamater.isNow;
-    public bool isDash => dashParamater.isNow;
+    public bool isJump => _jump.isNow;
+    public bool isDash => _dash.isNow;
     
     #endregion
 
@@ -86,7 +78,7 @@ public class MsMove : BaseMsParts
     public override void Initalize()
     {
         base.Initalize();
-        myCamera = mainMs.myCamera;
+        _myCamera = mainMs.myCamera;
     }
 
     /// <summary>
@@ -94,7 +86,7 @@ public class MsMove : BaseMsParts
     /// </summary>
     public void Landing()
     {
-        rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, jumpParamater.inertia);
+        rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, _jump.inertia);
     }
 
     /// <summary>
@@ -105,8 +97,8 @@ public class MsMove : BaseMsParts
     Vector3 MoveForward(Vector2 moveAxis)
     {
         // カメラの方向から、X-Z単位ベクトル(正規化)を取得
-        Vector3 cameraForward = Vector3.Scale(myCamera.forward, new Vector3(1, 0, 1));
-        Vector3 moveForward = cameraForward * moveAxis.y + myCamera.right * moveAxis.x;
+        Vector3 cameraForward = Vector3.Scale(_myCamera.forward, new Vector3(1, 0, 1));
+        Vector3 moveForward = cameraForward * moveAxis.y + _myCamera.right * moveAxis.x;
 
         return moveForward;
     }
@@ -134,8 +126,8 @@ public class MsMove : BaseMsParts
         if (moveAxis != Vector2.zero)
         {
             Vector3 moveFoward = MoveForward(moveAxis);
-            MoveForwardRot(moveFoward, moveParamater.rotationSpeed);
-            rb.velocity = transform.forward * moveParamater.speed + new Vector3(0, rb.velocity.y, 0);
+            MoveForwardRot(moveFoward, _move._rotationSpeed);
+            rb.velocity = transform.forward * _move._speed + new Vector3(0, rb.velocity.y, 0);
         }
         else
         {
@@ -158,24 +150,24 @@ public class MsMove : BaseMsParts
                 // 進行方向に補間しながら回転
                 if (moveFoward != Vector3.zero)
                 {
-                    MoveForwardRot(moveFoward, jumpParamater.rotationSpeed);
-                    rb.velocity = transform.forward * moveParamater.speed + new Vector3(0, rb.velocity.y, 0);
+                    MoveForwardRot(moveFoward, _jump._rotationSpeed);
+                    rb.velocity = transform.forward * _move._speed + new Vector3(0, rb.velocity.y, 0);
                 }
-                rb.velocity = new Vector3(rb.velocity.x, jumpParamater.power, rb.velocity.z);
+                rb.velocity = new Vector3(rb.velocity.x, _jump._power, rb.velocity.z);
 
-                jumpParamater.isNow = true;
+                _jump.isNow = true;
 
                 // エネルギーの使用
-                mainMs.UseBoost(jumpParamater.useBoost);
+                mainMs.UseBoost(_jump.useBoost);
             }
             else
             {
-                jumpParamater.isNow = false;
+                _jump.isNow = false;
             }
         }
         else
         {
-            jumpParamater.isNow = false;
+            _jump.isNow = false;
         }
     }
 
@@ -192,23 +184,23 @@ public class MsMove : BaseMsParts
                 // 進行方向に補間しながら回転
                 if (moveFoward != Vector3.zero)
                 {
-                    MoveForwardRot(moveFoward, dashParamater.rotationSpeed);
+                    MoveForwardRot(moveFoward, _dash.rotationSpeed);
                 }
-                rb.velocity = transform.forward * dashParamater.speed;
+                rb.velocity = transform.forward * _dash.speed;
 
-                dashParamater.isNow = true;
+                _dash.isNow = true;
 
                 // エネルギーの使用
-                mainMs.UseBoost(dashParamater.useBoost);
+                mainMs.UseBoost(_dash.useBoost);
             }
             else
             {
-                dashParamater.isNow = false;
+                _dash.isNow = false;
             }
         }
         else
         {
-            dashParamater.isNow = false;
+            _dash.isNow = false;
         }
     }
 }

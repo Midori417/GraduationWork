@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -95,7 +94,7 @@ public class Gundam : BaseMs
     /// </summary>
     private void Start()
     {
-        
+        Initialize();
     }
 
     /// <summary>
@@ -109,13 +108,13 @@ public class Gundam : BaseMs
             return;
         }
         BoostCharge();
-
     }
 
     #endregion
 
     /// <summary>
     /// 初期化する
+    /// パイロットに呼び出してもらう
     /// </summary>
     public override void Initialize()
     {

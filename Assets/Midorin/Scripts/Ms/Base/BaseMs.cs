@@ -21,7 +21,7 @@ public class BaseMs : BaseGameObject
     private List<BaseMsAmoParts> _uiArmeds = new List<BaseMsAmoParts>();
 
     [Serializable]
-    private class HpVariable
+    private class Hp
     {
         [HideInInspector, Header("現在の体力")]
         public int _current;
@@ -38,7 +38,7 @@ public class BaseMs : BaseGameObject
         }
     }
     [SerializeField, Header("Hp変数")]
-    private HpVariable _hp;
+    private Hp _hp;
 
     // trueならダメージを受ける
     protected bool isDamageOk = true;
@@ -50,7 +50,7 @@ public class BaseMs : BaseGameObject
     protected bool _isDown = false;
 
     [Serializable]
-    private class BoostVariable
+    private class Boost
     {
         // エネルギーの最大量
         private static float _max = 100;
@@ -140,7 +140,7 @@ public class BaseMs : BaseGameObject
         }
     }
     [SerializeField, Header("ブースト変数")]
-    private BoostVariable _boost;
+    private Boost _boost;
 
     [HideInInspector]
     public MsInput _msInput;
