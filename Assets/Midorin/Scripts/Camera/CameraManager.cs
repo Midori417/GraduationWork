@@ -18,9 +18,6 @@ public class CameraManager : BaseGameObject
     // とりつく機体
     private Transform _myMs;
 
-    // 敵機体配列
-    private List<Transform> _enemys;
-
     // ターゲット機体
     private Transform _target;
 
@@ -32,9 +29,9 @@ public class CameraManager : BaseGameObject
     {
         set => _myMs = value;
     }
-    public List<Transform> enemys
+    public Transform target
     {
-        set => _enemys = value;
+        set => _target = value;
     }
 
     /// <summary>
@@ -49,11 +46,9 @@ public class CameraManager : BaseGameObject
         if (!_virtualCamera.Follow)
             _virtualCamera.Follow = _myMs;
 
-        if(isStop) return;
+        if (isStop) return;
 
-        if (!_target)
-            _target = _enemys[0];
-        else _virtualCamera.LookAt = _target;
+        if (_target) _virtualCamera.LookAt = _target;
     }
 
     /// <summary>
@@ -62,21 +57,6 @@ public class CameraManager : BaseGameObject
     /// <returns></returns>
     private bool ProsessCheck()
     {
-        return (!_myMs) || (_enemys.Count <= 0) || (!_virtualCamera);
+        return (!_myMs) || (!_virtualCamera);
     }
-
-    /// <summary>
-    /// ターゲットチェンジ
-    /// パイロットで呼んでもらう
-    /// </summary>
-    public void TargetChange()
-    {
-        if (_enemys.Count - 1 == _index)
-        {
-            _index = 0;
-        }
-        _index++;
-        _target = _enemys[_index];
-    }
-
 }

@@ -14,6 +14,8 @@ public class BaseMsAmoParts : BaseMsParts
     [SerializeField, Header("最大弾")]
     protected int amoMax;
 
+    private bool isAdd = false;
+
     /// <summary>
     /// 初期化
     /// </summary>
@@ -21,6 +23,10 @@ public class BaseMsAmoParts : BaseMsParts
     {
         base.Initalize();
 
-        mainMs.AddAmoParts(this);
+        if (!isAdd)
+        {
+            isAdd = true;
+            mainMs.AddAmoParts(this);
+        }
     }
 }

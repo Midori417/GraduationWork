@@ -22,8 +22,10 @@ public class StateMachine<T> where T : Enum
         // 状態中に毎フレーム呼び出される処理
         public Action Update;
 
-        // 状態を離れるときの所為r
+        // 状態を離れるときの所為
         public Action<T> Exit;
+
+        public Action LateUpdate;
     }
 
     // 現在の状態を外部で取得
@@ -38,6 +40,7 @@ public class StateMachine<T> where T : Enum
             Enter = delegate { },
             Update = delegate { },
             Exit = delegate { },
+            LateUpdate = delegate { },
         },
     };
     private T _currentState;
@@ -60,15 +63,16 @@ public class StateMachine<T> where T : Enum
     /// <param name="enter">状態開始時の処理</param>
     /// <param name="update">状態更新ジ時の処理</param>
     /// <param name="exit">状態終了時の処理</param>
-    public void AddState(T value, Action<T> enter, Action update, Action<T> exit)
+    public void AddState(T value, Action<T> enter, Action update, Action lateUpdate, Action<T> exit)
     {
         var state = new State()
         {
             Value = value,
             Enter = enter,
             Update = update,
+            LateUpdate = lateUpdate,
             Exit = exit,
-        };
+        }; 
         _dict[value] = state;
     }
 
@@ -78,6 +82,14 @@ public class StateMachine<T> where T : Enum
     public void UpdateState()
     {
         _dict[_currentState].Update();
+    }
+
+    /// <summary>
+    /// 現在の状態のLateUpdate処理を実行する
+    /// </summary>
+    public void LateUpdateState()
+    {
+        _dict[_currentState].LateUpdate();
     }
 
     /// <summary>

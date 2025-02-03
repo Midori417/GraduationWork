@@ -150,7 +150,7 @@ public class BaseMs : BaseGameObject
     public Rigidbody rb => _rb;
     public Animator animator => _animator;
     public SkinnedMeshRenderer meshRenderer => _meshRenderer;
-    protected GroundCheck groundCheck => _groundCheck;
+    public GroundCheck groundCheck => _groundCheck;
 
     public Transform myCamera
     {
@@ -175,6 +175,16 @@ public class BaseMs : BaseGameObject
     public int amoCount => _uiArmeds.Count;
 
     #endregion
+
+    /// <summary>
+    /// 移動処理
+    /// </summary>
+    public override void Stop()
+    {
+        base.Stop();
+        rb.velocity = Vector3.zero;
+        _animator.speed = 0;
+    }
 
     /// <summary>
     /// 初期化

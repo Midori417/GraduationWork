@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -18,6 +19,8 @@ public class Gundam : BaseMs
     StateMachine<State> _stateMachine = new StateMachine<State>();
 
     private MsMove _move;
+    private GundamMainShot _mainShot;
+    private GundamSubShot _subShot;
 
     [Serializable]
     private struct ActiveObject
@@ -96,6 +99,8 @@ public class Gundam : BaseMs
     private void Awake()
     {
         _move = GetComponent<MsMove>();
+        _mainShot = GetComponent<GundamMainShot>();
+        _subShot = GetComponent<GundamSubShot>();
         SetUp();
     }
 
@@ -111,6 +116,8 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
+        if(isStop) return;
+
         if (DestroyCheck())
         {
             // 破壊された
@@ -119,6 +126,14 @@ public class Gundam : BaseMs
         _stateMachine.UpdateState();
         AnimUpdate();
         BoostCharge();
+    }
+
+    /// <summary>
+    /// Updateの後に呼び出される
+    /// </summary>
+    private void LateUpdate()
+    {
+        _stateMachine.LateUpdateState();
     }
 
     #endregion
@@ -134,6 +149,14 @@ public class Gundam : BaseMs
         {
             _move.SetMainMs(this);
             _move.Initalize();
+        }
+        if(_mainShot)
+        {
+            _mainShot.SetMainMs(this);
+            _mainShot.Initalize();
+        }
+        if(_subShot)
+        {
         }
         _activeObj.Initialize();
     }
@@ -175,12 +198,19 @@ public class Gundam : BaseMs
             if(groundCheck.isGround && !groundCheck.oldIsGround)
                 _stateMachine.ChangeState(State.Landing);
 
-            Move();
+            _move.MoveUpdate();
+            MoveAnimation();
+            bool isRoket = _move.isDash || _move.isJump;
+            _activeObj.RoketFireActive(isRoket);
+        };
+        Action lateUpdate = () =>
+        {
+            _mainShot.MainShotUpdate();
         };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, exit);
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
 
     /// <summary>
@@ -203,30 +233,18 @@ public class Gundam : BaseMs
                 _stateMachine.ChangeState(State.Normal);
             }
         };
+        Action lateUpdate = () =>
+        {
+        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, exit);
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
 
     #endregion
 
     #region 移動関係
-
-    /// <summary>
-    /// 移動処理
-    /// </summary>
-    private void Move()
-    {
-        if (!_move) return;
-
-        if (groundCheck.isGround)
-            _move.GroundMove();
-
-        _move.Jump();
-        _move.Dash();
-        MoveAnimation();
-    }
 
     /// <summary>
     /// 移動アニメーション

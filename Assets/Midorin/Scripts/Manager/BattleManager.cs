@@ -129,7 +129,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
         battleInfo.pilotsInfo = new List<PilotInfo>();
         {
             {
-                battleInfo.time = 2 * 60;
+                battleInfo.time = 60 * 60;
                 battleInfo.teamRedCost = 6000;
                 battleInfo.teamBlueCost = 3000;
             }
@@ -305,10 +305,14 @@ public class BattleManager : SingletonBehavior<BattleManager>
                 _stateMachine.ChangeState(State.Go);
             }
         };
+        Action lateUpdate = () =>
+        {
+
+        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, exit);
+        _stateMachine.AddState(state, enter, update,lateUpdate, exit);
     }
 
     /// <summary>
@@ -329,10 +333,14 @@ public class BattleManager : SingletonBehavior<BattleManager>
                 _stateMachine.ChangeState(State.Battle);
             }
         };
+        Action lateUpdate = () =>
+        {
+
+        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, exit);
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
 
     /// <summary>
@@ -360,6 +368,10 @@ public class BattleManager : SingletonBehavior<BattleManager>
                 _stateMachine.ChangeState(State.End);
             }
         };
+        Action lateUpdate = () =>
+        {
+
+        };
         Action<State> exit = (next) =>
         {
             foreach (BasePilot pilot in _pilot._all)
@@ -367,7 +379,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
                 pilot.Stop();
             }
         };
-        _stateMachine.AddState(state, enter, update, exit);
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
 
     /// <summary>
@@ -382,10 +394,14 @@ public class BattleManager : SingletonBehavior<BattleManager>
         Action update = () =>
         {
         };
+        Action lateUpdate = () =>
+        {
+
+        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, exit);
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
 
     #endregion

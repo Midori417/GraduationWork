@@ -40,6 +40,7 @@ public class HumanPilot : BasePilot
         msInput._move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         msInput._jump = Input.GetKey(KeyCode.Space);
         msInput._dash = Input.GetKey(KeyCode.LeftShift);
+        msInput._mainShot = Input.GetKeyDown(KeyCode.Mouse0);
 
         myMs.msInput = msInput;
     }

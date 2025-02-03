@@ -18,6 +18,7 @@ public class BasePilot : BaseGameObject
     // ターゲットパイロット
     private BasePilot _targetPilot;
     private List<BasePilot> _enemyPilots;
+    private int _taregetIndex = 0;
 
     public Team team
     {
@@ -50,11 +51,48 @@ public class BasePilot : BaseGameObject
         {
             _enemyMs.Add(pilot.myMs.center);
         }
-        _cameraManager.enemys = _enemyMs;
         // 最初のターゲットを設定
         _targetPilot = _enemyPilots[0];
+        _cameraManager.target = _targetPilot.myMs.center;
+        _myMs.targetMs = _targetPilot.myMs;
 
         // 初期化
         _myMs.Initialize();
+    }
+
+    /// <summary>
+    /// ターゲットチェンジ
+    /// パイロットで呼んでもらう
+    /// </summary>
+    public void TargetChange()
+    {
+        if (_enemyPilots.Count - 1 == _taregetIndex)
+        {
+            _taregetIndex = 0;
+        }
+        _taregetIndex++;
+        _targetPilot = _enemyPilots[_taregetIndex];
+
+        // ターゲットを設定
+        _cameraManager.target = _targetPilot.myMs.center;
+        _myMs.targetMs = _targetPilot.myMs;
+    }
+
+    /// <summary>
+    /// オブジェクトの処理を開始
+    /// </summary>
+    public override void Play()
+    {
+        base.Play();
+        myMs.Play();
+    }
+
+    /// <summary>
+    /// オブジェクトの処理を止める
+    /// </summary>
+    public override void Stop()
+    {
+        base.Stop();
+        myMs.Stop();
     }
 }

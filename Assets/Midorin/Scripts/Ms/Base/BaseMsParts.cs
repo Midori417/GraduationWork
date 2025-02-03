@@ -23,6 +23,17 @@ public class BaseMsParts : MonoBehaviour
             return null;
         }
     }
+    protected Animator animator
+    {
+        get
+        {
+            if(mainMs)
+            {
+                return mainMs.animator;
+            }
+            return null;
+        }
+    }
     protected Transform targetMs
     {
         get
@@ -31,7 +42,7 @@ public class BaseMsParts : MonoBehaviour
             {
                 if(mainMs.targetMs)
                 {
-                    return mainMs.targetMs.transform;
+                    return mainMs.targetMs.center;
                 }
             }
             return null;
@@ -39,6 +50,7 @@ public class BaseMsParts : MonoBehaviour
     }
     protected bool isStop => _mainMs.isStop;
     protected MsInput msInput => _mainMs.msInput;
+    protected GroundCheck groundCheck => _mainMs.groundCheck;
 
     /// <summary>
     /// 初期化
