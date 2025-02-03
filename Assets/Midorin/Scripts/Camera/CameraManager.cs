@@ -10,7 +10,7 @@ using UnityEngine;
 public class CameraManager : BaseGameObject
 {
     [SerializeField, Header("メインカメラ")]
-    private GameManager _mainCamera;
+    private GameObject _mainCamera;
 
     [SerializeField, Header("仮想シネマカメラ")]
     CinemachineVirtualCamera _virtualCamera;
@@ -27,7 +27,7 @@ public class CameraManager : BaseGameObject
     // 現在のターゲット番号
     int _index = 0;
 
-    public GameManager mainCamera => _mainCamera;
+    public GameObject mainCamera => _mainCamera;
     public Transform myMs
     {
         set => _myMs = value;

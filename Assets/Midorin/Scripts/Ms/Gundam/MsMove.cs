@@ -10,7 +10,7 @@ public class MsMove : BaseMsParts
 {
     // 自身のカメラ
     private Transform _myCamera;
-    
+
     [Serializable]
     private struct MoveValiable
     {
@@ -47,7 +47,7 @@ public class MsMove : BaseMsParts
     [SerializeField, Header("ジャンプパラメータ")]
     private JumpValiable _jump;
 
-   [Serializable]
+    [Serializable]
     private struct DashValiable
     {
         [Header("移動速度")]
@@ -69,7 +69,7 @@ public class MsMove : BaseMsParts
 
     public bool isJump => _jump.isNow;
     public bool isDash => _dash.isNow;
-    
+
     #endregion
 
     /// <summary>
@@ -115,13 +115,14 @@ public class MsMove : BaseMsParts
     /// <summary>
     /// 移動処理
     /// </summary>
-    public void GroundMove(Vector2 moveAxis)
+    public void GroundMove()
     {
         if (isDash)
         {
             return;
         }
 
+        Vector2 moveAxis = msInput._move;
         // 進行方向に回転しながら正面方向に進む
         if (moveAxis != Vector2.zero)
         {
@@ -139,8 +140,12 @@ public class MsMove : BaseMsParts
     /// <summary>
     /// ジャンプ処理
     /// </summary>
-    public void Jump(Vector2 moveAxis, bool isJumpBtn)
+    public void Jump()
     {
+        if (isDash) return;
+
+        Vector2 moveAxis = msInput._move;
+        bool isJumpBtn = msInput._jump;
         if (isJumpBtn)
         {
             if (mainMs.boost01 > 0)
@@ -151,7 +156,7 @@ public class MsMove : BaseMsParts
                 if (moveFoward != Vector3.zero)
                 {
                     MoveForwardRot(moveFoward, _jump._rotationSpeed);
-                    rb.velocity = transform.forward * _move._speed + new Vector3(0, rb.velocity.y, 0);
+                    rb.velocity = transform.forward * _jump._speed + new Vector3(0, rb.velocity.y, 0);
                 }
                 rb.velocity = new Vector3(rb.velocity.x, _jump._power, rb.velocity.z);
 
@@ -159,23 +164,34 @@ public class MsMove : BaseMsParts
 
                 // エネルギーの使用
                 mainMs.UseBoost(_jump.useBoost);
+                rb.useGravity = false;
             }
             else
             {
-                _jump.isNow = false;
+                JumpFailed();
             }
         }
         else
         {
-            _jump.isNow = false;
+            JumpFailed();
         }
+    }
+
+    /// </summary>
+    private void JumpFailed()
+    {
+        rb.useGravity = true;
+        _jump.isNow = false;
     }
 
     /// <summary>
     /// ダッシュ処理
     /// </summary>
-    public void Dash(Vector2 moveAxis, bool isDashBtn)
+    public void Dash()
     {
+        Vector2 moveAxis = msInput._move;
+        bool isDashBtn = msInput._dash;
+
         if (isDashBtn)
         {
             if (mainMs.boost01 > 0)
@@ -195,12 +211,21 @@ public class MsMove : BaseMsParts
             }
             else
             {
-                _dash.isNow = false;
+               DashFaild();
             }
         }
         else
         {
-            _dash.isNow = false;
+            DashFaild();
         }
+    }
+
+    /// <summary>
+    /// ダッシュ終了
+    /// </summary>
+    private void DashFaild()
+    {
+        rb.useGravity = true;
+        _dash.isNow = false;
     }
 }

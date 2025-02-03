@@ -143,7 +143,7 @@ public class BaseMs : BaseGameObject
     private Boost _boost;
 
     [HideInInspector]
-    public MsInput _msInput;
+    private MsInput _msInput;
 
     #region ゲッター
 
@@ -152,13 +152,25 @@ public class BaseMs : BaseGameObject
     public SkinnedMeshRenderer meshRenderer => _meshRenderer;
     protected GroundCheck groundCheck => _groundCheck;
 
-    public Transform myCamera => _myCamera;
-    public BaseMs targetMs => _targetMs;
+    public Transform myCamera
+    {
+        get => _myCamera;
+        set => _myCamera = value;
+    }
+    public BaseMs targetMs
+    {
+        get => _targetMs;
+        set => _targetMs = value;
+    }
     public Transform center => _center;
     public int hp => _hp._current;
     public int hpMax => _hp._max;
     public float boost01 => _boost._current01;
-    public MsInput msInput => _msInput;
+    public MsInput msInput
+    {
+        get => _msInput;
+        set => _msInput = value;
+    }
 
     public int amoCount => _uiArmeds.Count;
 
@@ -283,25 +295,6 @@ public class BaseMs : BaseGameObject
 
     #endregion
 
-    /// <summary>
-    /// ターゲット機体を設定
-    /// パイロットに呼び出す
-    /// </summary>
-    /// <param name="target"></param>
-    public void SetTargetMs(BaseMs target)
-    {
-        _targetMs = target;
-    }
-
-    /// <summary>
-    /// 自身のカメラを設定
-    /// パイロットで呼び出す
-    /// </summary>
-    /// <param name="myCameraTrs"></param>
-    public void SetMyCamera(Transform myCameraTrs)
-    {
-        _myCamera = myCameraTrs;
-    }
 
     /// <summary>
     /// UIに表示するパーツを追加

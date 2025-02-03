@@ -123,6 +123,8 @@ public class BattleManager : SingletonBehavior<BattleManager>
     {
         _gameManager = GameManager.I;
         //BattleInfo battleInfo = _gameManager._battleInfo;
+
+        //テスト用↓
         BattleInfo battleInfo = new BattleInfo();
         battleInfo.pilotsInfo = new List<PilotInfo>();
         {

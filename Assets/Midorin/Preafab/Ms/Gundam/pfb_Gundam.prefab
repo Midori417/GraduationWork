@@ -255,13 +255,6 @@ MonoBehaviour:
   _boost:
     _chargeLockTime: 0.5
     _overHeartChargeLockTime: 1
-  _msInput:
-    _move: {x: 0, y: 0}
-    _jump: 0
-    _dash: 0
-    _mainShot: 0
-    _subShot: 0
-    _mainAttack: 0
   _activeObj:
     _beumRifle: {fileID: 6540569978845907171}
     _bazooka: {fileID: 673071238241667363}
@@ -279,19 +272,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac7977ce974d5454d9153208040b457a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveParamater:
-    speed: 20
-    rotationSpeed: 7
-  jumpParamater:
-    power: 15
-    speed: 1
-    rotationSpeed: 5
+  _move:
+    _speed: 30
+    _rotationSpeed: 5
+  _jump:
+    _power: 20
+    _speed: 10
+    _rotationSpeed: 1
     useBoost: 30
-    inertia: 0.23
-  dashParamater:
+    isNow: 0
+    inertia: 0.05
+  _dash:
     speed: 40
-    rotationSpeed: 2
-    useBoost: 20
+    rotationSpeed: 3
+    useBoost: 30
+    isNow: 0
 --- !u!1 &286263149433171680
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,6 +15,8 @@ public class BasePilot : BaseGameObject
     // 自身の操る機体
     private BaseMs _myMs;
 
+    // ターゲットパイロット
+    private BasePilot _targetPilot;
     private List<BasePilot> _enemyPilots;
 
     public Team team
@@ -40,6 +42,7 @@ public class BasePilot : BaseGameObject
     {
         // 機体を子供に設定
         _myMs.transform.parent = transform;
+        _myMs.myCamera = _cameraManager.mainCamera.transform;
         _cameraManager.myMs = _myMs.center;
         
         List<Transform> _enemyMs = new List<Transform>();
@@ -48,6 +51,8 @@ public class BasePilot : BaseGameObject
             _enemyMs.Add(pilot.myMs.center);
         }
         _cameraManager.enemys = _enemyMs;
+        // 最初のターゲットを設定
+        _targetPilot = _enemyPilots[0];
 
         // 初期化
         _myMs.Initialize();

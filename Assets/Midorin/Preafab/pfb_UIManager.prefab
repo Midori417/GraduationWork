@@ -503,7 +503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _txtHp: {fileID: 702131115061974561}
-  _imgBoostGauge: {fileID: 0}
+  _imgBoostGauge: {fileID: 4745591196660142170}
   _txtTime: {fileID: 4003056043136932475}
   _imgArmed:
   - {fileID: 2033236558595588340}

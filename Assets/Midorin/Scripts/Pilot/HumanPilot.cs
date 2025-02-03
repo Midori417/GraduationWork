@@ -10,6 +10,8 @@ public class HumanPilot : BasePilot
     [SerializeField, Header("UIマネージャー")]
     private UIManager _uiManager;
 
+    MsInput msInput = new MsInput();
+
     /// <summary>
     /// 毎フレーム呼び出される
     /// </summary>
@@ -35,7 +37,11 @@ public class HumanPilot : BasePilot
     /// </summary>
     private void MsUpdate()
     {
-        
+        msInput._move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        msInput._jump = Input.GetKey(KeyCode.Space);
+        msInput._dash = Input.GetKey(KeyCode.LeftShift);
+
+        myMs.msInput = msInput;
     }
 
     /// <summary>

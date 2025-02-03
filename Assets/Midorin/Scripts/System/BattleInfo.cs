@@ -65,8 +65,7 @@ public struct BattleInfo
     public List<PilotInfo> pilotsInfo;
 }
 
-[Serializable]
-public class MsInput
+public struct MsInput
 {
     public Vector2 _move;
     public bool _jump;
