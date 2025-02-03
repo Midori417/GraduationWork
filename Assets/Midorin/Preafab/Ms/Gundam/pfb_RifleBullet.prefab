@@ -14673,7 +14673,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4044484641643912986}
-  - component: {fileID: -4104332489870500713}
+  - component: {fileID: -1440074383946312375}
   - component: {fileID: -1150294115761352523}
   - component: {fileID: -7839690479877354276}
   - component: {fileID: 2139225256780875728}
@@ -14700,7 +14700,7 @@ Transform:
   - {fileID: 7071678800979044974}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-4104332489870500713
+--- !u!114 &-1440074383946312375
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14709,13 +14709,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 2175586723132714862}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94af458b5ebf28946b7cafbfa6ea2a89, type: 3}
+  m_Script: {fileID: 11500000, guid: f86e5a131464cff4cadb0af3d257d415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 80
-  destroyTime: 10
-  homingAngle: 1
-  homingPercent: 30
+  _speed: 80
+  _destroyTimer:
+    _maxTime: 10
+  _homingAngle: 1
+  _homingPercent: 30
 --- !u!114 &-1150294115761352523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14728,12 +14729,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c507ea36eb22165478041758d2b442c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitTimer: 0.1
-  damage: -75
-  downValue: 2
-  isDead: 0
-  pfb_eff_hit: {fileID: 2571009842805038003, guid: 418168429573ef74fb94327267d69e24, type: 3}
-  hit_eff_destroyTimer: 0.5
+  _atk: 0
+  _down: 0
+  _isHitDestroy: 0
+  _pfbEffHit: {fileID: 0}
+  _hitEffDestroyTimer: 0
 --- !u!54 &-7839690479877354276
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -162,6 +162,7 @@ GameObject:
   - component: {fileID: 3573684057943629597}
   - component: {fileID: 4240836231859876430}
   - component: {fileID: 4291080379478233942}
+  - component: {fileID: 8897959845904195392}
   m_Layer: 0
   m_Name: pfb_Gundam
   m_TagString: MS
@@ -300,17 +301,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c774d7e97cc150b4e95fd449bfee20d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amoMax: 7
-  _pfbBullet: {fileID: -4104332489870500713, guid: 5727acbdd6d6bb744b4ed534a2779770, type: 3}
-  _shotTime: 0.4
+  _amoMax: 7
+  _pfbBullet: {fileID: -1440074383946312375, guid: 5727acbdd6d6bb744b4ed534a2779770, type: 3}
+  _shotTime: 0.3
   _endTime: 0.3
   _shotPos: {x: 0, y: 6.1, z: 3.75}
-  _interval: 0
+  _interval:
+    _maxTime: 0.3
+  _reloadTime:
+    _maxTime: 3
   _spine:
     _initial: {x: 0, y: 0, z: 0, w: 0}
     _old: {x: 0, y: 0, z: 0, w: 0}
     _rotSpeed: 10
     _bone: {fileID: 466701653090196231}
+--- !u!114 &8897959845904195392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130403658863983141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d1e6c17f6559cf48963fca7d29dbc1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _amoMax: 3
+  _pfbBullet: {fileID: 445208177012462472, guid: b11211e3148b2aa4a9b32a36cc2c3797, type: 3}
+  _shotTime: 0.4
+  _endTime: 0.5
+  _shotPos: {x: 0, y: 6.1, z: 3.75}
+  _interval:
+    _maxTime: 0.2
   _reloadTime:
     _maxTime: 3
 --- !u!1 &286263149433171680

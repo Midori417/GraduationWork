@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 /// <summary>
 /// ガンダム
@@ -77,7 +78,7 @@ public class Gundam : BaseMs
             if (!_sable) return;
             _sable.SetActive(value);
         }
-        
+
         /// <summary>
         /// バーニアの切り替え
         /// </summary>
@@ -90,6 +91,8 @@ public class Gundam : BaseMs
     }
     [SerializeField, Header("オブジェクト")]
     private ActiveObject _activeObj;
+
+    private int _layer = -1;
 
     #region イベント関数
 
@@ -109,6 +112,8 @@ public class Gundam : BaseMs
     /// </summary>
     private void Start()
     {
+        // レイヤー番号を取得
+        _layer = animator.GetLayerIndex("BeumRifleLayer");
     }
 
     /// <summary>
@@ -116,7 +121,7 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
-        if(isStop) return;
+        if (isStop) return;
 
         if (DestroyCheck())
         {
@@ -150,13 +155,15 @@ public class Gundam : BaseMs
             _move.SetMainMs(this);
             _move.Initalize();
         }
-        if(_mainShot)
+        if (_mainShot)
         {
             _mainShot.SetMainMs(this);
             _mainShot.Initalize();
         }
-        if(_subShot)
+        if (_subShot)
         {
+            _subShot.SetMainMs(this);
+            _subShot.Initalize();
         }
         _activeObj.Initialize();
     }
@@ -195,17 +202,18 @@ public class Gundam : BaseMs
         Action update = () =>
         {
             // 着地
-            if(groundCheck.isGround && !groundCheck.oldIsGround)
+            if (groundCheck.isGround && !groundCheck.oldIsGround)
                 _stateMachine.ChangeState(State.Landing);
 
-            _move.MoveUpdate();
-            MoveAnimation();
+            Move();
+            SubShot();
+
             bool isRoket = _move.isDash || _move.isJump;
             _activeObj.RoketFireActive(isRoket);
         };
         Action lateUpdate = () =>
         {
-            _mainShot.MainShotUpdate();
+            MainShot();
         };
         Action<State> exit = (next) =>
         {
@@ -228,7 +236,7 @@ public class Gundam : BaseMs
         };
         Action update = () =>
         {
-            if(timer.UpdateTimer())
+            if (timer.UpdateTimer())
             {
                 _stateMachine.ChangeState(State.Normal);
             }
@@ -244,17 +252,48 @@ public class Gundam : BaseMs
 
     #endregion
 
-    #region 移動関係
 
     /// <summary>
-    /// 移動アニメーション
+    /// 移動
     /// </summary>
-    private void MoveAnimation()
+    private void Move()
     {
-        // アニメータ変数処理
-        animator.SetBool("Jump", _move.isJump);
-        animator.SetBool("Dash", _move.isDash);
+        if (_subShot.isNow)
+            return;
+        _move.MoveUpdate();
     }
 
-    #endregion
+    /// <summary>
+    /// メイン射撃
+    /// </summary>
+    private void MainShot()
+    {
+        // バズーカ中は不可
+        if (_subShot.isNow)
+            return;
+
+        _mainShot.MainShot();
+    }
+
+    /// <summary>
+    /// サブ射撃
+    /// </summary>
+    private void SubShot()
+    {
+        if (_mainShot.isNow) return;
+        _subShot.SubShot();
+        // オブジェクトの切り替え
+        if (_subShot.isNow)
+        {
+            animator.SetLayerWeight(_layer, 0);
+            _activeObj.BazookaActive(true);
+            _activeObj.BeumRifleActive(false);
+        }
+        else
+        {
+            _activeObj.BazookaActive(false);
+            _activeObj.BeumRifleActive(true);
+        }
+    }
+
 }

@@ -104,6 +104,9 @@ public class MsMove : BaseMsParts
     public void MoveUpdate()
     {
         _stateMachine.UpdateState();
+        // アニメータ変数処理
+        animator.SetBool("Jump", isJump);
+        animator.SetBool("Dash", isDash);
     }
 
     #region 状態

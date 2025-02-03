@@ -5,16 +5,19 @@ using UnityEngine;
 public class BaseMsAmoParts : BaseMsParts
 {
     // 現在の弾
-    public int amo
-    {
-        get;
-        protected set;
-    }
+    private int _amo;
 
     [SerializeField, Header("最大弾")]
-    protected int amoMax;
+    private int _amoMax;
 
     private bool isAdd = false;
+
+    public int amoMax => _amoMax;
+    public int amo
+    {
+        get => _amo;
+        protected set => _amo = value;
+    }
 
     /// <summary>
     /// 初期化

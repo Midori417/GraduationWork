@@ -41,6 +41,7 @@ public class HumanPilot : BasePilot
         msInput._jump = Input.GetKey(KeyCode.Space);
         msInput._dash = Input.GetKey(KeyCode.LeftShift);
         msInput._mainShot = Input.GetKeyDown(KeyCode.Mouse0);
+        msInput._subShot = Input.GetKeyDown(KeyCode.E);
 
         myMs.msInput = msInput;
     }
@@ -58,7 +59,7 @@ public class HumanPilot : BasePilot
 
         for (int i = 0; i < myMs.amoCount; ++i)
         {
-            _uiManager.ArmedValue(i, myMs.GetAmo(i));
+            _uiManager.ArmedValue(i, myMs.GetAmo(i), myMs.GetAmoRate(i));
         }
     }
 }

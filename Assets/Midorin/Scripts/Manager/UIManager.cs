@@ -23,6 +23,9 @@ public class UIManager : MonoBehaviour
     [SerializeField, Header("武装の弾")]
     private List<Text> _txtArmedValues;
 
+    [SerializeField, Header("武装ゲージ")]
+    private List<Image> _imgArmedGauge;
+
     [SerializeField, Header("戦力0味方1敵")]
     private List<Image> _imgStrengthGauge;
 
@@ -68,20 +71,24 @@ public class UIManager : MonoBehaviour
     /// 武装の残弾を設定
     /// </summary>
     /// <param name="value"></param>
-    public void ArmedValue(int index, int _value)
+    public void ArmedValue(int index, int _value, float rate)
     {
         if (_txtArmedValues.Count - 1 < index)
         {
             return;
         }
-        if (!_imgArmed[index].enabled)
+        if (!_imgArmed[index].IsActive())
         {
-            _imgArmed[index].enabled = true;
+            _imgArmed[index].gameObject.SetActive(true);
         }
 
         if (_txtArmedValues[index])
         {
             _txtArmedValues[index].text = _value.ToString();
+        }
+        if(_imgArmedGauge[index])
+        {
+            _imgArmedGauge[index].fillAmount = rate;
         }
     }
 

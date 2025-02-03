@@ -9,12 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2959680175326449463}
-  - component: {fileID: -9183468177779130930}
+  - component: {fileID: 445208177012462472}
   - component: {fileID: 6397794088632679883}
   - component: {fileID: 2124124335741476796}
   - component: {fileID: 3717969407302220500}
   - component: {fileID: 3129955517262214483}
-  - component: {fileID: -1280995904645151494}
   - component: {fileID: 5709909807755568379}
   m_Layer: 0
   m_Name: pfb_BazookaBullet
@@ -38,7 +37,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-9183468177779130930
+--- !u!114 &445208177012462472
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,13 +46,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 2677364784809444316}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94af458b5ebf28946b7cafbfa6ea2a89, type: 3}
+  m_Script: {fileID: 11500000, guid: f86e5a131464cff4cadb0af3d257d415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 50
-  destroyTime: 10
-  homingAngle: 4
-  homingPercent: 25
+  _speed: 50
+  _destroyTimer:
+    _maxTime: 10
+  _homingAngle: 4
+  _homingPercent: 25
 --- !u!114 &6397794088632679883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,12 +66,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c507ea36eb22165478041758d2b442c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitTimer: 0.1
-  damage: -110
-  downValue: 6
-  isDead: 1
-  pfb_eff_hit: {fileID: 124326666274685267, guid: bfe24e59628a9e94e82d729ec9f5d564, type: 3}
-  hit_eff_destroyTimer: 1
+  _atk: 0
+  _down: 0
+  _isHitDestroy: 0
+  _pfbEffHit: {fileID: 0}
+  _hitEffDestroyTimer: 0
 --- !u!136 &2124124335741476796
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -145,21 +144,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-1280995904645151494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2677364784809444316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03f402d95adf95b45bbebffd50b799ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pfb_eff_smoke: {fileID: 5338156641947915191, guid: be8b0b660e4d0a441ada520cd511b5ac, type: 3}
-  interval: 0.1
-  destoryTime: 0.5
 --- !u!54 &5709909807755568379
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -254,14 +254,14 @@ public class BaseMs : BaseGameObject
     /// ダメージを与える
     /// </summary>
     /// <param name="damage"></param>
-    public virtual bool Damage(int damage, int _downValue, Vector3 bulletPos)
+    public virtual bool Damage(int damage, int downValue, Vector3 bulletPos)
     {
         // ダメージ処理不可
         if (!isDamageOk) return false;
 
         _hp._current += damage;
         _hp._current = Mathf.Clamp(_hp._current, 0, hpMax);
-        this._downValue += _downValue;
+        this._downValue += downValue;
         return true;
     }
 
@@ -323,5 +323,18 @@ public class BaseMs : BaseGameObject
     public int GetAmo(int index)
     {
         return _uiArmeds[index].amo;
+    }
+
+    /// <summary>
+    /// indexに対応した弾の割合を取得
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public float GetAmoRate(int index)
+    {
+        float amo = _uiArmeds[index].amo;
+        float max = _uiArmeds[index].amoMax;
+        float rate = Mathf.Clamp01((max - (max - amo)) / max);
+        return rate;
     }
 }

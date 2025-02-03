@@ -37,7 +37,7 @@ public class BulletCollision : MonoBehaviour
         // 機体に衝突したらダメージを与える
         if (other.CompareTag("MsCollision"))
         {
-            //other.GetComponent<MsDamageCheck>().Damage(_atk, _down, transform.position);
+            other.GetComponent<MsDamage>().Damage(_atk, _down, transform.position);
             if (_isHitDestroy) Destroy(gameObject);
         }
 

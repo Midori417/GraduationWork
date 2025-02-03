@@ -16,16 +16,13 @@ public class GundamMainShot : BaseMsAmoParts
         // 射撃前
         ShotF,
 
-        // 射撃段階
-        Shot,
-
         // 射撃後
         ShotB,
     }
     StateMachine<State> _stateMachine = new StateMachine<State>();
 
     [SerializeField, Header("弾Prefab")]
-    private RifleBullet _pfbBullet = null;
+    private BasicBulletMove _pfbBullet = null;
 
     [SerializeField, Header("行動を始めてから射撃するまでの時間")]
     private float _shotTime = 0;
@@ -37,15 +34,18 @@ public class GundamMainShot : BaseMsAmoParts
     private Vector3 _shotPos = Vector3.zero;
 
     [SerializeField, Header("インターバル")]
-    private float _interval = 0;
+    private GameTimer _interval = new GameTimer();
+
+    [SerializeField, Header("一発の弾がリロードされるまでの時間")]
+    private GameTimer _reloadTime = new GameTimer();
 
     [Serializable]
     private struct SpineRotValiable
     {
-        [Header("初期回転")]
+        [HideInInspector, Header("初期回転")]
         public Quaternion _initial;
 
-        [Header("前フレーム時の回転")]
+        [HideInInspector, Header("前フレーム時の回転")]
         public Quaternion _old;
 
         [Header("回転速度")]
@@ -57,15 +57,16 @@ public class GundamMainShot : BaseMsAmoParts
     [SerializeField, Header("腹回転変数")]
     private SpineRotValiable _spine;
 
-    [SerializeField, Header("一発の弾がリロードされるまでの時間")]
-    private GameTimer _reloadTime = new GameTimer();
-
     private Transform _target;
 
     // trueならバックショット
     private bool isBack = false;
 
     private int _layer = -1;
+
+    private bool _isNow = false;
+
+    public bool isNow => _isNow;
 
     #region イベント関数
 
@@ -112,9 +113,12 @@ public class GundamMainShot : BaseMsAmoParts
         };
         Action update = () =>
         {
-            if (msInput._mainShot && amo > 0)
+            if (_interval.UpdateTimer())
             {
-                _stateMachine.ChangeState(State.ShotF);
+                if (msInput._mainShot && amo > 0)
+                {
+                    _stateMachine.ChangeState(State.ShotF);
+                }
             }
         };
         Action lateUpdate = () =>
@@ -135,6 +139,7 @@ public class GundamMainShot : BaseMsAmoParts
         GameTimer timer = new GameTimer();
         Action<State> enter = (prev) =>
         {
+            _isNow = true;
             timer.ResetTimer(_shotTime);
             // ターゲットを設定
             _target = targetMs;
@@ -152,10 +157,14 @@ public class GundamMainShot : BaseMsAmoParts
             if (!isBack)
             {
                 animator.SetLayerWeight(_layer, 1);
-                animator.SetTrigger("MainShot");
+                animator.SetInteger("ShotType", 0);
+                animator.SetTrigger("Shot");
             }
             else
-                animator.SetTrigger("MainShotB");
+            {
+                animator.SetInteger("ShotType", 1);
+                animator.SetTrigger("Shot");
+            }
         };
         Action update = () =>
         {
@@ -212,9 +221,11 @@ public class GundamMainShot : BaseMsAmoParts
         };
         Action<State> exit = (next) =>
         {
+            _isNow = false;
             animator.SetLayerWeight(_layer, 0);
             _target = null;
             isBack = false;
+            _interval.ResetTimer();
         };
         _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
@@ -237,7 +248,7 @@ public class GundamMainShot : BaseMsAmoParts
     /// <summary>
     /// メイン射撃処理
     /// </summary>
-    public void MainShotUpdate()
+    public void MainShot()
     {
         Reload();
         _stateMachine.UpdateState();
@@ -259,8 +270,8 @@ public class GundamMainShot : BaseMsAmoParts
             Vector3 pos = mainMs.transform.position + rot * _shotPos;
 
             // 弾を生成
-            RifleBullet bullet = Instantiate(_pfbBullet, pos, rot);
-            bullet.Target = _target;
+            BasicBulletMove bullet = Instantiate(_pfbBullet, pos, rot);
+            bullet.target = _target;
         }
         else
         {
@@ -268,7 +279,7 @@ public class GundamMainShot : BaseMsAmoParts
             Transform center = mainMs.center;
             Quaternion rot = transform.rotation;
             Vector3 pos = center.position + rot * _shotPos;
-            RifleBullet bullet = Instantiate(_pfbBullet, pos, rot);
+            BasicBulletMove bullet = Instantiate(_pfbBullet, pos, rot);
         }
         // 弾を減らす
         amo--;
