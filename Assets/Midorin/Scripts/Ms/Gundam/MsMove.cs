@@ -94,7 +94,7 @@ public class MsMove : BaseMsParts
     /// </summary>
     /// <param name="moveAxis">移動軸</param>
     /// <returns></returns>
-    Vector3 MoveForward(Vector2 moveAxis)
+    private Vector3 MoveForward(Vector2 moveAxis)
     {
         // カメラの方向から、X-Z単位ベクトル(正規化)を取得
         Vector3 cameraForward = Vector3.Scale(_myCamera.forward, new Vector3(1, 0, 1));
@@ -106,7 +106,7 @@ public class MsMove : BaseMsParts
     /// <summary>
     /// 進行方向に回転
     /// </summary>
-    void MoveForwardRot(Vector3 moveForward, float rotSpeed)
+    private void MoveForwardRot(Vector3 moveForward, float rotSpeed)
     {
         Quaternion rotation = Quaternion.LookRotation(moveForward);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotSpeed * Time.deltaTime);

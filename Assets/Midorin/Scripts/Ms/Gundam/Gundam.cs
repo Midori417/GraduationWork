@@ -11,7 +11,7 @@ public class Gundam : BaseMs
     private MsMove _move;
 
     [Serializable]
-    private class ActiveObject
+    private struct ActiveObject
     {
         [Header("ビームライフル")]
         public GameObject _beumRifle;
@@ -94,7 +94,6 @@ public class Gundam : BaseMs
     /// </summary>
     private void Start()
     {
-        Initialize();
     }
 
     /// <summary>

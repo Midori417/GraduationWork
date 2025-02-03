@@ -30,7 +30,7 @@ public class BattleSettingManager : MonoBehaviour
         _battleInfo.time = 5;
         {
             PilotInfo pilotInfo;
-            pilotInfo.teamId = Team.Read;
+            pilotInfo.teamId = Team.Red;
             pilotInfo.playerType = PlayerType.Human;
             pilotInfo.useMs = MsList.Gundam;
             _battleInfo.pilotsInfo.Add(pilotInfo);
@@ -135,7 +135,7 @@ public class BattleSettingManager : MonoBehaviour
                 continue;
             }
 
-            if (pilotInfo.teamId == Team.Read)
+            if (pilotInfo.teamId == Team.Red)
             {
                 teamRed++;
             }

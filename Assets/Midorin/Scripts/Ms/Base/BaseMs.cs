@@ -21,7 +21,7 @@ public class BaseMs : BaseGameObject
     private List<BaseMsAmoParts> _uiArmeds = new List<BaseMsAmoParts>();
 
     [Serializable]
-    private class Hp
+    private struct Hp
     {
         [HideInInspector, Header("現在の体力")]
         public int _current;
@@ -50,7 +50,7 @@ public class BaseMs : BaseGameObject
     protected bool _isDown = false;
 
     [Serializable]
-    private class Boost
+    private struct Boost
     {
         // エネルギーの最大量
         private static float _max = 100;
@@ -158,6 +158,7 @@ public class BaseMs : BaseGameObject
     public int hp => _hp._current;
     public int hpMax => _hp._max;
     public float boost01 => _boost._current01;
+    public MsInput msInput => _msInput;
 
     public int amoCount => _uiArmeds.Count;
 

@@ -110,4 +110,40 @@ public class GameTimer
         _maxTime = time;
         _currentTime = _maxTime;
     }
+
+    /// <summary>
+    /// 時間に変換する
+    /// </summary>
+    /// <param name="iTotalSeconds">秒数の合計</param>
+    /// <returns>時間数</returns>
+    public static int GetHours(int iTotalSeconds)
+    {
+        if (iTotalSeconds > 0) return iTotalSeconds / 3600;
+
+        return 0;
+    }
+
+    /// <summary>
+    /// 分に変換する
+    /// </summary>
+    /// <param name="iTotalSeconds">秒数の合計</param>
+    /// <returns>分数</returns>
+    public static int GetMinutes(int iTotalSeconds)
+    {
+        if (iTotalSeconds > 0) return (iTotalSeconds % 3600) / 60;
+
+        return 0;
+    }
+
+    /// <summary>
+    /// 秒に変換する
+    /// </summary>
+    /// <param name="iTotalSeconds">秒数の合計</param>
+    /// <returns>秒数</returns>
+    public static int GetSeconds(int iTotalSeconds)
+    {
+        if (iTotalSeconds > 0) return iTotalSeconds % 60;
+
+        return 0;
+    }
 }

@@ -23,7 +23,10 @@ public class BattleEventUIControl : MonoBehaviour
 
     private Image _img;
 
-    private void Start()
+    /// <summary>
+    /// 生成時に実行
+    /// </summary>
+    private void Awake()
     {
         _img = GetComponent<Image>();
 

@@ -9,7 +9,6 @@ public class BaseGameObject : MonoBehaviour
 {
     private bool _isStop = false;
 
-    [HideInInspector]
     public bool isStop => _isStop;
 
     /// <summary>
@@ -17,7 +16,7 @@ public class BaseGameObject : MonoBehaviour
     /// </summary>
     public virtual void Stop()
     {
-        _isStop = false;
+        _isStop = true;
     }
 
     /// <summary>
@@ -25,6 +24,6 @@ public class BaseGameObject : MonoBehaviour
     /// </summary>
     public virtual void Play()
     {
-        _isStop = true;
+        _isStop = false;
     }
 }

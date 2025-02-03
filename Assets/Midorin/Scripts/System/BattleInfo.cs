@@ -8,7 +8,7 @@ using UnityEngine;
 public enum Team
 {
     None=0,
-    Read=1,
+    Red=1,
     Blue=2,
 }
 

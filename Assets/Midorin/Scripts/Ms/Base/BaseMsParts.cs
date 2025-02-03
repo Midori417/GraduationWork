@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 機体パーツのベースコンポーネント
 /// </summary>
-public class BaseMsParts : BaseGameObject
+public class BaseMsParts : MonoBehaviour
 {
     // メイン機体コンポーネント
     private BaseMs _mainMs;
@@ -37,6 +37,8 @@ public class BaseMsParts : BaseGameObject
             return null;
         }
     }
+    protected bool isStop => _mainMs.isStop;
+    protected MsInput msInput => _mainMs.msInput;
 
     /// <summary>
     /// 初期化

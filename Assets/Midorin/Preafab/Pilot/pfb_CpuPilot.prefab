@@ -45,13 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279edb04b8aaa5b4cac4e439e6755a26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _myCameraManager: {fileID: 5055779101882152996}
-  targetPilot: {fileID: 0}
-  _isProsess: 0
-  isStopMs: 1
-  moveTimer: 3
-  moveActionTimer: 2
-  attackActionTimer: 0.5
+  _cameraManager: {fileID: 5055779101882152996}
 --- !u!1001 &2441983506588518788
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -90,7 +84,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2976882775775432740, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.0000004850227
+      value: 0.00000047126917
       objectReference: {fileID: 0}
     - target: {fileID: 2976882775775432740, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalPosition.y
@@ -98,23 +92,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2976882775775432740, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -16.99996
+      value: 66.99996
       objectReference: {fileID: 0}
     - target: {fileID: 2976882775775432740, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.99999934
+      value: -0.000000015709004
       objectReference: {fileID: 0}
     - target: {fileID: 2976882775775432740, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.0011538333
+      value: 1.8125595e-11
       objectReference: {fileID: 0}
     - target: {fileID: 2976882775775432740, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000016167457
+      value: 0.99999934
       objectReference: {fileID: 0}
     - target: {fileID: 2976882775775432740, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 1.8654564e-11
+      value: 0.0011538339
       objectReference: {fileID: 0}
     - target: {fileID: 4458886686039897116, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_Name

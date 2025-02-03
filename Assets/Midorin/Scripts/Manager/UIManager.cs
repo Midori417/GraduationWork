@@ -8,14 +8,49 @@ using UnityEngine.UI;
 /// </summary>
 public class UIManager : MonoBehaviour
 {
-    [SerializeField, Header("ブーストゲージ")]
-    private Image _imgBoostGauge;
-
     [SerializeField, Header("自身の機体の体力")]
     private Text _txtHp;
 
+    [SerializeField, Header("ブーストゲージ")]
+    private Image _imgBoostGauge;
+
+    [SerializeField, Header("残り時間")]
+    private Text _txtTime;
+
+    [SerializeField, Header("武装")]
+    private List<Image> _imgArmed;
+
     [SerializeField, Header("武装の弾")]
     private List<Text> _txtArmedValues;
+
+    [SerializeField, Header("戦力0味方1敵")]
+    private List<Image> _imgStrengthGauge;
+
+    private BattleManager _battleManager;
+
+    private void Start()
+    {
+        if (!_battleManager) _battleManager = BattleManager.I;
+    }
+
+    /// <summary>
+    /// 毎フレーム呼び出される
+    /// </summary>
+    private void Update()
+    {
+        Timer();
+    }
+
+    /// <summary>
+    /// タイマーの設定
+    /// </summary>
+    private void Timer()
+    {
+        if (!_battleManager) return;
+        _txtTime.text = GameTimer.GetMinutes(_battleManager.battleTimer).ToString()
+            + ":"
+            + GameTimer.GetSeconds(_battleManager.battleTimer).ToString("00");
+    }
 
     /// <summary>
     /// ブーストゲージの設定
@@ -35,14 +70,42 @@ public class UIManager : MonoBehaviour
     /// <param name="value"></param>
     public void ArmedValue(int index, int _value)
     {
-        if(_txtArmedValues.Count-1 < index)
+        if (_txtArmedValues.Count - 1 < index)
         {
             return;
+        }
+        if (!_imgArmed[index].enabled)
+        {
+            _imgArmed[index].enabled = true;
         }
 
         if (_txtArmedValues[index])
         {
             _txtArmedValues[index].text = _value.ToString();
+        }
+    }
+
+    /// <summary>
+    /// 戦力値設定
+    /// </summary>
+    /// <param name="teamId"></param>
+    public void StrengthGauge(Team teamId)
+    {
+        if (!_imgStrengthGauge[0] || !_imgStrengthGauge[1])
+            return;
+        if (!_battleManager) return;
+        float max = GameManager.teamCostMax;
+        float red = (max -(max -  _battleManager.redCost)) / max;
+        float blue = (max - (max - _battleManager.blueCost)) / max;
+        if (teamId == Team.Red)
+        {
+            _imgStrengthGauge[0].fillAmount = red;
+            _imgStrengthGauge[1].fillAmount = blue;
+        }
+        else if (teamId == Team.Blue)
+        {
+            _imgStrengthGauge[0].fillAmount = blue;
+            _imgStrengthGauge[1].fillAmount = red;
         }
     }
 
