@@ -22,6 +22,8 @@ public class Gundam : BaseMs
     private MsMove _move;
     private GundamMainShot _mainShot;
     private GundamSubShot _subShot;
+    [SerializeField, Header("MsDamage")]
+    private MsDamage _msDamage;
 
     [Serializable]
     private struct ActiveObject
@@ -165,6 +167,11 @@ public class Gundam : BaseMs
             _subShot.SetMainMs(this);
             _subShot.Initalize();
         }
+        if(_msDamage)
+        {
+            _msDamage.SetMainMs(this);
+            _msDamage.Initalize();
+        }
         _activeObj.Initialize();
     }
 
@@ -208,7 +215,7 @@ public class Gundam : BaseMs
             Move();
             SubShot();
 
-            bool isRoket = _move.isDash || _move.isJump;
+            bool isRoket = _move.isDash || _move.isJump || _subShot.isNow;
             _activeObj.RoketFireActive(isRoket);
         };
         Action lateUpdate = () =>

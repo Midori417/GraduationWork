@@ -23,6 +23,10 @@ public class MsDamage : BaseMsParts
     /// <param name="bulletPos"></param>
     public void Damage(int damage, int downValue, Vector3 bulletPos)
     {
-        mainMs.Damage(damage, downValue, bulletPos);
+        if (mainMs)
+        {
+            mainMs.Damage(damage, downValue, bulletPos);
+            Debug.Log("衝突");
+        }
     }
 }

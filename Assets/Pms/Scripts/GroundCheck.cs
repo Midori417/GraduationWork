@@ -1,14 +1,14 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 /// <summary>
-/// ’n–Êƒ`ƒFƒbƒNƒRƒ“ƒ|[ƒlƒ“ƒg
+/// åœ°é¢ãƒã‚§ãƒƒã‚¯ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ
 /// </summary>
 public class GroundCheck : MonoBehaviour
 {
-    [SerializeField, Header("’n–Ê‚ğ”»’è‚·‚éƒ^ƒCƒv")]
+    [SerializeField, Header("åœ°é¢ã‚’åˆ¤å®šã™ã‚‹ã‚¿ã‚¤ãƒ—")]
     private string[] groundTypes;
 
-    // true‚È‚ç’n–Ê‚É‚Â‚¢‚Ä‚¢‚é
+    // trueãªã‚‰åœ°é¢ã«ã¤ã„ã¦ã„ã‚‹
     public bool isGround
     {
         get;
@@ -16,7 +16,7 @@ public class GroundCheck : MonoBehaviour
     }
 
     /// <summary>
-    /// ‘O‰ñ‚ÌƒtƒŒ[ƒ€’…’n‚µ‚Ä‚¢‚é‚©
+    /// å‰å›ã®ãƒ•ãƒ¬ãƒ¼ãƒ ç€åœ°ã—ã¦ã„ã‚‹ã‹
     /// </summary>
     public bool oldIsGround
     {
@@ -30,12 +30,12 @@ public class GroundCheck : MonoBehaviour
     }
 
     /// <summary>
-    /// G‚ê‚½‚Æ‚«‚ÉŒÄ‚Ño‚·
+    /// è§¦ã‚ŒãŸã¨ãã«å‘¼ã³å‡ºã™
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
-        // ’n–Ê‚É‚Â‚¢‚Ä‚¢‚éó‘Ô‚È‚Ì‚Åˆ—‚ğs‚í‚È‚¢
+        // åœ°é¢ã«ã¤ã„ã¦ã„ã‚‹çŠ¶æ…‹ãªã®ã§å‡¦ç†ã‚’è¡Œã‚ãªã„
         if (isGround) return;
 
         foreach (string type in groundTypes)
@@ -48,12 +48,12 @@ public class GroundCheck : MonoBehaviour
     }
 
     /// <summary>
-    /// —£‚ê‚½‚Æ‚«‚ÉŒÄ‚Ño‚·
+    /// é›¢ã‚ŒãŸã¨ãã«å‘¼ã³å‡ºã™
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
-        // ’n–Ê‚É‚Â‚¢‚Ä‚¢‚È‚¢ó‘Ô‚È‚Ì‚Åˆ—‚ğs‚í‚È‚¢
+        // åœ°é¢ã«ã¤ã„ã¦ã„ãªã„çŠ¶æ…‹ãªã®ã§å‡¦ç†ã‚’è¡Œã‚ãªã„
         if (!isGround) return;
 
         foreach (string type in groundTypes)

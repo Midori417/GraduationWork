@@ -439,18 +439,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: pfb_Map01
       objectReference: {fileID: 0}
-    - target: {fileID: 7818980051279404092, guid: cee263e083aa00141a0ba11e8c6bf527, type: 3}
-      propertyPath: _pfbWall
-      value: 
-      objectReference: {fileID: 4895641655689420138, guid: 96de9be450188754bb8e7004c5c3c0c0, type: 3}
-    - target: {fileID: 7818980051279404092, guid: cee263e083aa00141a0ba11e8c6bf527, type: 3}
-      propertyPath: _mapSize.x
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 7818980051279404092, guid: cee263e083aa00141a0ba11e8c6bf527, type: 3}
-      propertyPath: _mapSize.y
-      value: 300
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

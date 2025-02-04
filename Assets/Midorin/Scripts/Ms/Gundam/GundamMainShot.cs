@@ -24,6 +24,9 @@ public class GundamMainShot : BaseMsAmoParts
     [SerializeField, Header("弾Prefab")]
     private BasicBulletMove _pfbBullet = null;
 
+    [SerializeField, Header("マズルフラッシュ")]
+    private ParticleSystem _psMuzzle = null;
+
     [SerializeField, Header("行動を始めてから射撃するまでの時間")]
     private float _shotTime = 0;
 
@@ -75,6 +78,8 @@ public class GundamMainShot : BaseMsAmoParts
     /// </summary>
     private void Awake()
     {
+        if (_psMuzzle)
+            _psMuzzle.Stop();
         SetUp();
     }
 
@@ -139,6 +144,8 @@ public class GundamMainShot : BaseMsAmoParts
         GameTimer timer = new GameTimer();
         Action<State> enter = (prev) =>
         {
+            if (_psMuzzle)
+                _psMuzzle.Play();
             _isNow = true;
             timer.ResetTimer(_shotTime);
             // ターゲットを設定
@@ -164,6 +171,11 @@ public class GundamMainShot : BaseMsAmoParts
             {
                 animator.SetInteger("ShotType", 1);
                 animator.SetTrigger("Shot");
+            }
+
+            if (_psMuzzle)
+            {
+                     _psMuzzle.Play();
             }
         };
         Action update = () =>
@@ -209,7 +221,6 @@ public class GundamMainShot : BaseMsAmoParts
                 _spine._bone.localRotation = smoothRotation;
                 _spine._old = _spine._bone.localRotation;
             }
-
             // 射撃状態を終了
             if (timer.UpdateTimer())
             {
@@ -260,7 +271,6 @@ public class GundamMainShot : BaseMsAmoParts
     private void CreateBullet()
     {
         if (!_pfbBullet) return;
-
         if (_target)
         {
             // ターゲットの方向を計算

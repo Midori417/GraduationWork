@@ -22,7 +22,23 @@ public class BulletCollision : MonoBehaviour
     [SerializeField, Header("生成してからエフェクト消すまで")]
     private float _hitEffDestroyTimer = 0;
 
+    private GameTimer _collisionTimer = new GameTimer(0.1f);
+
+    // trueなら衝突可能
+    private bool _isCollision = false;
+
     #region イベント関数
+
+    /// <summary>
+    /// 毎フレーム呼び出される
+    /// </summary>
+    private void Update()
+    {
+        if (_collisionTimer.UpdateTimer())
+        {
+            _isCollision = true;
+        }
+    }
 
     /// <summary>
     /// 衝突したときに処理
@@ -30,6 +46,8 @@ public class BulletCollision : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
+        if (!_isCollision) return;
+
         // エフェクトを生成
         if (other.CompareTag("MsCollision") || (other.CompareTag("Ground") || other.CompareTag("Building")))
             CreteHitEffect();

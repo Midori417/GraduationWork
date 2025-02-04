@@ -20,6 +20,9 @@ public class GundamSubShot : BaseMsAmoParts
     [SerializeField, Header("弾Prefab")]
     private BasicBulletMove _pfbBullet = null;
 
+    [SerializeField, Header("マズルフラッシュ")]
+    private ParticleSystem _psMuzzle = null;
+
     [SerializeField, Header("行動を始めてから射撃するまでの時間")]
     private float _shotTime = 0;
 
@@ -28,6 +31,9 @@ public class GundamSubShot : BaseMsAmoParts
 
     [SerializeField, Header("弾生成位置")]
     private Vector3 _shotPos = Vector3.zero;
+
+    [SerializeField, Header("反動")]
+    private float _recoil = 0;
 
     [SerializeField, Header("インターバル")]
     private GameTimer _interval = new GameTimer();
@@ -46,6 +52,8 @@ public class GundamSubShot : BaseMsAmoParts
     /// </summary>
     private void Awake()
     {
+        if(_psMuzzle)
+            _psMuzzle.Stop();
         SetUp();
     }
 
@@ -99,6 +107,9 @@ public class GundamSubShot : BaseMsAmoParts
         GameTimer timer = new GameTimer();
         Action<State> enter = (prev) =>
         {
+            rb.AddForce(transform.up * 0.5f, ForceMode.Impulse);
+            if (_psMuzzle)
+                _psMuzzle.Play();
             _isNow = true;
             rb.useGravity = false;
             rb.velocity = Vector3.zero;
@@ -226,6 +237,7 @@ public class GundamSubShot : BaseMsAmoParts
             Vector3 pos = center.position + rot * _shotPos;
             BasicBulletMove bullet = Instantiate(_pfbBullet, pos, rot);
         }
+        rb.AddForce(-transform.forward * _recoil, ForceMode.Impulse);
         // 弾を減らす
         amo--;
         if (amo <= 0)
