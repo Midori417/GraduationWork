@@ -20,9 +20,11 @@ public class BasePilot : BaseGameObject
     private List<BasePilot> _enemyPilots;
     private int _taregetIndex = 0;
 
+    protected MsInput msInput = new MsInput();
+
     public Team team
     {
-        get => _team; 
+        get => _team;
         set => _team = value;
     }
     public BaseMs myMs
@@ -36,6 +38,58 @@ public class BasePilot : BaseGameObject
     }
     protected CameraManager cameraManager => _cameraManager;
 
+    // trueなら既にコストダウンされた
+    private bool _isCostDown = false;
+
+    // 復活処理作動時間
+    private GameTimer _responTimer = new GameTimer(3);
+
+    // trueならリスポーンする
+    private bool _respon = false;
+
+    private Vector3 _responPos = Vector3.zero;
+
+    /// <summary>
+    /// 機体が破壊されたときの処理
+    /// </summary>
+    protected virtual void MsUpdate()
+    {
+        // 機体が破壊された
+        if (myMs.hp <= 0)
+        {
+            // コストダウンが行われてなければ行う
+            if (!_isCostDown)
+            {
+
+                _isCostDown = true;
+                BattleManager mana = BattleManager.I;
+                mana.CostDown(_myMs.cost, _team);
+                // まだコストがあれば復活処理をする
+                if (mana.GetTeamCost(team) > 0)
+                {
+                    _responTimer.ResetTimer();
+                    _responPos = mana.GetResponPos();
+                    _respon = true;
+                }
+            }
+            // 復活処理が行われる
+            if (_respon)
+            {
+                // 破壊が終わっていたらタイマー作動
+                if (myMs.isDestroy)
+                {
+                    if (_responTimer.UpdateTimer())
+                    {
+                        _myMs.Respon();
+                        _myMs.transform.position = _responPos;
+                        _respon = false;
+                        _isCostDown = false;
+                    }
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// 初期化
     /// </summary>
@@ -45,9 +99,9 @@ public class BasePilot : BaseGameObject
         _myMs.transform.parent = transform;
         _myMs.myCamera = _cameraManager.mainCamera.transform;
         _cameraManager.myMs = _myMs.center;
-        
+
         List<Transform> _enemyMs = new List<Transform>();
-        foreach(BasePilot pilot in _enemyPilots)
+        foreach (BasePilot pilot in _enemyPilots)
         {
             _enemyMs.Add(pilot.myMs.center);
         }
@@ -94,5 +148,14 @@ public class BasePilot : BaseGameObject
     {
         base.Stop();
         myMs.Stop();
+    }
+
+    /// <summary>
+    /// 勝敗を設定
+    /// </summary>
+    /// <param name="victory"></param>
+    public virtual void SetVitory(Victory victory)
+    {
+
     }
 }

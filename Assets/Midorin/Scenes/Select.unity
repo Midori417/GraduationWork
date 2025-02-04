@@ -536,6 +536,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 56208f7bd5d74914da5035c157be12b5, type: 3}
+--- !u!114 &612866794 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 913695856700251233, guid: 56208f7bd5d74914da5035c157be12b5, type: 3}
+  m_PrefabInstance: {fileID: 612866793}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e94778a9200a9d4a93871a1e28a60de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &868075918
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,8 +576,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 115e80a43db9b984db5fc558d783115f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeOut: {fileID: 1731968721}
-  battleBtnSceneName: BattleSetting
+  _fadeOut: {fileID: 612866794}
+  _battleBtnSceneName: BattleSetting
 --- !u!4 &868075920
 Transform:
   m_ObjectHideFlags: 0
@@ -749,17 +760,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 9160866037556293929, guid: 56208f7bd5d74914da5035c157be12b5, type: 3}
   m_PrefabInstance: {fileID: 612866793}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1731968721 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 913695856700251233, guid: 56208f7bd5d74914da5035c157be12b5, type: 3}
-  m_PrefabInstance: {fileID: 612866793}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e94778a9200a9d4a93871a1e28a60de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1913698979
 GameObject:
   m_ObjectHideFlags: 0

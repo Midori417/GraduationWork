@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -701,6 +701,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59eaa1f29441f584e9b8793b3e667783, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _pfbMs: []
+  _pfbHumanPilot: {fileID: 0}
+  _pfbCpuPilot: {fileID: 0}
 --- !u!1 &1680661795
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,10 +748,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ba0047465a7c8e429ae276d5443abff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeOut: {fileID: 1843807089}
-  sceneName: Battle
-  escapeSceneName: Select
-  battleInfo:
+  _fadeOut: {fileID: 1843807089}
+  _sceneName: Battle
+  _escapeSceneName: Select
+  _battleInfo:
     teamRedCost: 0
     teamBlueCost: 0
     time: 0

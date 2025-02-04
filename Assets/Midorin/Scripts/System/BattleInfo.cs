@@ -74,3 +74,10 @@ public struct MsInput
     public bool _subShot;
     public bool _mainAttack;
 }
+
+// 勝敗
+public enum Victory
+{
+    Win,
+    Lose
+}

@@ -20,6 +20,9 @@ public class BaseMs : BaseGameObject
     private BaseMs _targetMs;
     private List<BaseMsAmoParts> _uiArmeds = new List<BaseMsAmoParts>();
 
+    [SerializeField, Header("機体コスト")]
+    private int _cost = 0;
+
     [Serializable]
     private struct Hp
     {
@@ -39,15 +42,6 @@ public class BaseMs : BaseGameObject
     }
     [SerializeField, Header("Hp変数")]
     private Hp _hp;
-
-    // trueならダメージを受ける
-    protected bool isDamageOk = true;
-
-    // ダウン値
-    protected float _downValue = 0;
-
-    // trueならダウン中
-    protected bool _isDown = false;
 
     [Serializable]
     private struct Boost
@@ -145,7 +139,25 @@ public class BaseMs : BaseGameObject
     [HideInInspector]
     private MsInput _msInput;
 
-    #region ゲッター
+    [SerializeField, Header("無敵タイマー")]
+    private GameTimer _invisibleTimer = new GameTimer();
+
+    [SerializeField, Header("復活時間")]
+    private float _responTime = 1;
+
+    // trueの時無敵タイマーを更新
+    private bool _isInvisible = false;
+
+    // ダウン値
+    private float _downValue = 0;
+
+    // trueならダメージを食らえる
+    private bool _isDamageOk = true;
+
+    // trueなら破壊が完了した
+    private bool _isDestroy = false;
+
+    #region プロパティ
 
     public Rigidbody rb => _rb;
     public Animator animator => _animator;
@@ -163,8 +175,25 @@ public class BaseMs : BaseGameObject
         set => _targetMs = value;
     }
     public Transform center => _center;
+    public int cost => _cost;
     public int hp => _hp._current;
     public int hpMax => _hp._max;
+    protected float responTime => _responTime;
+    public bool isDamageOk
+    {
+        get => _isDamageOk;
+        set => _isDamageOk = value;
+    }
+    public bool isDestroy
+    {
+        get => _isDestroy;
+        protected set => _isDestroy = value;
+    }
+    public float downValue
+    {
+        get => _downValue;
+        set => _downValue = value;
+    }
     public float boost01 => _boost._current01;
     public MsInput msInput
     {
@@ -182,8 +211,11 @@ public class BaseMs : BaseGameObject
     public override void Stop()
     {
         base.Stop();
-        rb.velocity = Vector3.zero;
-        _animator.speed = 0;
+        if (hp > 0)
+        {
+            rb.velocity = Vector3.zero;
+            _animator.speed = 0;
+        }
     }
 
     /// <summary>
@@ -208,30 +240,16 @@ public class BaseMs : BaseGameObject
 
         _hp.Initialzie();
         _boost.Initialize();
-    }
-
-    /// <summary>
-    /// 復活処理
-    /// </summary>
-    public virtual void Remove()
-    {
-        Initialize();
-        isDamageOk = true;
-        Invoke("RemoveInvincible", 2);
-    }
-
-    /// <summary>
-    /// 無敵解除
-    /// </summary>
-    protected void RemoveInvincible()
-    {
-        isDamageOk = true;
+        _downValue = 0;
+        _isDestroy = false;
+        NormalMesh();
+        gameObject.SetActive(true);
     }
 
     /// <summary>
     /// メッシュ赤発光
     /// </summary>
-    protected void MeshDamage()
+    public void RedMesh()
     {
         foreach (Material mat in meshRenderer.materials)
         {
@@ -242,7 +260,7 @@ public class BaseMs : BaseGameObject
     /// <summary>
     /// メッシュを元に戻す
     /// </summary>
-    protected void MeshRemove()
+    public void NormalMesh()
     {
         foreach (Material mat in meshRenderer.materials)
         {
@@ -256,28 +274,49 @@ public class BaseMs : BaseGameObject
     /// <param name="damage"></param>
     public virtual bool Damage(int damage, int downValue, Vector3 bulletPos)
     {
-        // ダメージ処理不可
-        if (!isDamageOk) return false;
+        if (!_isDamageOk) return false;
 
-        _hp._current += damage;
+        _hp._current -= damage;
         _hp._current = Mathf.Clamp(_hp._current, 0, hpMax);
         this._downValue += downValue;
+        if (_downValue > 5)
+        {
+            _isDamageOk = false;
+        }
         return true;
     }
 
     /// <summary>
-    /// 破壊されているかチェック
+    /// 無敵タイマー起動
     /// </summary>
-    /// <returns>
-    /// true 破壊されている
-    /// </returns>
-    public bool DestroyCheck()
+    /// <param name="_time"></param>
+    public void InvisibleTimer(float _time)
     {
-        if (hp <= 0)
+        _invisibleTimer.ResetTimer(_time);
+        _isInvisible = true;
+    }
+
+    /// <summary>
+    /// 復活させる
+    /// パイロットが呼ぶ
+    /// </summary>
+    public virtual void Respon()
+    {
+
+    }
+
+    /// <summary>
+    /// 無敵状態の更新
+    /// </summary>
+    protected void InvisibleUpdate()
+    {
+        if (!_isInvisible) return;
+
+        if (_invisibleTimer.UpdateTimer())
         {
-            return true;
+            _isInvisible = false;
+            _isDamageOk = true;
         }
-        return false;
     }
 
     #region ブースト関係

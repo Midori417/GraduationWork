@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 /// <summary>
 /// ガンダム
@@ -14,16 +13,21 @@ public class Gundam : BaseMs
     {
         // 通常
         Normal,
-        // 着地
-        Landing,
+
+        // 死亡
+        Destroy,
+
+        // 復活
+        Respon
     }
     StateMachine<State> _stateMachine = new StateMachine<State>();
 
     private MsMove _move;
     private GundamMainShot _mainShot;
     private GundamSubShot _subShot;
+    private GundamDamage _damage;
     [SerializeField, Header("MsDamage")]
-    private MsDamage _msDamage;
+    private MsDamageCollision _msDamageCollision;
 
     [Serializable]
     private struct ActiveObject
@@ -94,6 +98,12 @@ public class Gundam : BaseMs
     [SerializeField, Header("オブジェクト")]
     private ActiveObject _activeObj;
 
+    [SerializeField, Header("破壊されてから爆発するまで")]
+    private float _destroyTime = 0;
+
+    [SerializeField, Header("爆発エフェクト")]
+    private GameObject _pfbExsprosion;
+
     private int _layer = -1;
 
     #region イベント関数
@@ -106,6 +116,7 @@ public class Gundam : BaseMs
         _move = GetComponent<MsMove>();
         _mainShot = GetComponent<GundamMainShot>();
         _subShot = GetComponent<GundamSubShot>();
+        _damage = GetComponent<GundamDamage>();
         SetUp();
     }
 
@@ -123,13 +134,8 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
-        if (isStop) return;
+        if (isStop && isDestroy) return;
 
-        if (DestroyCheck())
-        {
-            // 破壊された
-            return;
-        }
         _stateMachine.UpdateState();
         AnimUpdate();
         BoostCharge();
@@ -141,6 +147,125 @@ public class Gundam : BaseMs
     private void LateUpdate()
     {
         _stateMachine.LateUpdateState();
+    }
+
+    #endregion
+
+    #region 状態
+
+    /// <summary>
+    /// 状態のセットアップ
+    /// </summary>
+    private void SetUp()
+    {
+        SetUpNormal();
+        SetUpDestroy();
+        SetUpRespon();
+        _stateMachine.Setup(State.Normal);
+    }
+
+    /// <summary>
+    /// 通常状態をセットアップ
+    /// </summary>
+    private void SetUpNormal()
+    {
+        State state = State.Normal;
+        Action<State> enter = (prev) =>
+        {
+        };
+        Action update = () =>
+        {
+            // 破壊された
+            if (hp <= 0)
+            {
+                _stateMachine.ChangeState(State.Destroy);
+            }
+
+            // 通常アクション
+            if (ActionCheck())
+            {
+                Move();
+                SubShot();
+            }
+
+            MsDamage();
+            InvisibleUpdate();
+            RoketControl();
+        };
+        Action lateUpdate = () =>
+        {
+            if (ActionCheck())
+            {
+                MainShot();
+            }
+        };
+        Action<State> exit = (next) =>
+        {
+        };
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+    }
+
+    /// <summary>
+    /// 破壊状態をセットアップ
+    /// </summary>
+    private void SetUpDestroy()
+    {
+        State state = State.Destroy;
+        GameTimer timer = new GameTimer();
+        Action<State> enter = (prev) =>
+        {
+            timer.ResetTimer();
+            _activeObj.RoketFireActive(false);
+            animator.SetTrigger("Down");
+            RedMesh();
+        };
+        Action update = () =>
+        {
+            if(timer.UpdateTimer())
+            {
+                var obj = Instantiate(_pfbExsprosion, transform.position, Quaternion.identity);
+                Destroy(obj, 4);
+                gameObject.SetActive(false);
+                isDestroy = true;
+            }
+        };
+        Action lateUpdate = () =>
+        {
+        };
+        Action<State> exit = (next) =>
+        {
+        };
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+    }
+
+    /// <summary>
+    /// 復活状態をセットアップ
+    /// </summary>
+    private void SetUpRespon()
+    {
+        State state = State.Respon;
+        GameTimer timer = new GameTimer();
+        Action<State> enter = (prev) =>
+        {
+            timer.ResetTimer(responTime);
+            Initialize();
+            InvisibleTimer(1);
+        };
+        Action update = () =>
+        {
+            if(timer.UpdateTimer())
+            {
+                _stateMachine.ChangeState(State.Normal);
+            }
+        };
+        Action lateUpdate = () =>
+        {
+        };
+        Action<State> exit = (next) =>
+        {
+        };
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+
     }
 
     #endregion
@@ -167,12 +292,27 @@ public class Gundam : BaseMs
             _subShot.SetMainMs(this);
             _subShot.Initalize();
         }
-        if(_msDamage)
+        if (_damage)
         {
-            _msDamage.SetMainMs(this);
-            _msDamage.Initalize();
+            _damage.SetMainMs(this);
+            _damage.Initalize();
+        }
+        if (_msDamageCollision)
+        {
+            _msDamageCollision.SetMainMs(this);
+            _msDamageCollision.Initalize();
         }
         _activeObj.Initialize();
+    }
+
+    /// <summary>
+    /// 復活処理
+    /// パイロットに呼び出してもらう
+    /// </summary>
+    public override void Respon()
+    {
+        base.Respon();
+        _stateMachine.ChangeState(State.Respon);
     }
 
     /// <summary>
@@ -185,80 +325,39 @@ public class Gundam : BaseMs
         animator.SetBool("IsGround", groundCheck.isGround);
     }
 
-    #region 状態
-
     /// <summary>
-    /// 状態のセットアップ
+    /// アクション可能かチェック
     /// </summary>
-    private void SetUp()
+    /// <returns>
+    /// trueなら可能
+    /// falseなら不可
+    /// </returns>
+    private bool ActionCheck()
     {
-        SetUpNormal();
-        SetUpLanding();
-        _stateMachine.Setup(State.Normal);
+        if (_damage.isDamage || _damage.isDown || _damage.isStanding)
+        {
+            return false;
+        }
+        return true;
     }
 
     /// <summary>
-    /// 通常状態をセットアップ
+    /// ロケットコントロール
     /// </summary>
-    private void SetUpNormal()
+    private void RoketControl()
     {
-        State state = State.Normal;
-        Action<State> enter = (prev) =>
+        if (ActionCheck())
         {
-        };
-        Action update = () =>
-        {
-            // 着地
-            if (groundCheck.isGround && !groundCheck.oldIsGround)
-                _stateMachine.ChangeState(State.Landing);
-
-            Move();
-            SubShot();
-
             bool isRoket = _move.isDash || _move.isJump || _subShot.isNow;
             _activeObj.RoketFireActive(isRoket);
-        };
-        Action lateUpdate = () =>
+        }
+        else
         {
-            MainShot();
-        };
-        Action<State> exit = (next) =>
-        {
-        };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+            _activeObj.RoketFireActive(false);
+        }
     }
 
-    /// <summary>
-    /// 着地状態をセットアップ
-    /// </summary>
-    private void SetUpLanding()
-    {
-        State state = State.Landing;
-        GameTimer timer = new GameTimer(1);
-        Action<State> enter = (prev) =>
-        {
-            _move.Landing();
-            animator.SetTrigger("Landing");
-            timer.ResetTimer();
-        };
-        Action update = () =>
-        {
-            if (timer.UpdateTimer())
-            {
-                _stateMachine.ChangeState(State.Normal);
-            }
-        };
-        Action lateUpdate = () =>
-        {
-        };
-        Action<State> exit = (next) =>
-        {
-        };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
-    }
-
-    #endregion
-
+    #region 機能
 
     /// <summary>
     /// 移動
@@ -267,7 +366,7 @@ public class Gundam : BaseMs
     {
         if (_subShot.isNow)
             return;
-        _move.MoveUpdate();
+        _move.UpdateState();
     }
 
     /// <summary>
@@ -276,10 +375,10 @@ public class Gundam : BaseMs
     private void MainShot()
     {
         // バズーカ中は不可
-        if (_subShot.isNow)
+        if (_subShot.isNow || _move.isLanding)
             return;
 
-        _mainShot.MainShot();
+        _mainShot.UpdateState();
     }
 
     /// <summary>
@@ -287,8 +386,8 @@ public class Gundam : BaseMs
     /// </summary>
     private void SubShot()
     {
-        if (_mainShot.isNow) return;
-        _subShot.SubShot();
+        if (_mainShot.isNow || _move.isLanding) return;
+        _subShot.UpdateState();
         // オブジェクトの切り替え
         if (_subShot.isNow)
         {
@@ -303,4 +402,31 @@ public class Gundam : BaseMs
         }
     }
 
+    /// <summary>
+    /// ダメージ
+    /// </summary>
+    private void MsDamage()
+    {
+        _damage.UpdateState();
+    }
+
+    /// <summary>
+    /// ダメージ処理
+    /// </summary>
+    /// <param name="damage"></param>
+    /// <param name="downValue"></param>
+    /// <param name="bulletPos"></param>
+    /// <returns></returns>
+    public override bool Damage(int damage, int downValue, Vector3 bulletPos)
+    {
+        if (!base.Damage(damage, downValue, bulletPos))
+        {
+            return false;
+        }
+        _damage.SetState(damage, downValue, bulletPos);
+
+        return true;
+    }
+
+    #endregion
 }

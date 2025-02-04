@@ -257,9 +257,9 @@ public class GundamMainShot : BaseMsAmoParts
     }
 
     /// <summary>
-    /// メイン射撃処理
+    /// 状態を更新
     /// </summary>
-    public void MainShot()
+    public void UpdateState()
     {
         Reload();
         _stateMachine.UpdateState();

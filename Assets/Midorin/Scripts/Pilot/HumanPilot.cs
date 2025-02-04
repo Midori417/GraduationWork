@@ -10,8 +10,6 @@ public class HumanPilot : BasePilot
     [SerializeField, Header("UIマネージャー")]
     private UIManager _uiManager;
 
-    MsInput msInput = new MsInput();
-
     /// <summary>
     /// 毎フレーム呼び出される
     /// </summary>
@@ -37,6 +35,7 @@ public class HumanPilot : BasePilot
     /// </summary>
     private void MsUpdate()
     {
+        base.MsUpdate();
         msInput._move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         msInput._jump = Input.GetKey(KeyCode.Space);
         msInput._dash = Input.GetKey(KeyCode.LeftShift);
@@ -61,5 +60,17 @@ public class HumanPilot : BasePilot
         {
             _uiManager.ArmedValue(i, myMs.GetAmo(i), myMs.GetAmoRate(i));
         }
+    }
+
+    /// <summary>
+    /// 勝敗を設定
+    /// </summary>
+    /// <param name="victory"></param>
+    public override void SetVitory(Victory victory)
+    {
+        base.SetVitory(victory);
+        if(!_uiManager) return;
+
+        _uiManager.SetVictory(victory);
     }
 }

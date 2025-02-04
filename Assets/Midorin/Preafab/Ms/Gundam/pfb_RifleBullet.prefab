@@ -14677,7 +14677,7 @@ GameObject:
   - component: {fileID: -1150294115761352523}
   - component: {fileID: -7839690479877354276}
   - component: {fileID: 2139225256780875728}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: pfb_RifleBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14693,7 +14693,7 @@ Transform:
   m_GameObject: {fileID: 2175586723132714862}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.8416734, y: 10.790763, z: -9.442758}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14729,11 +14729,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c507ea36eb22165478041758d2b442c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _atk: 0
-  _down: 0
+  _atk: 70
+  _down: 3
   _isHitDestroy: 0
-  _pfbEffHit: {fileID: 0}
-  _hitEffDestroyTimer: 0
+  _pfbEffHit: {fileID: 56783644349017880, guid: 2e2a521fe05d904408d9bbf72693fcb3, type: 3}
+  _hitEffDestroyTimer: 1
 --- !u!54 &-7839690479877354276
 Rigidbody:
   m_ObjectHideFlags: 0

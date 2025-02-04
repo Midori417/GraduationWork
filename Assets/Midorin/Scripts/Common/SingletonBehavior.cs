@@ -36,4 +36,12 @@ public class SingletonBehavior<T> : MonoBehaviour where T : MonoBehaviour
 
         Destroy(this);
     }
+
+    /// <summary>
+    /// 破壊する
+    /// </summary>
+    public void DestroyComand()
+    {
+        _Instance = null;
+    }
 }

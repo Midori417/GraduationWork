@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -19,6 +18,9 @@ public class MsMove : BaseMsParts
 
         // ダッシュ
         Dash,
+
+        // 着地
+        Landing,
     }
     StateMachine<State> _stateMachine = new StateMachine<State>();
 
@@ -34,7 +36,7 @@ public class MsMove : BaseMsParts
         [Header("旋回速度")]
         public float _rotationSpeed;
     }
-    [SerializeField, Header("移動パラメータ")]
+    [SerializeField, Header("移動変数")]
     private MoveValiable _move;
 
     [Serializable]
@@ -51,14 +53,8 @@ public class MsMove : BaseMsParts
 
         [Header("ブーストゲージの消費量")]
         public float useBoost;
-
-        [HideInInspector, Header("ジャンプ中か")]
-        public bool isNow;
-
-        [Header("着地時の慣性")]
-        public float inertia;
     }
-    [SerializeField, Header("ジャンプパラメータ")]
+    [SerializeField, Header("ジャンプ変数")]
     private JumpValiable _jump;
 
     [Serializable]
@@ -72,17 +68,24 @@ public class MsMove : BaseMsParts
 
         [Header("ブーストゲージの消費量")]
         public float useBoost;
-
-        [HideInInspector, Header("ダッシュ中か")]
-        public bool isNow;
     }
     [SerializeField, Header("ダッシュパラメータ")]
     private DashValiable _dash;
 
-    #region プロパティ
+    [Serializable]
+    private struct LandingValiable
+    {
+        [Header("着地時の慣性")]
+        public float inertia;
+    }
+    [SerializeField, Header("着地変数")]
+    private LandingValiable _landing;
 
-    public bool isJump => _jump.isNow;
-    public bool isDash => _dash.isNow;
+    #region ゲッター
+
+    public bool isJump => _stateMachine.currentState == State.Jump;
+    public bool isDash => _stateMachine.currentState == State.Dash;
+    public bool isLanding => _stateMachine.currentState == State.Landing;
 
     #endregion
 
@@ -98,17 +101,6 @@ public class MsMove : BaseMsParts
 
     #endregion
 
-    /// <summary>
-    /// 移動処理
-    /// </summary>
-    public void MoveUpdate()
-    {
-        _stateMachine.UpdateState();
-        // アニメータ変数処理
-        animator.SetBool("Jump", isJump);
-        animator.SetBool("Dash", isDash);
-    }
-
     #region 状態
 
     /// <summary>
@@ -119,6 +111,7 @@ public class MsMove : BaseMsParts
         SetUpNormal();
         SetUpJump();
         SetUpDash();
+        SetUpLanding();
         _stateMachine.Setup(State.Normal);
     }
 
@@ -135,6 +128,10 @@ public class MsMove : BaseMsParts
         {
             if (groundCheck.isGround)
             {
+                // 着地
+                if (groundCheck.isGround && !groundCheck.oldIsGround)
+                    _stateMachine.ChangeState(State.Landing);
+
                 // 進行方向に回転しながら正面方向に進む
                 if (msInput._move != Vector2.zero)
                 {
@@ -179,7 +176,6 @@ public class MsMove : BaseMsParts
         State state = State.Jump;
         Action<State> enter = (prev) =>
         {
-            _jump.isNow = true;
             rb.useGravity = false;
         };
         Action update = () =>
@@ -214,7 +210,6 @@ public class MsMove : BaseMsParts
         Action<State> exit = (next) =>
         {
             rb.useGravity = true;
-            _jump.isNow = false;
         };
         _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
@@ -227,7 +222,6 @@ public class MsMove : BaseMsParts
         State state = State.Dash;
         Action<State> enter = (prev) =>
         {
-            _dash.isNow = true;
             rb.useGravity = false;
             transform.Translate(0, 1, 0);
         };
@@ -257,12 +251,51 @@ public class MsMove : BaseMsParts
         Action<State> exit = (next) =>
         {
             rb.useGravity = true;
-            _dash.isNow = false;
+        };
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+    }
+
+    /// <summary>
+    /// 着地状態をセットアップ
+    /// </summary>
+    private void SetUpLanding()
+    {
+        State state = State.Landing;
+        GameTimer timer = new GameTimer(1);
+        Action<State> enter = (prev) =>
+        {
+            rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, _landing.inertia);
+            animator.SetTrigger("Landing");
+            timer.ResetTimer();
+        };
+        Action update = () =>
+        {
+            if (timer.UpdateTimer())
+            {
+                _stateMachine.ChangeState(State.Normal);
+            }
+        };
+        Action lateUpdate = () =>
+        {
+        };
+        Action<State> exit = (next) =>
+        {
         };
         _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
 
     #endregion
+
+    /// <summary>
+    /// 処理
+    /// </summary>
+    public void UpdateState()
+    {
+        _stateMachine.UpdateState();
+        // アニメータ変数処理
+        animator.SetBool("Jump", isJump);
+        animator.SetBool("Dash", isDash);
+    }
 
     /// <summary>
     /// 初期化
@@ -271,14 +304,6 @@ public class MsMove : BaseMsParts
     {
         base.Initalize();
         _myCamera = mainMs.myCamera;
-    }
-
-    /// <summary>
-    /// 着地処理
-    /// </summary>
-    public void Landing()
-    {
-        rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, _jump.inertia);
     }
 
     /// <summary>

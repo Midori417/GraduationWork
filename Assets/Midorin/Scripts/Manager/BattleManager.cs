@@ -74,6 +74,9 @@ public class BattleManager : SingletonBehavior<BattleManager>
     [SerializeField, Header("マップ")]
     private MapManager _mapManager;
 
+    // 復活位置
+    private List<Transform> _responTrs;
+
     [SerializeField, Header("バトル")]
     private BattleEventUIControl _battleEventUIControl;
 
@@ -82,7 +85,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
 
     public int battleTimer => _battleTimer;
     public int redCost => _teamCost._red;
-    public int blueCost => _teamCost._blue ;
+    public int blueCost => _teamCost._blue;
 
     #region イベント関数
 
@@ -131,7 +134,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
             {
                 battleInfo.time = 60 * 60;
                 battleInfo.teamRedCost = 6000;
-                battleInfo.teamBlueCost = 3000;
+                battleInfo.teamBlueCost = 6000;
             }
             {
                 PilotInfo pilotInfo;
@@ -259,14 +262,14 @@ public class BattleManager : SingletonBehavior<BattleManager>
             Debug.LogError("MapManagerが設定されていないよ");
             return;
         }
-        List<Transform> respones = _mapManager.responTrs;
+        _responTrs = _mapManager.responTrs;
         foreach (BasePilot pilot in _pilot._red)
         {
-            pilot.myMs.transform.SetPositionAndRotation(respones[0].position, respones[0].rotation);
+            pilot.myMs.transform.SetPositionAndRotation(_responTrs[0].position, _responTrs[0].rotation);
         }
         foreach (BasePilot pilot in _pilot._blue)
         {
-            pilot.myMs.transform.SetPositionAndRotation(respones[1].position, respones[1].rotation);
+            pilot.myMs.transform.SetPositionAndRotation(_responTrs[1].position, _responTrs[1].rotation);
         }
     }
 
@@ -312,7 +315,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update,lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
 
     /// <summary>
@@ -390,13 +393,40 @@ public class BattleManager : SingletonBehavior<BattleManager>
         State state = State.End;
         Action<State> enter = (prev) =>
         {
+            if (redCost <= 0)
+            {
+                foreach (BasePilot pilot in _pilot._red)
+                {
+                    pilot.SetVitory(Victory.Lose);
+                }
+                foreach (BasePilot pilot in _pilot._blue)
+                {
+                    pilot.SetVitory(Victory.Win);
+                }
+            }
+            if (blueCost <= 0)
+            {
+                foreach (BasePilot pilot in _pilot._red)
+                {
+                    pilot.SetVitory(Victory.Win);
+                }
+                foreach (BasePilot pilot in _pilot._blue)
+                {
+                    pilot.SetVitory(Victory.Lose);
+                }
+            }
+
         };
         Action update = () =>
         {
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene("BattleSetting");
+                DestroyComand();
+            }
         };
         Action lateUpdate = () =>
         {
-
         };
         Action<State> exit = (next) =>
         {
@@ -405,4 +435,48 @@ public class BattleManager : SingletonBehavior<BattleManager>
     }
 
     #endregion
+
+    /// <summary>
+    /// コストダウン
+    /// </summary>
+    /// <param name="cost"></param>
+    public void CostDown(int cost, Team team)
+    {
+        if (team == Team.Red)
+        {
+            _teamCost._red -= cost;
+        }
+        else if (team == Team.Blue)
+        {
+            _teamCost._blue -= cost;
+        }
+    }
+
+    /// <summary>
+    /// チームコストを取得
+    /// </summary>
+    /// <param name="team"></param>
+    public int GetTeamCost(Team team)
+    {
+        if (team == Team.Red)
+        {
+            return redCost;
+        }
+        else if (team == Team.Blue)
+        {
+            return blueCost;
+        }
+
+        return 0;
+    }
+
+    /// <summary>
+    /// 復活位置を取得
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 GetResponPos()
+    {
+        int random = UnityEngine.Random.Range(0, _responTrs.Count - 1);
+        return _responTrs[random].position;
+    }
 }

@@ -7,4 +7,12 @@ using UnityEngine;
 /// </summary>
 public class CpuPilot : BasePilot
 {
+
+    private void Update()
+    {
+        MsUpdate();
+        msInput._mainShot = true;
+
+        myMs.msInput = msInput;
+    }
 }

@@ -48,14 +48,14 @@ public class BulletCollision : MonoBehaviour
     {
         if (!_isCollision) return;
 
-        // エフェクトを生成
-        if (other.CompareTag("MsCollision") || (other.CompareTag("Ground") || other.CompareTag("Building")))
-            CreteHitEffect();
 
         // 機体に衝突したらダメージを与える
         if (other.CompareTag("MsCollision"))
         {
-            other.GetComponent<MsDamage>().Damage(_atk, _down, transform.position);
+            if (!other.GetComponent<MsDamageCollision>().Damage(_atk, _down, transform.position))
+            {
+                return;
+            }
             if (_isHitDestroy) Destroy(gameObject);
         }
 
@@ -64,6 +64,9 @@ public class BulletCollision : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        // エフェクトを生成
+        if (other.CompareTag("MsCollision") || (other.CompareTag("Ground") || other.CompareTag("Building")))
+            CreteHitEffect();
     }
 
     #endregion

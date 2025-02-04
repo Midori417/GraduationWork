@@ -128,6 +128,7 @@ public class GundamSubShot : BaseMsAmoParts
                 Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
                 transform.rotation = targetRotation;
             }
+            mainMs.UseBoost(20);
             // 射撃時間になったら弾を生成
             if (timer.UpdateTimer())
             {
@@ -188,9 +189,9 @@ public class GundamSubShot : BaseMsAmoParts
     }
 
     /// <summary>
-    /// サブ射撃
+    /// 状態を更新
     /// </summary>
-    public void SubShot()
+    public void UpdateState()
     {
         Reload();
         _stateMachine.UpdateState();

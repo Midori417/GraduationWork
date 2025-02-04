@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// ダメージ検知
 /// </summary>
-public class MsDamage : BaseMsParts
+public class MsDamageCollision : BaseMsParts
 {
     /// <summary>
     /// 初期化
@@ -21,12 +21,12 @@ public class MsDamage : BaseMsParts
     /// <param name="damage"></param>
     /// <param name="downValue"></param>
     /// <param name="bulletPos"></param>
-    public void Damage(int damage, int downValue, Vector3 bulletPos)
+    public bool Damage(int damage, int downValue, Vector3 bulletPos)
     {
         if (mainMs)
         {
-            mainMs.Damage(damage, downValue, bulletPos);
-            Debug.Log("衝突");
+            return mainMs.Damage(damage, downValue, bulletPos);
         }
+        return false;
     }
 }

@@ -62,22 +62,6 @@ public class BattleEventUIControl : MonoBehaviour
     }
 
     /// <summary>
-    /// 勝利
-    /// </summary>
-    public void Win()
-    {
-        ImgChange(_win);
-    }
-
-    /// <summary>
-    /// 敗北
-    /// </summary>
-    public void Lose()
-    {
-        ImgChange(_lose);
-    }
-
-    /// <summary>
     /// 画像を表示しない
     /// </summary>
     public void NoImg()

@@ -29,6 +29,15 @@ public class UIManager : MonoBehaviour
     [SerializeField, Header("戦力0味方1敵")]
     private List<Image> _imgStrengthGauge;
 
+    [SerializeField, Header("イベントUI")]
+    private Image _imgEvent;
+
+    [SerializeField, Header("勝利画像")]
+    private Sprite _win;
+
+    [SerializeField, Header("敗北画像")]
+    private Sprite _lose;
+
     private BattleManager _battleManager;
 
     private void Start()
@@ -125,6 +134,23 @@ public class UIManager : MonoBehaviour
         if (_txtHp)
         {
             _txtHp.text = value.ToString();
+        }
+    }
+
+    /// <summary>
+    /// 勝敗を設定
+    /// </summary>
+    /// <param name="victory"></param>
+    public void SetVictory(Victory victory)
+    {
+        _imgEvent.enabled = true;
+        if(victory == Victory.Win)
+        {
+            _imgEvent.sprite = _win;
+        }
+        else if(victory == Victory.Lose)
+        {
+            _imgEvent.sprite = _lose;
         }
     }
 }

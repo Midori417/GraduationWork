@@ -244,8 +244,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cc0405f7cc0734ba0ca5474c38669e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fadeOut: {fileID: 1128900952119066567}
-  sceneName: Select
+  _fadeOut: {fileID: 1128900952119066567}
+  _sceneName: Select
 --- !u!4 &31603151
 Transform:
   m_ObjectHideFlags: 0
