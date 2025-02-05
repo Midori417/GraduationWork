@@ -119,7 +119,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _atk: 99
   _down: 6
-  _isHitDestroy: 0
+  _isHitDestroy: 1
   _pfbEffHit: {fileID: 124326666274685267, guid: bfe24e59628a9e94e82d729ec9f5d564, type: 3}
   _hitEffDestroyTimer: 1
 --- !u!136 &2124124335741476796

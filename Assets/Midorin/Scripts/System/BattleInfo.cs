@@ -73,6 +73,7 @@ public struct MsInput
     public bool _mainShot;
     public bool _subShot;
     public bool _mainAttack;
+    public bool _targetChange;
 }
 
 // 勝敗
@@ -80,4 +81,13 @@ public enum Victory
 {
     Win,
     Lose
+}
+
+// ターゲットタイプ
+public enum TargetType
+{
+    Red,
+    Green,
+    Yellow,
+    LookOn
 }

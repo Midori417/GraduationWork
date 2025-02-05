@@ -228,7 +228,10 @@ public class GundamSubShot : BaseMsAmoParts
 
             // 弾を生成
             BasicBulletMove bullet = Instantiate(_pfbBullet, pos, rot);
-            bullet.target = _target;
+            if (mainMs.isRedDistance)
+            {
+                bullet.target = _target;
+            }
         }
         else
         {

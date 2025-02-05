@@ -145,7 +145,7 @@ public class MsMove : BaseMsParts
                     rb.velocity = new Vector3(0, rb.velocity.y, 0);
                 }
             }
-            if (mainMs.boost01 > 0)
+            if (mainMs.boostRate > 0)
             {
                 if (msInput._jump && !isDash)
                 {
@@ -180,7 +180,7 @@ public class MsMove : BaseMsParts
         };
         Action update = () =>
         {
-            if (!msInput._jump || mainMs.boost01 <= 0)
+            if (!msInput._jump || mainMs.boostRate <= 0)
             {
                 _stateMachine.ChangeState(State.Normal);
                 return;
@@ -228,7 +228,7 @@ public class MsMove : BaseMsParts
         Action update = () =>
         {
             // 入力かブーストがなくなれば通常に戻どす
-            if (!msInput._dash || mainMs.boost01 <= 0)
+            if (!msInput._dash || mainMs.boostRate <= 0)
             {
                 _stateMachine.ChangeState(State.Normal);
                 return;

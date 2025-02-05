@@ -68,8 +68,8 @@ public class BattleManager : SingletonBehavior<BattleManager>
     private PilotVaiable _pilot;
 
     // バトル時間を格納する変数
-    private int _battleTime = 0;
-    private int _battleTimer = 0;
+    private float _battleTime = 0;
+    private float _battleTimer = 0;
 
     [SerializeField, Header("マップ")]
     private MapManager _mapManager;
@@ -83,7 +83,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
     // ゲームマネージャー
     private GameManager _gameManager;
 
-    public int battleTimer => _battleTimer;
+    public float battleTimer => _battleTimer;
     public int redCost => _teamCost._red;
     public int blueCost => _teamCost._blue;
 
@@ -132,7 +132,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
         battleInfo.pilotsInfo = new List<PilotInfo>();
         {
             {
-                battleInfo.time = 60 * 60;
+                battleInfo.time = 120;
                 battleInfo.teamRedCost = 6000;
                 battleInfo.teamBlueCost = 6000;
             }
@@ -153,14 +153,14 @@ public class BattleManager : SingletonBehavior<BattleManager>
 
             {
                 PilotInfo pilotInfo;
-                pilotInfo.teamId = Team.None;
+                pilotInfo.teamId = Team.Blue;
                 pilotInfo.playerType = PlayerType.Cpu;
                 pilotInfo.useMs = MsList.Gundam;
                 battleInfo.pilotsInfo.Add(pilotInfo);
             }
             {
                 PilotInfo pilotInfo;
-                pilotInfo.teamId = Team.None;
+                pilotInfo.teamId = Team.Red;
                 pilotInfo.playerType = PlayerType.Cpu;
                 pilotInfo.useMs = MsList.Gundam;
                 battleInfo.pilotsInfo.Add(pilotInfo);
@@ -228,6 +228,16 @@ public class BattleManager : SingletonBehavior<BattleManager>
         {
             pilot.enemyPilots = _pilot._red;
         }
+        if(_pilot._red.Count > 1)
+        {
+            _pilot._red[0].teamPilot = _pilot._red[1];
+            _pilot._red[1].teamPilot = _pilot._red[0];
+        }
+        if (_pilot._blue.Count > 1)
+        {
+            _pilot._blue[0].teamPilot = _pilot._blue[1];
+            _pilot._blue[1].teamPilot = _pilot._blue[0];
+        }
 
         // パイロットの初期化
         foreach (BasePilot pilot in _pilot._all)
@@ -263,13 +273,15 @@ public class BattleManager : SingletonBehavior<BattleManager>
             return;
         }
         _responTrs = _mapManager.responTrs;
-        foreach (BasePilot pilot in _pilot._red)
+        for(int i = 0; i < _pilot._red.Count; ++i)
         {
-            pilot.myMs.transform.SetPositionAndRotation(_responTrs[0].position, _responTrs[0].rotation);
+            _pilot._red[i].myMs.transform.SetPositionAndRotation(_responTrs[0].position, _responTrs[0].rotation);
+            _pilot._red[i].myMs.transform.Translate(30 * i, 0, 0);
         }
-        foreach (BasePilot pilot in _pilot._blue)
+        for (int i = 0; i < _pilot._blue.Count; ++i)
         {
-            pilot.myMs.transform.SetPositionAndRotation(_responTrs[1].position, _responTrs[1].rotation);
+            _pilot._blue[i].myMs.transform.SetPositionAndRotation(_responTrs[1].position, _responTrs[1].rotation);
+            _pilot._blue[i].myMs.transform.Translate(30 * i, 0, 0);
         }
     }
 
@@ -364,7 +376,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
         };
         Action update = () =>
         {
-            _battleTimer = (int)timer.remain;
+            _battleTimer = timer.remain;
             // 時間制限かどちらかのコストがなくなれば終了
             if (timer.UpdateTimer() || _teamCost.IsEnd())
             {

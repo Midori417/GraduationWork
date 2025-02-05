@@ -19,6 +19,7 @@ public class HumanPilot : BasePilot
 
         MsUpdate();
         UIUpdate();
+        TargetUpdate();
     }
 
     /// <summary>
@@ -33,14 +34,23 @@ public class HumanPilot : BasePilot
     /// <summary>
     /// 機体の更新
     /// </summary>
-    private void MsUpdate()
+    protected override void MsUpdate()
     {
         base.MsUpdate();
+        MsInput();
+    }
+
+    /// <summary>
+    /// 機体の入力
+    /// </summary>
+    private void MsInput()
+    {
         msInput._move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         msInput._jump = Input.GetKey(KeyCode.Space);
         msInput._dash = Input.GetKey(KeyCode.LeftShift);
         msInput._mainShot = Input.GetKeyDown(KeyCode.Mouse0);
         msInput._subShot = Input.GetKeyDown(KeyCode.E);
+        msInput._targetChange = Input.GetKeyDown(KeyCode.Mouse2);
 
         myMs.msInput = msInput;
     }
@@ -52,9 +62,44 @@ public class HumanPilot : BasePilot
     {
         if (!_uiManager) return;
 
-        _uiManager.Hp(myMs.hp);
-        _uiManager.BoostGauge(myMs.boost01);
+        _uiManager.SetHp((int)myMs.hp, myMs.hpRate);
+        _uiManager.BoostGauge(myMs.boostRate);
         _uiManager.StrengthGauge(team);
+
+        if (targetMs)
+        {
+            Vector3 pos = cameraManager.mainCamera.WorldToScreenPoint(targetMs.center.position);
+            if (!targetMs.isDamageOk)
+            {
+                _uiManager.SetTargetMark(TargetType.Yellow, pos);
+            }
+            else if (myMs.isLookDistance)
+            {
+                _uiManager.SetTargetMark(TargetType.LookOn, pos);
+            }
+            else if (myMs.isRedDistance)
+            {
+                _uiManager.SetTargetMark(TargetType.Red, pos);
+            }
+            else
+            {
+                _uiManager.SetTargetMark(TargetType.Green, pos);
+            }
+        }
+        // エネミー体力
+        for (int i = 0; i < enemyPilots.Count; ++i)
+        {
+            BaseMs ms = enemyPilots[i].myMs;
+            Vector3 pos = cameraManager.mainCamera.WorldToScreenPoint(ms.center.position);
+            _uiManager.SetEnemHp(i, ms.hpRate, pos, ms.isVisible);
+        }
+        if(teamPilot)
+        {
+            BaseMs ms = teamPilot.myMs;
+            Vector3 pos = cameraManager.mainCamera.WorldToScreenPoint(ms.center.position);
+            _uiManager.SetPartnerHpBar(ms.hpRate, pos, ms.isVisible);
+            _uiManager.SetPartnerHp(ms.hp, ms.hpRate);
+        }
 
         for (int i = 0; i < myMs.amoCount; ++i)
         {
@@ -69,7 +114,7 @@ public class HumanPilot : BasePilot
     public override void SetVitory(Victory victory)
     {
         base.SetVitory(victory);
-        if(!_uiManager) return;
+        if (!_uiManager) return;
 
         _uiManager.SetVictory(victory);
     }

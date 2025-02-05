@@ -258,6 +258,11 @@ MonoBehaviour:
   _boost:
     _chargeLockTime: 0.5
     _overHeartChargeLockTime: 1
+  _targetDistace:
+    _redHorizontal: 120
+    _redUp: 30
+    _redDown: 10
+    _lookOn: 50
   _invisibleTimer:
     _maxTime: 1
   _responTime: 0
@@ -361,8 +366,8 @@ MonoBehaviour:
     _maxTime: 0.3
   _damageTime: 0.3
   _autoStandingtime: 3
-  _standingTime: 1
-  _invisibleTime: 0
+  _standingTime: 0.5
+  _invisibleTime: 0.5
 --- !u!1 &286263149433171680
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,12 +15,16 @@ public class BasePilot : BaseGameObject
     // 自身の操る機体
     private BaseMs _myMs;
 
+    // チームパイロット
+    private BasePilot _teamPilot;
+
     // ターゲットパイロット
     private BasePilot _targetPilot;
     private List<BasePilot> _enemyPilots;
-    private int _taregetIndex = 0;
-
     protected MsInput msInput = new MsInput();
+    private int _targetIndex = 0;
+
+    #region プロパティ
 
     public Team team
     {
@@ -32,8 +36,27 @@ public class BasePilot : BaseGameObject
         get { return _myMs; }
         set { _myMs = value; }
     }
+    public BasePilot teamPilot
+    {
+       protected get => _teamPilot;
+        set => _teamPilot = value;
+    }
+    public BasePilot targetPilot => _targetPilot;
+    public BaseMs targetMs
+    {
+        get
+        {
+            if (targetPilot)
+            {
+                return targetPilot.myMs;
+            }
+            return null;
+        }
+    }
+
     public List<BasePilot> enemyPilots
     {
+        protected get => _enemyPilots;
         set => _enemyPilots = value;
     }
     protected CameraManager cameraManager => _cameraManager;
@@ -48,6 +71,8 @@ public class BasePilot : BaseGameObject
     private bool _respon = false;
 
     private Vector3 _responPos = Vector3.zero;
+
+    #endregion
 
     /// <summary>
     /// 機体が破壊されたときの処理
@@ -115,19 +140,33 @@ public class BasePilot : BaseGameObject
     }
 
     /// <summary>
-    /// ターゲットチェンジ
-    /// パイロットで呼んでもらう
+    /// ターゲットの更新
     /// </summary>
-    public void TargetChange()
+    protected void TargetUpdate()
     {
-        if (_enemyPilots.Count - 1 == _taregetIndex)
+        if (msInput._targetChange)
         {
-            _taregetIndex = 0;
+            TargetChange();
         }
-        _taregetIndex++;
-        _targetPilot = _enemyPilots[_taregetIndex];
+        if (targetMs.hp <= 0)
+        {
+            TargetChange();
+        }
+    }
+
+    /// <summary>
+    /// ターゲットチェンジ
+    /// </summary>
+    private void TargetChange()
+    {
+        _targetIndex++;
+        if (_targetIndex == _enemyPilots.Count)
+        {
+            _targetIndex = 0;
+        }
 
         // ターゲットを設定
+        _targetPilot = _enemyPilots[_targetIndex];
         _cameraManager.target = _targetPilot.myMs.center;
         _myMs.targetMs = _targetPilot.myMs;
     }

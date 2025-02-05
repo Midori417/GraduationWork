@@ -27,10 +27,14 @@ public class BaseMs : BaseGameObject
     private struct Hp
     {
         [HideInInspector, Header("現在の体力")]
-        public int _current;
+        public float _current;
 
         [Header("最大体力")]
-        public int _max;
+        public float _max;
+
+        // 現在のエネルギーの割合(0～1)
+        public float _rate
+        { get { return Mathf.Clamp01((_max - (_max - _current)) / _max); } }
 
         /// <summary>
         /// 初期化
@@ -53,7 +57,7 @@ public class BaseMs : BaseGameObject
         private float _current;
 
         // 現在のエネルギーの割合(0～1)
-        public float _current01
+        public float _rate
         { get { return Mathf.Clamp01((_max - (_max - _current)) / _max); } }
 
         // チャージタイマー
@@ -136,6 +140,77 @@ public class BaseMs : BaseGameObject
     [SerializeField, Header("ブースト変数")]
     private Boost _boost;
 
+    [Serializable]
+    private struct TargetDistace
+    {
+        [Header("赤距離")]
+        public float _redHorizontal;
+
+        [Header("赤距離(上)")]
+        public float _redUp;
+
+        [Header("赤距離(下)")]
+        public float _redDown;
+
+        [Header("ロック距離")]
+        public float _lookOn;
+
+        /// <summary>
+        /// 赤ロック範囲筧さん
+        /// </summary>
+        /// <param name="myPos"></param>
+        /// <param name="targetPos"></param>
+        /// <returns></returns>
+        public bool RedDistance(Vector3 myPos, Vector3 targetPos)
+        {
+            // 上判定
+            if (myPos.y + _redUp < targetPos.y) return false;
+            // 下判定
+            if (myPos.y - _redDown > targetPos.y) return false;
+
+            {
+                Vector2 mp = new Vector2(myPos.x, myPos.z);
+                Vector2 tp = new Vector2(targetPos.x, targetPos.z);
+                // 水平計算
+                float distance = Vector2.Distance(mp, tp);
+                if (distance > _redHorizontal)
+                {
+                    return false;
+                }
+            }
+
+            //  範囲内
+            return true;
+        }
+
+        /// <summary>
+        /// レッドロック範囲か計算
+        /// </summary>
+        /// <param name="myPos"></param>
+        /// <param name="targetPos"></param>
+        /// <returns></returns>
+        public bool LooOnDistance(Vector3 myPos, Vector3 targetPos)
+        {
+            if (!RedDistance(myPos, targetPos)) return false;
+
+            {
+                Vector2 mp = new Vector2(myPos.x, myPos.z);
+                Vector2 tp = new Vector2(targetPos.x, targetPos.z);
+                // 水平計算
+                float distance = Vector2.Distance(mp, tp);
+                if (distance > _lookOn)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+
+        }
+    }
+    [SerializeField, Header("ターゲット距離")]
+    private TargetDistace _targetDistace;
+
     [HideInInspector]
     private MsInput _msInput;
 
@@ -176,8 +251,31 @@ public class BaseMs : BaseGameObject
     }
     public Transform center => _center;
     public int cost => _cost;
-    public int hp => _hp._current;
-    public int hpMax => _hp._max;
+    public float hp => _hp._current;
+    public float hpMax => _hp._max;
+    public float hpRate => _hp._rate;
+    public bool isRedDistance
+    {
+        get
+        {
+            if (!targetMs)
+            {
+                return false;
+            }
+            return _targetDistace.RedDistance(center.position, targetMs.center.position);
+        }
+    }
+    public bool isLookDistance
+    {
+        get
+        {
+            if (!targetMs)
+            {
+                return false;
+            }
+            return _targetDistace.LooOnDistance(center.position, targetMs.center.position);
+        }
+    }
     protected float responTime => _responTime;
     public bool isDamageOk
     {
@@ -194,13 +292,13 @@ public class BaseMs : BaseGameObject
         get => _downValue;
         set => _downValue = value;
     }
-    public float boost01 => _boost._current01;
+    public float boostRate => _boost._rate;
     public MsInput msInput
     {
         get => _msInput;
         set => _msInput = value;
     }
-
+    public bool isVisible => _meshRenderer.isVisible;
     public int amoCount => _uiArmeds.Count;
 
     #endregion

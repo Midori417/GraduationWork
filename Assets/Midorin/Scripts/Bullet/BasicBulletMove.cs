@@ -46,12 +46,11 @@ public class BasicBulletMove : BaseGameObject
         // nullチェック
         if (!_target)
         {
-            Debug.Log("射撃対象が見つかりません。");
             return;
         }
 
-        // 射撃対象がいる方向に向ける
-        transform.LookAt(_target.position);
+        //// 射撃対象がいる方向に向ける
+        //transform.LookAt(_target.position);
     }
 
     /// <summary>

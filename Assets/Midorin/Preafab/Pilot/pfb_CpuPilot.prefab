@@ -46,6 +46,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cameraManager: {fileID: 5055779101882152996}
+  moveTimer: 0.5
+  moveActionTimer: 1
+  attackActionTimer: 0.5
 --- !u!1001 &2441983506588518788
 PrefabInstance:
   m_ObjectHideFlags: 0

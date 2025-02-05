@@ -104,7 +104,7 @@ public class Gundam : BaseMs
     [SerializeField, Header("爆発エフェクト")]
     private GameObject _pfbExsprosion;
 
-    private int _layer = -1;
+    private int _beumLayer = -1;
 
     #region イベント関数
 
@@ -126,7 +126,7 @@ public class Gundam : BaseMs
     private void Start()
     {
         // レイヤー番号を取得
-        _layer = animator.GetLayerIndex("BeumRifleLayer");
+        _beumLayer = animator.GetLayerIndex("BeumRifleLayer");
     }
 
     /// <summary>
@@ -391,7 +391,7 @@ public class Gundam : BaseMs
         // オブジェクトの切り替え
         if (_subShot.isNow)
         {
-            animator.SetLayerWeight(_layer, 0);
+            animator.SetLayerWeight(_beumLayer, 0);
             _activeObj.BazookaActive(true);
             _activeObj.BeumRifleActive(false);
         }
