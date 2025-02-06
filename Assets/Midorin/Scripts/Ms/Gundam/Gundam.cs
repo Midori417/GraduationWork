@@ -105,6 +105,7 @@ public class Gundam : BaseMs
     private GameObject _pfbExsprosion;
 
     private int _beumLayer = -1;
+    private int _sableLayer = -1;
 
     #region イベント関数
 
@@ -127,6 +128,7 @@ public class Gundam : BaseMs
     {
         // レイヤー番号を取得
         _beumLayer = animator.GetLayerIndex("BeumRifleLayer");
+        _sableLayer = animator.GetLayerIndex("SableLayer");
     }
 
     /// <summary>
