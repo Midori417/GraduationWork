@@ -8,8 +8,8 @@ using UnityEngine;
 /// </summary>
 public class Gundam : BaseMs
 {
-    [SerializeField, Header("true動きを止める")]
-    private bool isStop = false;
+    // trueなら動きを止める
+    private bool isStopMove = false;
 
     [SerializeField, Header("頭の処理")]
     private LockHead lockHead;
@@ -23,14 +23,32 @@ public class Gundam : BaseMs
     [SerializeField, Header("バズーカコンポーネント")]
     private GundamBazookaShot bazookaShot;
 
+    [SerializeField, Header("ダメージ検出コンポーネント")]
+    private MsDamageCheck msDamageCheck;
+
     [SerializeField, Header("ビームライフルオブジェクト")]
     private GameObject beumRifle;
 
-    [SerializeField, Header("バズーカオブジェクト")]
-    private GameObject bazooka;
-
     [SerializeField, Header("バーニアエフェクト")]
-    private ParticleSystem eff_roketFire;
+    private GameObject eff_roketFire;
+
+    [SerializeField, Header("バーニア位置")]
+    private Transform rokeFireTrs;
+
+    private GameObject roketFire;
+
+    // trueならダメージを受ける
+    private bool isDamageOk = true;
+
+    // trueなら立ち上がること可能
+    private bool isStandingOk = false;
+
+    [SerializeField, Header("ダウン着地してから立ち上がり可能になるまでの時間")]
+    private float standingTime = 0;
+    private float standingTimer = 0;
+
+    [SerializeField, Header("無敵時間")]
+    private float invincibleTime = 0;
 
     // ビームライフル攻撃レイヤーインデックス
     int beumRifleLayerIndex = 0;
@@ -42,23 +60,26 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
-        if (!ComponentCheck())
+        if (DestroyCheck())
         {
-            Debug.LogError("必要なコンポーネント足りません");
-            return;
+            // 破壊された
+            //return;
         }
 
         BoostCharge();
 
-        if (!isStop)
+        if (!isStopMove && !isDown)
         {
             MoveProsess();
             BeumRifleProcess();
             BazookaProsess();
         }
 
-        RoketFireControl();
-        AnimUpdate();
+        DownProsess();
+        StandingProsess();
+
+        RoketEffControl();
+        AnimationProsess();
     }
 
     #endregion
@@ -69,67 +90,189 @@ public class Gundam : BaseMs
     public override void Initialize()
     {
         base.Initialize();
-        ComponentCheck();
-
-        lockHead.Initalize();
-        move.Initalize();
-        rifleShot.Initalize();
-        bazookaShot.Initalize();
+        ProsessCheck();
 
         // レイヤー番号を取得
         beumRifleLayerIndex = animator.GetLayerIndex("BeumRifleLayer");
-        bazooka.SetActive(false);
     }
 
     /// <summary>
-    /// 必要なコンポーネントがあるか
+    ///処理に必要なものがそろっているかチェック
     /// </summary>
-    /// <returns></returns>
-    protected override bool ComponentCheck()
+    protected override void ProsessCheck()
     {
-        if (!base.ComponentCheck()) return false;
-        if (!lockHead) return false;
-        if (!move) return false;
-        if (!rifleShot) return false;
-        if (!bazookaShot) return false;
+        // 必ず必要なもの
+        base.ProsessCheck();
 
-        return true;
+        if (!move)
+        {
+            Debug.LogError("移動コンポーネントが存在しません");
+            return;
+        }
+        else move.Initalize();
+
+        // 存在しなくても大丈夫なもの
+        if (!lockHead) Debug.LogWarning("LockHead存在しません");
+        else lockHead.Initalize();
+        if (!rifleShot) Debug.LogWarning("RifleShot存在しません");
+        else rifleShot.Initalize();
+        if (!bazookaShot) Debug.LogWarning("Bazooka存在しません");
+        else bazookaShot.Initalize();
+        if (!msDamageCheck) Debug.LogWarning("MsDamageChackが存在しません");
+        else msDamageCheck.Initalize();
     }
 
     /// <summary>
-    /// アニメータに伝える変数の更新
+    /// アニメーションの処理
     /// </summary>
-    void AnimUpdate()
+    void AnimationProsess()
     {
         // アニメータ変数処理
         float speed = new Vector2(rb.velocity.x, rb.velocity.z).magnitude;
         animator.SetFloat("Speed", speed);
         animator.SetBool("IsGround", groundCheck.isGround);
-        animator.SetBool("Jump", move.isJump);
-        animator.SetBool("Dash", move.isDash);
+        if (!isDown)
+        {
+            animator.SetBool("Jump", move.isJump);
+            animator.SetBool("Dash", move.isDash);
+        }
+        else
+        {
+            animator.SetBool("Jump", false);
+            animator.SetBool("Dash", false);
+        }
     }
 
     /// <summary>
     /// ロケットエフェクトコントロール
     /// </summary>
-    void RoketFireControl()
+    void RoketEffControl()
     {
-        if (!eff_roketFire)
-        {
-            return;
-        }
+        if (!eff_roketFire || !rokeFireTrs) return;
 
         if (move.isDash || move.isJump)
         {
-            eff_roketFire.Play();
+            if (!roketFire)
+            {
+                roketFire = Instantiate(eff_roketFire, rokeFireTrs);
+            }
         }
         else
         {
-            // 既に存在しているパーティクルは消さないで放出だけ止める
-            //eff_roketFire.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-            eff_roketFire.Stop();
+            if (roketFire)
+            {
+                Destroy(roketFire);
+            }
+        }
+
+        // ダウン中は止める
+        if (isDown)
+        {
+            if (roketFire)
+            {
+                Destroy(roketFire);
+            }
         }
     }
+
+    #region ダメージ
+
+    /// <summary>
+    /// ダメージを与える
+    /// </summary>
+    /// <param name="damage"></param>
+    public override void Damage(int damage, int _downValue, Vector3 bulletPos)
+    {
+        // falseならダメージ処理を行わない
+        if (!isDamageOk) return;
+
+        base.Damage(damage, _downValue, bulletPos);
+
+        Vector3 directionToTarget = Vector3.Scale(transform.position - bulletPos, new Vector3(1, 0, 1));
+        float dot = Vector3.Dot(directionToTarget.normalized, transform.forward);
+        if (dot > 0)
+        {
+            // 背面から
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+            transform.rotation = targetRotation;
+            animator.SetInteger("DamageDirection", 2);
+        }
+        else
+        {
+            // 正面からくらった
+            Vector3 reverseDirectionToTarget = directionToTarget * -1.0f;
+            Quaternion targetRotation = Quaternion.LookRotation(reverseDirectionToTarget);
+            transform.rotation = targetRotation;
+            animator.SetInteger("DamageDirection", 1);
+        }
+        // ダウン値が5以上ならダウン状態
+        if (downValue < 5)
+        {
+            // 後ろに後退
+            rb.AddForce(directionToTarget * 10.0f, ForceMode.Impulse);
+            animator.SetTrigger("Damage");
+            Stop();
+        }
+        else
+        {
+            rb.AddForce(Vector3.up * 10, ForceMode.Impulse);
+            rb.AddForce(directionToTarget * 20, ForceMode.Impulse);
+            Stop();
+            rb.useGravity = true;
+            animator.SetTrigger("Down");
+            // 無敵化
+            isDamageOk = false;
+            isDown = true;
+            standingTimer = standingTime;
+        }
+    }
+
+    /// <summary>
+    /// ダウン状態処理
+    /// </summary>
+    private void DownProsess()
+    {
+        // ダウン状態でなければ処理しない
+        if (!isDown) return;
+
+        // 着地してから一定時間たてば立ち上がり可能
+        if (groundCheck.isGround)
+        {
+            standingTimer -= Time.deltaTime;
+            if(standingTimer <= 0)
+            {
+                isStandingOk = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 立ち上がり処理
+    /// </summary>
+    private void StandingProsess()
+    {
+        // 立ち上がり可能じゃなければ処理をしない
+        if (!isStandingOk) return;
+
+        // 移動入力があれば立ち上がる
+        if (moveAxis != Vector2.zero)
+        {
+            animator.SetTrigger("Standing");
+            Invoke("RemoveInvincible", invincibleTime);
+            isDown = false;
+            isStandingOk = false;
+        }
+    }
+
+    /// <summary>
+    /// 無敵解除
+    /// </summary>
+    private void RemoveInvincible()
+    {
+        isDamageOk = true;
+    }
+   
+    #endregion
 
     #region 行動のコントロール
 
@@ -138,7 +281,8 @@ public class Gundam : BaseMs
     /// </summary>
     public void Stop()
     {
-        isStop = true;
+        isStopMove = true;
+        rb.velocity = Vector3.zero;
     }
 
     /// <summary>
@@ -146,7 +290,7 @@ public class Gundam : BaseMs
     /// </summary>
     public void Go()
     {
-        isStop = false;
+        isStopMove = false;
     }
     #endregion
 
@@ -157,33 +301,21 @@ public class Gundam : BaseMs
     /// </summary>
     void MoveProsess()
     {
-        // 地面ついているときのみ
-        if (groundCheck.isGround)
-        {
-            move.Move(moveAxis);
-        }
+        // 地面移動処理
+        if (groundCheck.isGround) move.GroundMove(moveAxis);
 
-        if (!move.isDash)
-        {
-            move.Jump(moveAxis, isJumpBtn);
-        }
+        // ジャンプ処理
+        if (!move.isDash) move.Jump(moveAxis, isJumpBtn);
 
-        // ダッシュが終わったとき地面についていたら着地する
-        if (move.isDash && !isDashBtn && groundCheck.isGround)
-        {
-            Landing();
-        }
-
+        // ダッシュ処理
         move.Dash(moveAxis, isDashBtn);
 
-        // 着地した瞬間
-        if (groundCheck.isGround && !groundCheck.oldIsGround)
-        {
-            Landing();
-        }
+        // 着地処理
+        if (groundCheck.isGround && !groundCheck.oldIsGround) Landing();
 
         // ダッシュとジャンプ中は重力の影響を受けない
         rb.useGravity = (!move.isDash) && (!move.isJump);
+
     }
 
     /// <summary>
@@ -191,9 +323,9 @@ public class Gundam : BaseMs
     /// </summary>
     void Landing()
     {
-        move.Landing();
-        animator.SetTrigger("Landing");
         Stop();
+        animator.SetTrigger("Landing");
+        move.Landing();
         Invoke("Go", 1);
     }
 
@@ -206,36 +338,46 @@ public class Gundam : BaseMs
     /// </summary>
     private void BeumRifleProcess()
     {
+        // ライフル射撃機能が存在しないので処理を行わない
+        if (!rifleShot) return;
+
+        // 射撃入力あれば処理をする
         if (isMainShotBtn)
         {
-            if(bazookaShot.isNow)
-            {
-                return;
-            }
-
-            if (!rifleShot.ShotCheck())
-            {
-                // 射撃不可
-                return;
-            }
+            // falseなら射撃不可
+            if (!BeumRifleShotCheck()) return;
 
             if (!rifleShot.isBackShot)
             {
                 animator.SetTrigger("BeumRifleShot");
                 animator.SetLayerWeight(beumRifleLayerIndex, 1);
             }
-            else
-            {
-                animator.SetTrigger("BeumRifleShotBack");
-            }
+            else animator.SetTrigger("BeumRifleShotBack");
+
             Invoke("BeumRifleShotFailed", 0.8f);
         }
     }
 
     /// <summary>
-    /// ビームライフルの弾を生成
+    /// 射撃が可能かチェック
     /// </summary>
-    public void BeumRifleCreateBullet()
+    /// <returns>
+    /// true 射撃可能
+    /// false 射撃不可
+    /// </returns>
+    private bool BeumRifleShotCheck()
+    {
+        if (bazookaShot.isNow) return false;
+        if (!rifleShot.ShotCheck()) return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// ビームライフルの弾を生成
+    /// アニメーションイベントで呼び出す
+    /// </summary>
+    private void BeumRifleCreateBullet()
     {
         rifleShot.CreateBullet();
     }
@@ -243,7 +385,7 @@ public class Gundam : BaseMs
     /// <summary>
     /// ビームライフル攻撃が終わった時の処理
     /// </summary>
-    void BeumRifleShotFailed()
+    private void BeumRifleShotFailed()
     {
         rifleShot.Failed();
         animator.SetLayerWeight(beumRifleLayerIndex, 0);
@@ -258,23 +400,26 @@ public class Gundam : BaseMs
     /// </summary>
     private void BazookaProsess()
     {
-        if(isSubShotBtn)
+        // バズーカ射撃機能が存在しないので処理を行わない
+        if (!bazookaShot) return;
+
+        if (isSubShotBtn)
         {
-            if(!bazookaShot.ShotCheck())
+            if (!bazookaShot.ShotCheck())
             {
                 return;
             }
 
             animator.SetTrigger("BazookaShot");
             Invoke("BazookaFailed", 0.8f);
-            bazooka.SetActive(true);
         }
     }
 
     /// <summary>
     /// バズーカの弾を生成
+    /// アニメーションイベントで呼び出す
     /// </summary>
-    public void BazookaCreateBullet()
+    private void BazookaCreateBullet()
     {
         bazookaShot.CreateBullet();
     }
@@ -285,7 +430,6 @@ public class Gundam : BaseMs
     private void BazookaFailed()
     {
         bazookaShot.Failed();
-        bazooka.SetActive(false);
     }
 
     #endregion

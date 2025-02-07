@@ -7,6 +7,9 @@ using UnityEngine;
 /// </summary>
 public class GundamBazookaShot : BaseMsAmoParts
 {
+    [SerializeField, Header("バズーカオブジェクト")]
+    private GameObject bazooka;
+
     [SerializeField, Header("弾のプレハブ")]
     private RifleBullet bulletPrefab;
 
@@ -20,13 +23,11 @@ public class GundamBazookaShot : BaseMsAmoParts
     private bool isShotOk = true;
 
     // 行動中か
-    private bool _isNow = false;
+    public bool isNow
+    { get; private set; }
 
     // ターゲット
     private Transform target;
-
-    public bool isNow
-    { get { return _isNow; } }
 
     private void LateUpdate()
     {
@@ -66,6 +67,9 @@ public class GundamBazookaShot : BaseMsAmoParts
             return false;
         }
 
+        if (bazooka) bazooka.SetActive(false);
+        else Debug.LogWarning("BazookaObjectが存在しません");
+
         amo = amoMax;
 
         return true;
@@ -94,8 +98,9 @@ public class GundamBazookaShot : BaseMsAmoParts
         }
 
         // 射撃行動中
-        _isNow = true;
+        isNow = true;
         isShotOk = false;
+        bazooka.SetActive(true);
 
         // 射撃
         return true;
@@ -142,8 +147,8 @@ public class GundamBazookaShot : BaseMsAmoParts
     /// </summary>
     public void Failed()
     {
-        _isNow = false;
-
+        isNow = false;
+        bazooka.SetActive(false);
         Invoke("Interval", interval);
     }
 

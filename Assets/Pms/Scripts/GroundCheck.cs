@@ -10,7 +10,7 @@ public class GroundCheck : MonoBehaviour
 
     // trueなら地面についている
     public bool isGround
-    { 
+    {
         get;
         private set;
     }
@@ -33,8 +33,11 @@ public class GroundCheck : MonoBehaviour
     /// 触れたときに呼び出す
     /// </summary>
     /// <param name="other"></param>
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
+        // 地面についている状態なので処理を行わない
+        if (isGround) return;
+
         foreach (string type in groundTypes)
         {
             if (other.tag == type)
@@ -50,6 +53,9 @@ public class GroundCheck : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
+        // 地面についていない状態なので処理を行わない
+        if (!isGround) return;
+
         foreach (string type in groundTypes)
         {
             if (other.tag == type)

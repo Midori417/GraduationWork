@@ -25,8 +25,8 @@ public enum PlayerType
 /// </summary>
 public enum MsList
 {
-    None,
     Gundam,
+    None,
 }
 
 /// <summary>

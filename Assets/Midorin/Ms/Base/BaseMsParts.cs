@@ -52,8 +52,13 @@ public class BaseMsParts : MonoBehaviour
         _mainMs = GetComponent<Gundam>();
         if (!mainMs)
         {
-            Debug.LogError("メインコンポーネントが取得できません");
-            return false;
+            _mainMs = GetComponentInParent<Gundam>();
+
+            if (!mainMs)
+            {
+                Debug.LogError("メインコンポーネントが取得できません");
+                return false;
+            }
         }
         _rb = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();

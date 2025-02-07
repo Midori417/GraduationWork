@@ -29,6 +29,12 @@ public class BaseMs : MonoBehaviour
     [SerializeField, Header("最大体力")]
     private int _hpMax;
 
+    // ダウン値
+    protected float downValue = 0;
+
+    // trueならダウン中
+    protected bool isDown = false;
+
     [System.Serializable]
     private struct BoostParamater
     {
@@ -181,27 +187,60 @@ public class BaseMs : MonoBehaviour
     }
 
     /// <summary>
-    /// 必要なコンポーネントがあるか
+    ///処理に必要なものがそろっているかチェック
     /// </summary>
-    /// <returns></returns>
-    protected virtual bool ComponentCheck()
+    /// <returns>
+    /// false そろっている
+    /// true そろっていない
+    /// </returns>
+    protected virtual void ProsessCheck()
     {
-        if (!rb) return false;
-        if (!animator) return false;
-        if (!groundCheck) return false;
-        if (!center) return false;
-
-        return true;
+        if (!rb)
+        {
+            Debug.LogError("Rigidbodyが存在しません");
+            return;
+        }
+        if (!animator)
+        {
+            Debug.LogError("Animatorが存在しません");
+            return;
+        }
+        if (!groundCheck)
+        {
+            Debug.LogError("GroundCheckが存在しません");
+            return;
+        }
+        if (!center)
+        {
+            Debug.LogError("Centerが存在しません");
+            return;
+        }
     }
 
     /// <summary>
     /// ダメージを与える
     /// </summary>
     /// <param name="damage"></param>
-    public virtual void Damage(int damage)
+    public virtual void Damage(int damage, int _downValue, Vector3 bulletPos)
     {
-        _hp -= damage;
+        _hp += damage;
         _hp = Mathf.Clamp(_hp, 0, hpMax);
+        this.downValue += _downValue;
+    }
+
+    /// <summary>
+    /// 破壊されているかチェック
+    /// </summary>
+    /// <returns>
+    /// true 破壊されている
+    /// </returns>
+    public bool DestroyCheck()
+    {
+        if(hp <= 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     #region ブースト関係

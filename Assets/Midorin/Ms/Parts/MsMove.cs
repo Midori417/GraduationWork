@@ -152,7 +152,7 @@ public class MsMove : BaseMsParts
     /// <summary>
     /// ˆÚ“®ˆ—
     /// </summary>
-    public void Move(Vector2 moveAxis)
+    public void GroundMove(Vector2 moveAxis)
     {
         if (isDash)
         {

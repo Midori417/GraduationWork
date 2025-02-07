@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+// -----------------------------------------
+// ※プレイヤー移動テスト用
+// ※Pokarin以外、使用不可
+// -----------------------------------------
+
 public class PlayerMove : MonoBehaviour
 {
     [Header("移動速度")]

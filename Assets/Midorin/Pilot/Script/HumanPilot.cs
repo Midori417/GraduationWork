@@ -10,28 +10,58 @@ public class HumanPilot : BasePilot
     [SerializeField, Header("UI")]
     private UIManager uiManager;
 
+    #region イベント
+
     void Start()
     {
-        base.Initialize();
-        uiManager = GetComponentInChildren<UIManager>();
+        if (!uiManager)
+        {
+            uiManager = GetComponentInChildren<UIManager>();
+        }
+        uiManager.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(!myMs)
-        {
-            return;
-        }
+        if (!ProessCheck()) return;
 
-        ControlUpdate();
-        UIUpdate();
+        MsSetControl();
+        UIProsess();
+    }
+
+    #endregion
+
+    /// <summary>
+    /// 処理が可能かチェック
+    /// </summary>
+    /// <returns></returns>
+    bool ProessCheck()
+    {
+        if (!isProsess)
+        {
+            return false;
+        }
+        if (!myMs)
+        {
+            Debug.LogError("機体が存在しません");
+            return false;
+        }
+        return true;
     }
 
     /// <summary>
-    /// 入力コントール
+    /// 処理開始
     /// </summary>
-    void ControlUpdate()
+    public override void StartProsess()
+    {
+        base.StartProsess();
+        uiManager.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// 機体に入力を伝える
+    /// </summary>
+    void MsSetControl()
     {
         // 仮キー入力
         myMs.moveAxis = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
@@ -42,9 +72,9 @@ public class HumanPilot : BasePilot
     }
 
     /// <summary>
-    /// UIの更新
+    /// UI処理
     /// </summary>
-    void UIUpdate()
+    void UIProsess()
     {
         if(!uiManager)
         {
