@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6206736508778615835}
   - component: {fileID: 7329022052198830138}
   - component: {fileID: 305651353062943385}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: pfb_MapRangeLimit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,5 +103,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 150, z: 1}
-  m_Center: {x: 0, y: 75, z: 0}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 75, z: 12.858135}

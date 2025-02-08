@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 /// <summary>
 /// バトル設定画面管理クラス
@@ -18,6 +20,20 @@ public class BattleSettingManager : MonoBehaviour
 
     [SerializeField, Header("バトル情報")]
     private BattleInfo _battleInfo;
+
+    [SerializeField]
+    private AudioSource _bgmSouce;
+
+    int _selctNum = 1;
+
+    [SerializeField]
+    private List<Image> _selectedImages;
+    [SerializeField]
+    private List<Button> _selectedButtons;
+
+    Color _noramColor = new Color(0.4f, 0.4f, 0.4f);
+    Color _hightColor = Color.white;
+    bool isOn = false;
 
     /// <summary>
     /// スタートイベント
@@ -63,27 +79,57 @@ public class BattleSettingManager : MonoBehaviour
 
     void Update()
     {
-        BtnUpdate();
+        ControlUpdate();
     }
 
     /// <summary>
-    /// ボタンの更新
+    /// 操作の更新
     /// </summary>
-    void BtnUpdate()
+    void ControlUpdate()
     {
-        // テスト用
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (isOn) return;
+        // 一個前に戻る
+        if (Gamepad.current == null)
         {
-            if (!_fadeOut)
+            // テスト用
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Debug.LogError("フェードオブジェクトが存在しません");
+                _fadeOut.FadeStrt(Global._selectScene);
+                isOn = true;
             }
-            else
+            foreach (Button button in _selectedButtons)
             {
-                _fadeOut.FadeStrt(_escapeSceneName);
+                button.enabled = true;
             }
         }
-
+        else
+        {
+            if (Gamepad.current.crossButton.wasPressedThisFrame)
+            {
+                isOn = true;
+                PushBattleStart();
+            }
+            else if (Gamepad.current.circleButton.wasPressedThisFrame)
+            {
+                isOn = true;
+                _fadeOut.FadeStrt(Global._selectScene);
+            }
+            foreach(Button button in _selectedButtons)
+            {
+               button.enabled = false;
+            }
+            for (int i = 0; i < _selectedImages.Count; i++)
+            {
+                if (_selctNum == i)
+                {
+                    _selectedImages[i].color = _noramColor;
+                }
+                else
+                {
+                    _selectedImages[i].color = _hightColor;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -102,6 +148,8 @@ public class BattleSettingManager : MonoBehaviour
             Debug.Log("バトル情報が足りてないよ");
             return;
         }
+        _bgmSouce.Stop();
+        GetComponent<AudioSource>().Play();
 
         // ゲームマネージャーにバトル情報を伝える
         GameManager.I.SetBattleInfo(_battleInfo);
@@ -130,7 +178,7 @@ public class BattleSettingManager : MonoBehaviour
         foreach (PilotInfo pilotInfo in _battleInfo.pilotsInfo)
         {
             // 出場しません
-            if(pilotInfo.teamId == Team.None)
+            if (pilotInfo.teamId == Team.None)
             {
                 continue;
             }
@@ -144,7 +192,7 @@ public class BattleSettingManager : MonoBehaviour
                 teamBlue++;
             }
 
-            if(pilotInfo.useMs == MsList.None)
+            if (pilotInfo.useMs == MsList.None)
             {
                 noMs = true;
             }
@@ -164,7 +212,7 @@ public class BattleSettingManager : MonoBehaviour
             return false;
         }
         // チームの必要人数が足りません
-        if(teamBlue < 1 && teamRed < 1)
+        if (teamBlue < 1 && teamRed < 1)
         {
             Debug.Log("チームに必要な人数が足りていない");
             return false;

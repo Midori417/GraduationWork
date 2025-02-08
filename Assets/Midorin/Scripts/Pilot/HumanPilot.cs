@@ -28,7 +28,16 @@ public class HumanPilot : BasePilot
     public override void Play()
     {
         base.Play();
-        _uiManager.gameObject.SetActive(true);
+        _uiManager.Play();
+    }
+
+    /// <summary>
+    /// オブジェクトの処理を停止
+    /// </summary>
+    public override void Stop()
+    {
+        base.Stop();
+        _uiManager.Stop();
     }
 
     /// <summary>
@@ -45,12 +54,14 @@ public class HumanPilot : BasePilot
     /// </summary>
     private void MsInput()
     {
-        msInput._move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        msInput._jump = Input.GetKey(KeyCode.Space);
-        msInput._dash = Input.GetKey(KeyCode.LeftShift);
-        msInput._mainShot = Input.GetKeyDown(KeyCode.Mouse0);
-        msInput._subShot = Input.GetKeyDown(KeyCode.E);
-        msInput._targetChange = Input.GetKeyDown(KeyCode.Mouse2);
+        msInput.Update();
+        //msInput._move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        //msInput._jump = Input.GetKey(KeyCode.Space);
+        //msInput._dash = Input.GetKey(KeyCode.LeftShift);
+        //msInput._mainShot = Input.GetKeyDown(KeyCode.Mouse0);
+        //msInput._subShot = Input.GetKeyDown(KeyCode.E);
+        //msInput._mainAttack = Input.GetKeyDown(KeyCode.Mouse1);
+        //msInput._targetChange = Input.GetKeyDown(KeyCode.Mouse2);
 
         myMs.msInput = msInput;
     }
@@ -91,13 +102,24 @@ public class HumanPilot : BasePilot
         {
             BaseMs ms = enemyPilots[i].myMs;
             Vector3 pos = cameraManager.mainCamera.WorldToScreenPoint(ms.center.position);
-            _uiManager.SetEnemHp(i, ms.hpRate, pos, ms.isVisible);
+            Vector3 viewportPosition = cameraManager.mainCamera.WorldToViewportPoint(ms.transform.position);
+
+            // 画面内にあるかチェック
+            bool isVisible = viewportPosition.z > 0 && viewportPosition.x > 0 && viewportPosition.x < 1 &&
+                             viewportPosition.y > 0 && viewportPosition.y < 1;
+            _uiManager.SetEnemHp(i, ms.hpRate, pos, isVisible);
         }
-        if(teamPilot)
+        if (teamPilot)
         {
             BaseMs ms = teamPilot.myMs;
             Vector3 pos = cameraManager.mainCamera.WorldToScreenPoint(ms.center.position);
-            _uiManager.SetPartnerHpBar(ms.hpRate, pos, ms.isVisible);
+            Vector3 viewportPosition = cameraManager.mainCamera.WorldToViewportPoint(ms.transform.position);
+
+            // 画面内にあるかチェック
+            bool isVisible = viewportPosition.z > 0 && viewportPosition.x > 0 && viewportPosition.x < 1 &&
+                             viewportPosition.y > 0 && viewportPosition.y < 1;
+
+            _uiManager.SetPartnerHpBar(ms.hpRate, pos, isVisible);
             _uiManager.SetPartnerHp(ms.hp, ms.hpRate);
         }
 

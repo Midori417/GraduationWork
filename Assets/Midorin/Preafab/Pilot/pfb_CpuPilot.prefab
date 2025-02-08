@@ -46,9 +46,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cameraManager: {fileID: 5055779101882152996}
-  moveTimer: 0.5
-  moveActionTimer: 1
-  attackActionTimer: 0.5
+  _moveTimer:
+    _maxTime: 0.3
+  _moveActionTimer:
+    _maxTime: 0.5
+  _attackActionTimer:
+    _maxTime: 0.3
+  _targetChangeTimer:
+    _maxTime: 0.5
 --- !u!1001 &2441983506588518788
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -140,6 +145,10 @@ PrefabInstance:
     - target: {fileID: 6462394998492914402, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7478815702750933408, guid: 991fed602e78a254e886419c64651952, type: 3}
+      propertyPath: minY
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 9075616522220614139, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalPosition.x

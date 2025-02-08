@@ -12,6 +12,10 @@ public class BaseMs : BaseGameObject
     private Animator _animator;
     private SkinnedMeshRenderer _meshRenderer;
     private GroundCheck _groundCheck;
+    [SerializeField]
+    private AudioSource _mainAudio;
+    [SerializeField]
+    private AudioSource _subAudio;
 
     [SerializeField, Header("機体の真ん中")]
     private Transform _center;
@@ -19,6 +23,8 @@ public class BaseMs : BaseGameObject
     private Transform _myCamera;
     private BaseMs _targetMs;
     private List<BaseMsAmoParts> _uiArmeds = new List<BaseMsAmoParts>();
+
+    private Team _team;
 
     [SerializeField, Header("機体コスト")]
     private int _cost = 0;
@@ -111,7 +117,7 @@ public class BaseMs : BaseGameObject
         /// ブーストの消費
         /// </summary>
         /// <param name="value">消費量</param>
-        public void UseBoost(float value)
+        public void UseBoost(float value, bool isStatic = false)
         {
             // 0以下なら処理を行わない
             if (_current <= 0)
@@ -120,8 +126,14 @@ public class BaseMs : BaseGameObject
             }
 
             // 消費
-            _current -= value * Time.deltaTime;
-
+            if (!isStatic)
+            {
+                _current -= value * Time.deltaTime;
+            }
+            else
+            {
+                _current -= value;
+            }
             // チャージタイムを入れておく
             if (_current > 0)
             {
@@ -212,7 +224,7 @@ public class BaseMs : BaseGameObject
     private TargetDistace _targetDistace;
 
     [HideInInspector]
-    private MsInput _msInput;
+    private GameInput _msInput;
 
     [SerializeField, Header("無敵タイマー")]
     private GameTimer _invisibleTimer = new GameTimer();
@@ -232,13 +244,23 @@ public class BaseMs : BaseGameObject
     // trueなら破壊が完了した
     private bool _isDestroy = false;
 
+    GameTimer _hitStop = new GameTimer(0.1f);
+    bool isHitStop = false;
+
     #region プロパティ
 
     public Rigidbody rb => _rb;
     public Animator animator => _animator;
     public SkinnedMeshRenderer meshRenderer => _meshRenderer;
     public GroundCheck groundCheck => _groundCheck;
+    public AudioSource mainAudio => _mainAudio;
+    public AudioSource subAudio => _subAudio;
 
+    public Team team
+    {
+        get => _team;
+        set => _team = value;
+    }
     public Transform myCamera
     {
         get => _myCamera;
@@ -262,6 +284,11 @@ public class BaseMs : BaseGameObject
             {
                 return false;
             }
+            // 黄色ロックなので不可
+            if (!targetMs.isDamageOk)
+            {
+                return false;
+            }
             return _targetDistace.RedDistance(center.position, targetMs.center.position);
         }
     }
@@ -276,6 +303,18 @@ public class BaseMs : BaseGameObject
             return _targetDistace.LooOnDistance(center.position, targetMs.center.position);
         }
     }
+    public float targetDistance
+    {
+        get
+        {
+            if (targetMs)
+            {
+                return Vector3.Distance(center.position, targetMs.center.position);
+            }
+            return 0f;
+        }
+    }
+
     protected float responTime => _responTime;
     public bool isDamageOk
     {
@@ -293,7 +332,7 @@ public class BaseMs : BaseGameObject
         set => _downValue = value;
     }
     public float boostRate => _boost._rate;
-    public MsInput msInput
+    public GameInput msInput
     {
         get => _msInput;
         set => _msInput = value;
@@ -301,10 +340,48 @@ public class BaseMs : BaseGameObject
     public bool isVisible => _meshRenderer.isVisible;
     public int amoCount => _uiArmeds.Count;
 
+
     #endregion
 
     /// <summary>
-    /// 移動処理
+    /// ヒットストップ更新
+    /// </summary>
+    protected void HitStopUpdate()
+    {
+        if (!isHitStop) return;
+
+        if(_hitStop.UpdateTimer())
+        {
+            Stop();
+        }
+        else
+        {
+            isHitStop = false;
+            Play();
+        }
+    }
+
+    /// <summary>
+    /// ヒットストップを設定
+    /// </summary>
+    /// <param name="time"></param>
+    public void SetHitStop(float time)
+    {
+        isHitStop = true;
+        _hitStop.ResetTimer(time);
+    }
+
+    /// <summary>
+    /// 処理を開始
+    /// </summary>
+    public override void Play()
+    {
+        base.Play();
+        animator.speed = 1;
+    }
+
+    /// <summary>
+    /// 処理を停止
     /// </summary>
     public override void Stop()
     {
@@ -335,7 +412,14 @@ public class BaseMs : BaseGameObject
                 meshRenderer.materials[i] = mats[i];
             }
         }
-
+        if (!mainAudio)
+        {
+            _mainAudio.maxDistance = 1000;
+        }
+        if (!subAudio)
+        {
+            _subAudio.maxDistance = 1000;
+        }
         _hp.Initialzie();
         _boost.Initialize();
         _downValue = 0;
@@ -370,7 +454,7 @@ public class BaseMs : BaseGameObject
     /// ダメージを与える
     /// </summary>
     /// <param name="damage"></param>
-    public virtual bool Damage(int damage, int downValue, Vector3 bulletPos)
+    public virtual bool Damage(int damage, float downValue, Vector3 bulletPos, float hitStop = 0)
     {
         if (!_isDamageOk) return false;
 
@@ -400,7 +484,8 @@ public class BaseMs : BaseGameObject
     /// </summary>
     public virtual void Respon()
     {
-
+        rb.velocity = Vector3.zero;
+        transform.rotation = Quaternion.identity;
     }
 
     /// <summary>
@@ -435,9 +520,9 @@ public class BaseMs : BaseGameObject
     /// ブーストの消費
     /// </summary>
     /// <param name="value">消費量</param>
-    public void UseBoost(float value)
+    public void UseBoost(float value, bool isStatic = false)
     {
-        _boost.UseBoost(value);
+        _boost.UseBoost(value, isStatic);
     }
 
     #endregion

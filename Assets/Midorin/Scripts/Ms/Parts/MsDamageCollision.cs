@@ -7,6 +7,19 @@ using UnityEngine;
 /// </summary>
 public class MsDamageCollision : BaseMsParts
 {
+
+    public Team team
+    {
+        get
+        {
+            if(mainMs)
+            {
+                return mainMs.team;
+            }
+            return Team.None;
+        }
+    }
+
     /// <summary>
     /// 初期化
     /// </summary>
@@ -21,11 +34,11 @@ public class MsDamageCollision : BaseMsParts
     /// <param name="damage"></param>
     /// <param name="downValue"></param>
     /// <param name="bulletPos"></param>
-    public bool Damage(int damage, int downValue, Vector3 bulletPos)
+    public bool Damage(int damage, float downValue, Vector3 bulletPos, float hitStop = 0)
     {
         if (mainMs)
         {
-            return mainMs.Damage(damage, downValue, bulletPos);
+            return mainMs.Damage(damage, downValue, bulletPos, hitStop);
         }
         return false;
     }

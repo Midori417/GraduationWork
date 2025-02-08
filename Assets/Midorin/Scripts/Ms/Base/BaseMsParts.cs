@@ -34,7 +34,30 @@ public class BaseMsParts : MonoBehaviour
             return null;
         }
     }
-    protected Transform targetMs
+    protected AudioSource mainAudio
+    {
+        get
+        {
+            if(mainMs)
+            {
+                return mainMs.mainAudio;
+            }
+            return null;
+        }
+    }
+    protected AudioSource subAudio
+    {
+        get
+        {
+            if (mainMs)
+            {
+                return mainMs.subAudio;
+            }
+            return null;
+        }
+    }
+
+    protected Transform targetMsCenter
     {
         get
         {
@@ -48,8 +71,22 @@ public class BaseMsParts : MonoBehaviour
             return null;
         }
     }
+    protected BaseMs targetMs
+    {
+        get
+        {
+            if (mainMs)
+            {
+                if (mainMs.targetMs)
+                {
+                    return mainMs.targetMs;
+                }
+            }
+            return null;
+        }
+    }
     protected bool isStop => _mainMs.isStop;
-    protected MsInput msInput => _mainMs.msInput;
+    protected GameInput msInput => _mainMs.msInput;
     protected GroundCheck groundCheck => _mainMs.groundCheck;
 
     /// <summary>

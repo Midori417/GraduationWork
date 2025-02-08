@@ -21,7 +21,7 @@ public class BasePilot : BaseGameObject
     // ターゲットパイロット
     private BasePilot _targetPilot;
     private List<BasePilot> _enemyPilots;
-    protected MsInput msInput = new MsInput();
+    protected GameInput msInput = new GameInput();
     private int _targetIndex = 0;
 
     #region プロパティ
@@ -120,10 +120,14 @@ public class BasePilot : BaseGameObject
     /// </summary>
     public virtual void Initialize()
     {
+        msInput.Initialize();
+
         // 機体を子供に設定
         _myMs.transform.parent = transform;
         _myMs.myCamera = _cameraManager.mainCamera.transform;
         _cameraManager.myMs = _myMs.center;
+        _myMs.msInput = msInput;
+        _myMs.team = team;
 
         List<Transform> _enemyMs = new List<Transform>();
         foreach (BasePilot pilot in _enemyPilots)
@@ -144,7 +148,7 @@ public class BasePilot : BaseGameObject
     /// </summary>
     protected void TargetUpdate()
     {
-        if (msInput._targetChange)
+        if (msInput.GetInputDown(GameInputState.TargetChange))
         {
             TargetChange();
         }
@@ -166,7 +170,10 @@ public class BasePilot : BaseGameObject
         }
 
         // ターゲットを設定
-        _targetPilot = _enemyPilots[_targetIndex];
+        if (_enemyPilots[_targetIndex].myMs.hp > 0)
+        {
+            _targetPilot = _enemyPilots[_targetIndex];
+        }
         _cameraManager.target = _targetPilot.myMs.center;
         _myMs.targetMs = _targetPilot.myMs;
     }

@@ -24,6 +24,9 @@ public class CameraManager : BaseGameObject
     // 現在のターゲット番号
     int _index = 0;
 
+    [SerializeField, Header("")]
+    private float minY = 0;
+
     public Camera mainCamera => _mainCamera;
     public Transform myMs
     {
@@ -49,6 +52,18 @@ public class CameraManager : BaseGameObject
         if (isStop) return;
 
         if (_target) _virtualCamera.LookAt = _target;
+    }
+
+    private void LateUpdate()
+    {
+        if (_virtualCamera != null)
+        {
+            Transform camTransform = _virtualCamera.transform;
+            if (camTransform.position.y < minY)
+            {
+                camTransform.position = new Vector3(camTransform.position.x, minY, camTransform.position.z);
+            }
+        }
     }
 
     /// <summary>

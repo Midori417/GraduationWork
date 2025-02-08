@@ -115,7 +115,6 @@ public class GundamDamage : BaseMsParts
             mainMs.RedMesh();
             // アニメーション
             animator.SetTrigger("Damage");
-
         };
         Action update = () =>
         {
@@ -174,7 +173,7 @@ public class GundamDamage : BaseMsParts
             {
                 if(inputTimer.UpdateTimer())
                 {
-                    if (msInput._move != Vector2.zero)
+                    if (msInput.GetMoveAxis() != Vector2.zero)
                     {
                         _stateMachine.ChangeState(State.Standing);
                     }
@@ -242,7 +241,7 @@ public class GundamDamage : BaseMsParts
     /// <param name="damage"></param>
     /// <param name="downValue"></param>
     /// <param name="bulletPos"></param>
-    public void SetState(int damage, int downValue, Vector3 bulletPos)
+    public void SetState(int damage, float downValue, Vector3 bulletPos)
     {
         rb.useGravity = true;
         _directionToTarget = Vector3.Scale(transform.position - bulletPos, new Vector3(1, 0, 1));

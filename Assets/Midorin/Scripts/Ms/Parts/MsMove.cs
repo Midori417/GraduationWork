@@ -81,6 +81,18 @@ public class MsMove : BaseMsParts
     [SerializeField, Header("着地変数")]
     private LandingValiable _landing;
 
+    [SerializeField, Header("ダッシュ音")]
+    private AudioClip _seDash;
+
+    [SerializeField, Header("着地音")]
+    private AudioClip _seLanding;
+
+    [SerializeField, Header("足音")]
+    private AudioClip _seLeg;
+
+    // このタイマー以内に押せたらダッシュに切り替わる
+    private GameTimer _jumpBtnTimer = new GameTimer(0.5f);
+
     #region ゲッター
 
     public bool isJump => _stateMachine.currentState == State.Jump;
@@ -121,6 +133,7 @@ public class MsMove : BaseMsParts
     private void SetUpNormal()
     {
         State state = State.Normal;
+        GameTimer seTimer = new GameTimer(0.3f);
         Action<State> enter = (prev) =>
         {
         };
@@ -133,11 +146,16 @@ public class MsMove : BaseMsParts
                     _stateMachine.ChangeState(State.Landing);
 
                 // 進行方向に回転しながら正面方向に進む
-                if (msInput._move != Vector2.zero)
+                if (msInput.GetMoveAxis() != Vector2.zero)
                 {
                     Vector3 moveFoward = MoveForward();
                     MoveForwardRot(moveFoward, _move._rotationSpeed);
                     rb.velocity = transform.forward * _move._speed + new Vector3(0, rb.velocity.y, 0);
+                    if(seTimer.UpdateTimer())
+                    {
+                        subAudio.PlayOneShot(_seLeg);
+                        seTimer.ResetTimer();
+                    }
                 }
                 else
                 {
@@ -147,14 +165,9 @@ public class MsMove : BaseMsParts
             }
             if (mainMs.boostRate > 0)
             {
-                if (msInput._jump && !isDash)
+                if (msInput.GetInputDown(GameInputState.Jump))
                 {
                     _stateMachine.ChangeState(State.Jump);
-                    return;
-                }
-                if (msInput._dash)
-                {
-                    _stateMachine.ChangeState(State.Dash);
                     return;
                 }
             }
@@ -177,18 +190,27 @@ public class MsMove : BaseMsParts
         Action<State> enter = (prev) =>
         {
             rb.useGravity = false;
+            mainMs.UseBoost(5, true);
+            mainAudio.PlayOneShot(_seDash);
+            _jumpBtnTimer.ResetTimer();
         };
         Action update = () =>
         {
-            if (!msInput._jump || mainMs.boostRate <= 0)
+            if (_jumpBtnTimer.UpdateTimer())
             {
-                _stateMachine.ChangeState(State.Normal);
-                return;
+                if (!msInput.GetInput(GameInputState.Jump) || mainMs.boostRate <= 0)
+                {
+                    _stateMachine.ChangeState(State.Normal);
+                    return;
+                }
             }
-            if (msInput._dash)
+            else
             {
-                _stateMachine.ChangeState(State.Dash);
-                return;
+                if (msInput.GetInputDown(GameInputState.Jump))
+                {
+                    _stateMachine.ChangeState(State.Dash);
+                    return;
+                }
             }
             Vector3 moveFoward = MoveForward();
 
@@ -222,13 +244,21 @@ public class MsMove : BaseMsParts
         State state = State.Dash;
         Action<State> enter = (prev) =>
         {
+            Vector3 moveForward = MoveForward();
+            // 進行方向に補間しながら回転
+            if (moveForward != Vector3.zero)
+            {
+                 transform.rotation = Quaternion.LookRotation(moveForward);
+            }
+            rb.AddForce(transform.forward * 30.0f, ForceMode.Impulse);
             rb.useGravity = false;
-            transform.Translate(0, 1, 0);
+            mainMs.UseBoost(10, true);
+            mainAudio.PlayOneShot(_seDash);
         };
         Action update = () =>
         {
             // 入力かブーストがなくなれば通常に戻どす
-            if (!msInput._dash || mainMs.boostRate <= 0)
+            if (!msInput.GetInput(GameInputState.Jump) || mainMs.boostRate <= 0)
             {
                 _stateMachine.ChangeState(State.Normal);
                 return;
@@ -267,6 +297,7 @@ public class MsMove : BaseMsParts
             rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, _landing.inertia);
             animator.SetTrigger("Landing");
             timer.ResetTimer();
+            mainAudio.PlayOneShot(_seLanding);
         };
         Action update = () =>
         {
@@ -312,7 +343,7 @@ public class MsMove : BaseMsParts
     /// <returns></returns>
     private Vector3 MoveForward()
     {
-        Vector2 moveAxis = msInput._move;
+        Vector2 moveAxis = msInput.GetMoveAxis();
         // カメラの方向から、X-Z単位ベクトル(正規化)を取得
         Vector3 cameraForward = Vector3.Scale(_myCamera.forward, new Vector3(1, 0, 1));
         Vector3 moveForward = cameraForward * moveAxis.y + _myCamera.right * moveAxis.x;

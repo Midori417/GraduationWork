@@ -62,6 +62,9 @@ public class GundamMainShot : BaseMsAmoParts
 
     private Transform _target;
 
+    [SerializeField, Header("発射音")]
+    private AudioClip _seShot;
+
     // trueならバックショット
     private bool isBack = false;
 
@@ -70,6 +73,7 @@ public class GundamMainShot : BaseMsAmoParts
     private bool _isNow = false;
 
     public bool isNow => _isNow;
+
 
     #region イベント関数
 
@@ -120,7 +124,7 @@ public class GundamMainShot : BaseMsAmoParts
         {
             if (_interval.UpdateTimer())
             {
-                if (msInput._mainShot && amo > 0)
+                if (msInput.GetInputDown(GameInputState.MainShot) && amo > 0)
                 {
                     _stateMachine.ChangeState(State.ShotF);
                 }
@@ -149,7 +153,7 @@ public class GundamMainShot : BaseMsAmoParts
             _isNow = true;
             timer.ResetTimer(_shotTime);
             // ターゲットを設定
-            _target = targetMs;
+            _target = targetMsCenter;
             _spine._old = _spine._bone.localRotation;
             // バックショットか判定
             if (_target)
@@ -254,6 +258,7 @@ public class GundamMainShot : BaseMsAmoParts
             _spine._initial = _spine._bone.localRotation;
         }
         amo = amoMax;
+        _stateMachine.ChangeState(State.None);
     }
 
     /// <summary>
@@ -281,6 +286,7 @@ public class GundamMainShot : BaseMsAmoParts
 
             // 弾を生成
             BasicBulletMove bullet = Instantiate(_pfbBullet, pos, rot);
+            bullet.team = mainMs.team;
             if (mainMs.isRedDistance)
             {
                 bullet.target = _target;
@@ -293,7 +299,9 @@ public class GundamMainShot : BaseMsAmoParts
             Quaternion rot = transform.rotation;
             Vector3 pos = center.position + rot * _shotPos;
             BasicBulletMove bullet = Instantiate(_pfbBullet, pos, rot);
+            bullet.team = mainMs.team;
         }
+        mainAudio.PlayOneShot(_seShot);
         // 弾を減らす
         amo--;
     }

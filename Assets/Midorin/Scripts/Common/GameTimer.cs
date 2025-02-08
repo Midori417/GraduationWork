@@ -61,7 +61,7 @@ public class GameTimer
     /// <param name="scale">時間の進む速さ</param>
     /// <returns>
     /// true    タイマー終了
-    /// flase   タイマー継続
+    /// false   タイマー継続
     /// </returns>
     public bool UpdateTimer(float scale = 1.0f)
     {

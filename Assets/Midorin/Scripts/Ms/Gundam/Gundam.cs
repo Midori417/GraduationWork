@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -26,6 +27,7 @@ public class Gundam : BaseMs
     private GundamMainShot _mainShot;
     private GundamSubShot _subShot;
     private GundamDamage _damage;
+    private GundamMelee _melee;
     [SerializeField, Header("MsDamage")]
     private MsDamageCollision _msDamageCollision;
 
@@ -40,6 +42,9 @@ public class Gundam : BaseMs
 
         [Header("サーベル")]
         public GameObject _sable;
+
+        [Header("バックパックサーベル")]
+        public GameObject _mountSable;
 
         [Header("バ―ニア")]
         public GameObject _roketFire;
@@ -83,6 +88,7 @@ public class Gundam : BaseMs
         {
             if (!_sable) return;
             _sable.SetActive(value);
+            _mountSable.SetActive(!value);
         }
 
         /// <summary>
@@ -107,6 +113,9 @@ public class Gundam : BaseMs
     private int _beumLayer = -1;
     private int _sableLayer = -1;
 
+    [SerializeField, Header("死亡")]
+    private AudioClip _seDead;
+
     #region イベント関数
 
     /// <summary>
@@ -117,6 +126,7 @@ public class Gundam : BaseMs
         _move = GetComponent<MsMove>();
         _mainShot = GetComponent<GundamMainShot>();
         _subShot = GetComponent<GundamSubShot>();
+        _melee = GetComponent<GundamMelee>();
         _damage = GetComponent<GundamDamage>();
         SetUp();
     }
@@ -136,11 +146,8 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
-        if (isStop && isDestroy) return;
-
         _stateMachine.UpdateState();
-        AnimUpdate();
-        BoostCharge();
+        HitStopUpdate();
     }
 
     /// <summary>
@@ -177,6 +184,8 @@ public class Gundam : BaseMs
         };
         Action update = () =>
         {
+            if (isStop) return;
+
             // 破壊された
             if (hp <= 0)
             {
@@ -188,14 +197,20 @@ public class Gundam : BaseMs
             {
                 Move();
                 SubShot();
+                Melee();
             }
 
             MsDamage();
             InvisibleUpdate();
+            ObjBeumControl();
+            ObjSableControl();
             RoketControl();
+            AnimUpdate();
+            BoostCharge();
         };
         Action lateUpdate = () =>
         {
+            if (isStop) return;
             if (ActionCheck())
             {
                 MainShot();
@@ -223,12 +238,14 @@ public class Gundam : BaseMs
         };
         Action update = () =>
         {
-            if(timer.UpdateTimer())
+            if (timer.UpdateTimer())
             {
+
                 var obj = Instantiate(_pfbExsprosion, transform.position, Quaternion.identity);
                 Destroy(obj, 4);
                 gameObject.SetActive(false);
                 isDestroy = true;
+                mainAudio.PlayOneShot(_seDead);
             }
         };
         Action lateUpdate = () =>
@@ -255,7 +272,7 @@ public class Gundam : BaseMs
         };
         Action update = () =>
         {
-            if(timer.UpdateTimer())
+            if (timer.UpdateTimer())
             {
                 _stateMachine.ChangeState(State.Normal);
             }
@@ -298,6 +315,11 @@ public class Gundam : BaseMs
         {
             _damage.SetMainMs(this);
             _damage.Initalize();
+        }
+        if (_melee)
+        {
+            _melee.SetMainMs(this);
+            _melee.Initalize();
         }
         if (_msDamageCollision)
         {
@@ -343,6 +365,8 @@ public class Gundam : BaseMs
         return true;
     }
 
+    #region オブジェクトの表示非表示
+
     /// <summary>
     /// ロケットコントロール
     /// </summary>
@@ -350,7 +374,7 @@ public class Gundam : BaseMs
     {
         if (ActionCheck())
         {
-            bool isRoket = _move.isDash || _move.isJump || _subShot.isNow;
+            bool isRoket = _move.isDash || _move.isJump || _subShot.isNow || _melee.isNow;
             _activeObj.RoketFireActive(isRoket);
         }
         else
@@ -359,6 +383,34 @@ public class Gundam : BaseMs
         }
     }
 
+    private void ObjBeumControl()
+    {
+        if (_mainShot.isNow || _subShot.isNow)
+        {
+            animator.SetLayerWeight(_sableLayer, 0);
+            _activeObj.BeumRifleActive(true);
+            _activeObj.SableActive(false);
+        }
+    }
+    private void ObjSableControl()
+    {
+        if (_melee.isNow)
+        {
+            _activeObj.BeumRifleActive(false);
+            _activeObj.SableActive(true);
+            if (!_melee.isNow)
+            {
+                animator.SetLayerWeight(_sableLayer, 1);
+            }
+            else
+            {
+                animator.SetLayerWeight(_sableLayer, 0);
+            }
+        }
+    }
+
+    #endregion
+
     #region 機能
 
     /// <summary>
@@ -366,7 +418,7 @@ public class Gundam : BaseMs
     /// </summary>
     private void Move()
     {
-        if (_subShot.isNow)
+        if (_subShot.isNow || _melee.isNow)
             return;
         _move.UpdateState();
     }
@@ -376,8 +428,7 @@ public class Gundam : BaseMs
     /// </summary>
     private void MainShot()
     {
-        // バズーカ中は不可
-        if (_subShot.isNow || _move.isLanding)
+        if (_move.isLanding || _subShot.isNow || _melee.isNow)
             return;
 
         _mainShot.UpdateState();
@@ -388,7 +439,8 @@ public class Gundam : BaseMs
     /// </summary>
     private void SubShot()
     {
-        if (_mainShot.isNow || _move.isLanding) return;
+        if (_mainShot.isNow || _melee.isNow)
+            return;
         _subShot.UpdateState();
         // オブジェクトの切り替え
         if (_subShot.isNow)
@@ -400,8 +452,17 @@ public class Gundam : BaseMs
         else
         {
             _activeObj.BazookaActive(false);
-            _activeObj.BeumRifleActive(true);
         }
+    }
+
+    /// <summary>
+    /// 近接攻撃
+    /// </summary>
+    private void Melee()
+    {
+        if (_mainShot.isNow || _subShot.isNow || _move.isLanding)
+            return;
+        _melee.UpdateState();
     }
 
     /// <summary>
@@ -419,11 +480,15 @@ public class Gundam : BaseMs
     /// <param name="downValue"></param>
     /// <param name="bulletPos"></param>
     /// <returns></returns>
-    public override bool Damage(int damage, int downValue, Vector3 bulletPos)
+    public override bool Damage(int damage, float downValue, Vector3 bulletPos, float hitStop = 0)
     {
         if (!base.Damage(damage, downValue, bulletPos))
         {
             return false;
+        }
+        if(_melee.isNow)
+        {
+            _melee.Initalize();
         }
         _damage.SetState(damage, downValue, bulletPos);
 

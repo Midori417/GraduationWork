@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,16 +9,16 @@ using UnityEngine.UI;
 /// <summary>
 /// UI管理クラス
 /// </summary>
-public class UIManager : MonoBehaviour
+public class UIManager : BaseGameObject
 {
     [SerializeField, Header("自身の機体の体力")]
-    private Text _txtHp;
+    private TextMeshProUGUI _txtHp;
 
     [SerializeField, Header("ブーストゲージ")]
     private Image _imgBoostGauge;
 
     [SerializeField, Header("残り時間")]
-    private Text _txtTime;
+    private TextMeshProUGUI _txtTime;
 
     [Serializable]
     private struct Armed
@@ -26,7 +27,7 @@ public class UIManager : MonoBehaviour
         public List<Image> _imgBack;
 
         [Header("武装の弾")]
-        public List<Text> _txtValue;
+        public List<TextMeshProUGUI> _txtValue;
 
         [Header("武装ゲージ")]
         public List<Image> _imgGauge;
@@ -76,7 +77,7 @@ public class UIManager : MonoBehaviour
         public Image _barBack;
 
         [Header("体力")]
-        public Text _hp;
+        public TextMeshProUGUI _hp;
 
         [Header("体力背景")]
         public Image _hpBack;
@@ -96,7 +97,13 @@ public class UIManager : MonoBehaviour
     [SerializeField, Header("敗北画像")]
     private Sprite _lose;
 
+    [SerializeField, Header("引き分け画像")]
+    private Sprite _draw;
+
     private BattleManager _battleManager;
+
+    [SerializeField]
+    private GameObject _playerUI;
 
     private void Start()
     {
@@ -231,6 +238,10 @@ public class UIManager : MonoBehaviour
         {
             _imgEvent.sprite = _lose;
         }
+        else
+        {
+            _imgEvent.sprite = _draw;
+        }
     }
 
     /// <summary>
@@ -267,7 +278,7 @@ public class UIManager : MonoBehaviour
         if (!_enemyHp._bar[index] || !_enemyHp._back[index]) return;
 
         // 体力がゼロ以下または画面外なら非表示
-        if (hpRate <= 0 || !isEnable)
+        if (hpRate <= 0)
         {
             if (_enemyHp._back[index].gameObject.activeSelf)
             {
@@ -276,9 +287,19 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            if (!_enemyHp._back[index].gameObject.activeSelf)
+            if (isEnable)
             {
-                _enemyHp._back[index].gameObject.SetActive(true);
+                if (!_enemyHp._back[index].gameObject.activeSelf)
+                {
+                    _enemyHp._back[index].gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                if (_enemyHp._back[index].gameObject.activeSelf)
+                {
+                    _enemyHp._back[index].gameObject.SetActive(false);
+                }
             }
         }
         _enemyHp._bar[index].fillAmount = hpRate;
@@ -295,7 +316,7 @@ public class UIManager : MonoBehaviour
         if (!_teamHp._bar || !_teamHp._barBack) return;
 
         // 体力がゼロ以下または画面外なら非表示
-        if (hpRate <= 0 || !isEnable)
+        if (hpRate <= 0)
         {
             if (_teamHp._barBack.gameObject.activeSelf)
             {
@@ -305,10 +326,21 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            if (!_teamHp._barBack.gameObject.activeSelf)
+            if(isEnable)
             {
-                _teamHp._barBack.gameObject.SetActive(true);
-                _teamHp._hpBack.gameObject.SetActive(true);
+                if (!_teamHp._barBack.gameObject.activeSelf)
+                {
+                    _teamHp._barBack.gameObject.SetActive(true);
+                    _teamHp._hpBack.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                if (_teamHp._barBack.gameObject.activeSelf)
+                {
+                    _teamHp._barBack.gameObject.SetActive(false);
+                    _teamHp._hpBack.gameObject.SetActive(false);
+                }
             }
         }
         _teamHp._bar.fillAmount = hpRate;
@@ -339,5 +371,17 @@ public class UIManager : MonoBehaviour
             _teamHp._hp.color = Color.white;
         }
         _teamHp._hp.text = hp.ToSafeString();
+    }
+
+    public override void Play()
+    {
+        base.Play();
+        _playerUI.gameObject.SetActive(true);
+    }
+
+    public override void Stop()
+    {
+        base.Stop();
+        _playerUI.gameObject.SetActive(false);
     }
 }

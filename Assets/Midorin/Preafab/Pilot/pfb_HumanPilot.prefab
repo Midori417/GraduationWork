@@ -112,9 +112,17 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 1.8654564e-11
       objectReference: {fileID: 0}
+    - target: {fileID: 3150674804094179394, guid: 991fed602e78a254e886419c64651952, type: 3}
+      propertyPath: m_TrackedObjectOffset.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4458886686039897116, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_Name
       value: pfb_CameraManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7478815702750933408, guid: 991fed602e78a254e886419c64651952, type: 3}
+      propertyPath: minY
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 8505366715175040664, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_CameraDistance
@@ -170,7 +178,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8549877267738516714, guid: 991fed602e78a254e886419c64651952, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2482487443717007396}
+      addedObject: {fileID: 5439864136035639111}
   m_SourcePrefab: {fileID: 100100000, guid: 991fed602e78a254e886419c64651952, type: 3}
 --- !u!4 &7466584511763982194 stripped
 Transform:
@@ -182,7 +190,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8549877267738516714, guid: 991fed602e78a254e886419c64651952, type: 3}
   m_PrefabInstance: {fileID: 1904374109454734985}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2482487443717007396
+--- !u!114 &5439864136035639111
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -197,20 +205,20 @@ MonoBehaviour:
   m_CollideAgainst:
     serializedVersion: 2
     m_Bits: 65
-  m_IgnoreTag: 
+  m_IgnoreTag: MS
   m_TransparentLayers:
     serializedVersion: 2
     m_Bits: 0
   m_MinimumDistanceFromTarget: 1
   m_AvoidObstacles: 1
-  m_DistanceLimit: 5
+  m_DistanceLimit: 0.5
   m_MinimumOcclusionTime: 0
   m_CameraRadius: 0.1
   m_Strategy: 1
-  m_MaximumEffort: 4
-  m_SmoothingTime: 0
-  m_Damping: 0
-  m_DampingWhenOccluded: 0
+  m_MaximumEffort: 2
+  m_SmoothingTime: 0.2
+  m_Damping: 0.3
+  m_DampingWhenOccluded: 0.2
   m_OptimalTargetDistance: 0
 --- !u!114 &9054387444070557481 stripped
 MonoBehaviour:
@@ -241,7 +249,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2662163317272685299, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4278581385191783100, guid: e6734b60cea141444919387b50b2522e, type: 3}
       propertyPath: m_IsActive

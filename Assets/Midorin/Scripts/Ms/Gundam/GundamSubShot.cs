@@ -43,6 +43,9 @@ public class GundamSubShot : BaseMsAmoParts
 
     private Transform _target;
 
+    [SerializeField, Header("発射音")]
+    private AudioClip _seShot;
+
     private bool _isNow = false;
 
     public bool isNow => _isNow;
@@ -83,7 +86,7 @@ public class GundamSubShot : BaseMsAmoParts
         {
             if (_interval.UpdateTimer())
             {
-                if (msInput._subShot && amo > 0)
+                if (msInput.GetInputDown(GameInputState.SubShot) && amo > 0)
                 {
                     _stateMachine.ChangeState(State.ShotF);
                 }
@@ -115,7 +118,7 @@ public class GundamSubShot : BaseMsAmoParts
             rb.velocity = Vector3.zero;
             timer.ResetTimer(_shotTime);
             // ターゲットを設定
-            _target = targetMs;
+            _target = targetMsCenter;
             animator.SetInteger("ShotType", 2);
             animator.SetTrigger("Shot");
         };
@@ -141,6 +144,7 @@ public class GundamSubShot : BaseMsAmoParts
         };
         Action<State> exit = (next) =>
         {
+            rb.useGravity = true;
         };
         _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
@@ -154,6 +158,7 @@ public class GundamSubShot : BaseMsAmoParts
         GameTimer timer = new GameTimer();
         Action<State> enter = (prev) =>
         {
+            rb.useGravity = false;
             timer.ResetTimer(_endTime);
         };
         Action update = () =>
@@ -186,6 +191,7 @@ public class GundamSubShot : BaseMsAmoParts
     {
         base.Initalize();
         amo = amoMax;
+        _stateMachine.ChangeState(State.None);
     }
 
     /// <summary>
@@ -228,6 +234,7 @@ public class GundamSubShot : BaseMsAmoParts
 
             // 弾を生成
             BasicBulletMove bullet = Instantiate(_pfbBullet, pos, rot);
+            bullet.team = mainMs.team;
             if (mainMs.isRedDistance)
             {
                 bullet.target = _target;
@@ -240,8 +247,10 @@ public class GundamSubShot : BaseMsAmoParts
             Quaternion rot = transform.rotation;
             Vector3 pos = center.position + rot * _shotPos;
             BasicBulletMove bullet = Instantiate(_pfbBullet, pos, rot);
+            bullet.team = mainMs.team;
         }
         rb.AddForce(-transform.forward * _recoil, ForceMode.Impulse);
+        mainAudio.PlayOneShot(_seShot);
         // 弾を減らす
         amo--;
         if (amo <= 0)

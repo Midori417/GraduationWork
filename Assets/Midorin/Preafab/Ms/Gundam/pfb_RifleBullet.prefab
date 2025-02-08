@@ -14715,7 +14715,7 @@ MonoBehaviour:
   _speed: 80
   _destroyTimer:
     _maxTime: 10
-  _homingAngle: 1
+  _homingAngle: 3
   _homingPercent: 30
 --- !u!114 &-1150294115761352523
 MonoBehaviour:
@@ -14730,10 +14730,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _atk: 70
-  _down: 3
+  _down: 2
   _isHitDestroy: 0
   _pfbEffHit: {fileID: 56783644349017880, guid: 2e2a521fe05d904408d9bbf72693fcb3, type: 3}
   _hitEffDestroyTimer: 1
+  _seHit: {fileID: 0}
 --- !u!54 &-7839690479877354276
 Rigidbody:
   m_ObjectHideFlags: 0

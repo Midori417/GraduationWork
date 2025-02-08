@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 /// <summary>
 /// バトル管理クラス
@@ -16,6 +18,8 @@ public class BattleManager : SingletonBehavior<BattleManager>
         End
     }
     StateMachine<State> _stateMachine = new StateMachine<State>();
+
+    bool isStop = false;
 
     [SerializeField, Header("STANBY時間")]
     private float _stanbyTime = 0;
@@ -87,6 +91,127 @@ public class BattleManager : SingletonBehavior<BattleManager>
     public int redCost => _teamCost._red;
     public int blueCost => _teamCost._blue;
 
+    [SerializeField, Header("フェードオブジェクト")]
+    private FadeOut _fadeOut;
+
+    [SerializeField, Header("btnの親")]
+    private GameObject _btnParent;
+
+    int _selctNum = 0;
+
+    [SerializeField]
+    private List<Image> _selectedImages;
+    [SerializeField]
+    private List<Button> _selectedButtons;
+
+    Color _noramColor = new Color(0.4f, 0.4f, 0.4f);
+    Color _hightColor = Color.white;
+    bool isOn = false;
+
+
+    [Serializable]
+    private struct AudioValiable
+    {
+        [SerializeField, Header("audioBGM")]
+        private AudioSource _bgmSource;
+
+        [SerializeField, Header("bgmAudioClip")]
+        private List<AudioClip> _bgmClipList;
+
+        [SerializeField, Header("audioSE")]
+        private AudioSource _seSource;
+
+        [SerializeField, Header("Stanby")]
+        private AudioClip _seStanby;
+
+        [SerializeField, Header("Go")]
+        private AudioClip _seGo;
+
+        [SerializeField, Header("Finish")]
+        private AudioClip _seFinish;
+
+        [SerializeField, Header("選択オン")]
+        private AudioClip _seSelect;
+
+        #region BGM関数
+
+        /// <summary>
+        /// BGMを再生
+        /// </summary>
+        public void BGMPlay()
+        {
+            if (!_bgmSource) return;
+            if (_bgmClipList.Count <= 0) return;
+
+            // clipが設定されていないなら乱数で設定
+            if (!_bgmSource.clip)
+            {
+                int random = UnityEngine.Random.Range(0, _bgmClipList.Count);
+                _bgmSource.clip = _bgmClipList[random];
+            }
+            _bgmSource.Play();
+        }
+
+        /// <summary>
+        /// BGMをストップ
+        /// </summary>
+        public void BGMStop()
+        {
+            if (!_bgmSource) return;
+            _bgmSource.Stop();
+        }
+
+        #endregion
+
+        #region SE関数
+
+        /// <summary>
+        /// Ready音声を流す
+        /// </summary>
+        public void StanbyPlay()
+        {
+            if (!_seSource) return;
+            if (!_seStanby) return;
+            _seSource.PlayOneShot(_seStanby);
+        }
+
+        /// <summary>
+        /// Go音声を流す
+        /// </summary>
+        public void GoPlay()
+        {
+            if (!_seSource) return;
+            if (!_seGo) return;
+            _seSource.PlayOneShot(_seGo);
+        }
+
+        /// <summary>
+        /// Finish音声を流す
+        /// </summary>
+        public void FinishPlay()
+        {
+            if (!_seSource) return;
+            if (!_seFinish) return;
+            _seSource.PlayOneShot(_seFinish);
+        }
+
+        /// <summary>
+        /// Finish音声を流す
+        /// </summary>
+        public void SelectPlay()
+        {
+            if (!_seSource) return;
+            if (!_seSelect) return;
+            _seSource.PlayOneShot(_seSelect);
+        }
+
+        #endregion
+    }
+    [SerializeField, Header("サウンド関係")]
+    private AudioValiable _audio;
+
+    private List<BasicBulletMove> _bulletList = new List<BasicBulletMove>(100);
+
     #region イベント関数
 
     /// <summary>
@@ -125,14 +250,12 @@ public class BattleManager : SingletonBehavior<BattleManager>
     private void Setting()
     {
         _gameManager = GameManager.I;
-        //BattleInfo battleInfo = _gameManager._battleInfo;
-
         //テスト用↓
         BattleInfo battleInfo = new BattleInfo();
         battleInfo.pilotsInfo = new List<PilotInfo>();
         {
             {
-                battleInfo.time = 120;
+                battleInfo.time = 3 * 60;
                 battleInfo.teamRedCost = 6000;
                 battleInfo.teamBlueCost = 6000;
             }
@@ -169,6 +292,10 @@ public class BattleManager : SingletonBehavior<BattleManager>
         BattleSetting(battleInfo);
         PilotSetting(battleInfo);
         MsStartPos();
+        foreach (BasePilot pilot in _pilot._all)
+        {
+            pilot.Stop();
+        }
     }
 
     /// <summary>
@@ -228,7 +355,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
         {
             pilot.enemyPilots = _pilot._red;
         }
-        if(_pilot._red.Count > 1)
+        if (_pilot._red.Count > 1)
         {
             _pilot._red[0].teamPilot = _pilot._red[1];
             _pilot._red[1].teamPilot = _pilot._red[0];
@@ -273,7 +400,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
             return;
         }
         _responTrs = _mapManager.responTrs;
-        for(int i = 0; i < _pilot._red.Count; ++i)
+        for (int i = 0; i < _pilot._red.Count; ++i)
         {
             _pilot._red[i].myMs.transform.SetPositionAndRotation(_responTrs[0].position, _responTrs[0].rotation);
             _pilot._red[i].myMs.transform.Translate(30 * i, 0, 0);
@@ -312,6 +439,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
         Action<State> enter = (prev) =>
         {
             _battleEventUIControl.Stanby();
+            _audio.StanbyPlay();
         };
         Action update = () =>
         {
@@ -340,6 +468,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
         Action<State> enter = (prev) =>
         {
             _battleEventUIControl.Go();
+            _audio.GoPlay();
         };
         Action update = () =>
         {
@@ -367,19 +496,20 @@ public class BattleManager : SingletonBehavior<BattleManager>
         GameTimer timer = new GameTimer();
         Action<State> enter = (prev) =>
         {
+            _audio.BGMPlay();
             _battleEventUIControl.NoImg();
             timer.ResetTimer(_battleTime);
-            foreach (BasePilot pilot in _pilot._all)
-            {
-                pilot.Play();
-            }
+            Play();
         };
         Action update = () =>
         {
+            if (isStop) return;
+
             _battleTimer = timer.remain;
             // 時間制限かどちらかのコストがなくなれば終了
             if (timer.UpdateTimer() || _teamCost.IsEnd())
             {
+                _battleTimer = timer.remain;
                 _stateMachine.ChangeState(State.End);
             }
         };
@@ -389,10 +519,8 @@ public class BattleManager : SingletonBehavior<BattleManager>
         };
         Action<State> exit = (next) =>
         {
-            foreach (BasePilot pilot in _pilot._all)
-            {
-                pilot.Stop();
-            }
+            _audio.BGMStop();
+            Stop();
         };
         _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
@@ -403,38 +531,80 @@ public class BattleManager : SingletonBehavior<BattleManager>
     private void SetUpEnd()
     {
         State state = State.End;
+        GameTimer uitimer = new GameTimer(1);
         Action<State> enter = (prev) =>
         {
-            if (redCost <= 0)
+            _audio.FinishPlay();
+            if (battleTimer <= 0)
             {
-                foreach (BasePilot pilot in _pilot._red)
+                // 青の勝ち
+                if (redCost < blueCost)
                 {
-                    pilot.SetVitory(Victory.Lose);
+                    foreach (BasePilot pilot in _pilot._red)
+                    {
+                        pilot.SetVitory(Victory.Lose);
+                    }
+                    foreach (BasePilot pilot in _pilot._blue)
+                    {
+                        pilot.SetVitory(Victory.Win);
+                    }
                 }
-                foreach (BasePilot pilot in _pilot._blue)
+                // 勝ちの勝ち
+                else if (blueCost < redCost)
                 {
-                    pilot.SetVitory(Victory.Win);
+                    foreach (BasePilot pilot in _pilot._red)
+                    {
+                        pilot.SetVitory(Victory.Win);
+                    }
+                    foreach (BasePilot pilot in _pilot._blue)
+                    {
+                        pilot.SetVitory(Victory.Lose);
+                    }
+                }
+                // 引き分け
+                else
+                {
+                    foreach (BasePilot pilot in _pilot._all)
+                    {
+                        pilot.SetVitory(Victory.Draw);
+                    }
                 }
             }
-            if (blueCost <= 0)
+            else
             {
-                foreach (BasePilot pilot in _pilot._red)
+                if (redCost <= 0)
                 {
-                    pilot.SetVitory(Victory.Win);
+                    foreach (BasePilot pilot in _pilot._red)
+                    {
+                        pilot.SetVitory(Victory.Lose);
+                    }
+                    foreach (BasePilot pilot in _pilot._blue)
+                    {
+                        pilot.SetVitory(Victory.Win);
+                    }
                 }
-                foreach (BasePilot pilot in _pilot._blue)
+                if (blueCost <= 0)
                 {
-                    pilot.SetVitory(Victory.Lose);
+                    foreach (BasePilot pilot in _pilot._red)
+                    {
+                        pilot.SetVitory(Victory.Win);
+                    }
+                    foreach (BasePilot pilot in _pilot._blue)
+                    {
+                        pilot.SetVitory(Victory.Lose);
+                    }
                 }
             }
 
         };
         Action update = () =>
         {
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (uitimer.UpdateTimer())
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene("BattleSetting");
-                DestroyComand();
+                // ボタンを表示する
+                if (_btnParent) _btnParent.SetActive(true);
+
+                EndControlUpdate();
             }
         };
         Action lateUpdate = () =>
@@ -447,6 +617,132 @@ public class BattleManager : SingletonBehavior<BattleManager>
     }
 
     #endregion
+
+    #region ボタン
+
+    /// <summary>
+    /// 操作の更新
+    /// </summary>
+    void EndControlUpdate()
+    {
+        if (isOn) return;
+        // 一個前に戻る
+        if (Gamepad.current == null)
+        {
+            foreach (Button button in _selectedButtons)
+            {
+                button.enabled = true;
+            }
+        }
+        else
+        {
+            // 上下の切り替え
+            if (Gamepad.current.dpad.left.wasPressedThisFrame)
+            {
+                _selctNum--;
+            }
+            if (Gamepad.current.dpad.right.wasPressedThisFrame)
+            {
+                _selctNum++;
+            }
+            _selctNum = Mathf.Clamp(_selctNum, 0, 1);
+            if (Gamepad.current.crossButton.wasPressedThisFrame)
+            {
+                isOn = true;
+                if (_selctNum == 0)
+                {
+                    PushBattleSetting();
+                }
+                else if (_selctNum == 1)
+                {
+                    PushTitle();
+                }
+            }
+            foreach (Button button in _selectedButtons)
+            {
+                button.enabled = false;
+            }
+            for (int i = 0; i < _selectedImages.Count; i++)
+            {
+                if (_selctNum == i)
+                {
+                    _selectedImages[i].color = _noramColor;
+                }
+                else
+                {
+                    _selectedImages[i].color = _hightColor;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Battleボタンを選択したときの処理
+    /// </summary>
+    public void PushBattleSetting()
+    {
+        if (!_fadeOut)
+        {
+            Debug.LogError("フェードオブジェクトが存在しません");
+            return;
+        }
+        // バトル設定シーンに移行させる
+        _fadeOut.FadeStrt(Global._battleSettingScene);
+        _audio.SelectPlay();
+    }
+
+    /// <summary>
+    /// Battleボタンを選択したときの処理
+    /// </summary>
+    public void PushTitle()
+    {
+        if (!_fadeOut)
+        {
+            Debug.LogError("フェードオブジェクトが存在しません");
+            return;
+        }
+        // タイトルシーンに移行させる
+        _fadeOut.FadeStrt(Global._titleScene);
+        _audio.SelectPlay();
+    }
+
+    #endregion
+
+    private void Play()
+    {
+        isStop = false;
+        foreach (BasePilot pilot in _pilot._all)
+        {
+            pilot.Play();
+        }
+        foreach (BasicBulletMove bullet in _bulletList)
+        {
+            bullet.Play();
+        }
+    }
+
+    private void Stop()
+    {
+        isStop = true;
+        foreach (BasePilot pilot in _pilot._all)
+        {
+            pilot.Stop();
+        }
+        foreach (BasicBulletMove bullet in _bulletList)
+        {
+            bullet.Stop();
+        }
+    }
+
+    public void SetBullet(BasicBulletMove bullet)
+    {
+        _bulletList.Add(bullet);
+    }
+
+    public void RemoveBullet(BasicBulletMove bullet)
+    {
+        _bulletList.Remove(bullet);
+    }
 
     /// <summary>
     /// コストダウン
@@ -488,7 +784,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
     /// <returns></returns>
     public Vector3 GetResponPos()
     {
-        int random = UnityEngine.Random.Range(0, _responTrs.Count - 1);
+        int random = UnityEngine.Random.Range(0, _responTrs.Count);
         return _responTrs[random].position;
     }
 }

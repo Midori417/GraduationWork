@@ -65,22 +65,12 @@ public struct BattleInfo
     public List<PilotInfo> pilotsInfo;
 }
 
-public struct MsInput
-{
-    public Vector2 _move;
-    public bool _jump;
-    public bool _dash;
-    public bool _mainShot;
-    public bool _subShot;
-    public bool _mainAttack;
-    public bool _targetChange;
-}
-
 // 勝敗
 public enum Victory
 {
     Win,
-    Lose
+    Lose,
+    Draw
 }
 
 // ターゲットタイプ
