@@ -17,6 +17,9 @@ public class UIManager : BaseGameObject
     [SerializeField, Header("ブーストゲージ")]
     private Image _imgBoostGauge;
 
+    [SerializeField, Header("ブーストゲージオーバーヒート")]
+    private Image _imgBoostOverHeat;
+
     [SerializeField, Header("残り時間")]
     private TextMeshProUGUI _txtTime;
 
@@ -85,26 +88,108 @@ public class UIManager : BaseGameObject
     [SerializeField, Header("チームHp")]
     private TeamHp _teamHp;
 
-    [SerializeField, Header("戦力0味方1敵")]
-    private List<Image> _imgStrengthGauge;
+    [Serializable]
+    private struct StrengthGauge
+    {
+        [Header("戦力ゲージ0味方1敵")]
+        public List<Image> _imgGauge;
 
+        [Header("戦力ゲージWarning")]
+        public List<Image> _imgWarning;
+    }
+    [SerializeField, Header("戦力ゲージ")]
+    private StrengthGauge _strengthGauge;
+
+    [Serializable]
+    private struct EventUI
+    {
+        [Header("イベントUI(大)")]
+        public Image _img;
+
+        [Header("イベントUI(小)")]
+        public Image _imgSmall;
+
+        [Header("勝利画像(大)")]
+        public Sprite _winLarge;
+
+        [Header("勝利画像(小)")]
+        public Sprite _winSmall;
+
+        [Header("敗北画像(大)")]
+        public Sprite _loseLarge;
+
+        [Header("敗北画像(小)")]
+        public Sprite _loseSmall;
+
+        [Header("引き分け画像(大)")]
+        public Sprite _drawLarge;
+
+        [Header("引き分け画像(小)")]
+        public Sprite _drawSmall;
+
+        #region 画像関数
+
+        /// <summary>
+        /// 大きい画像切り替え
+        /// </summary>
+        public void Big(Victory victory)
+        {
+            if (!_img) return;
+            _img.enabled = true;
+            switch (victory)
+            {
+                case Victory.Win:
+                  _img.sprite = _winLarge;
+                    break;
+                case Victory.Lose:
+                    _img.sprite = _loseLarge;
+                    break;
+                case Victory.Draw:
+                    _img.sprite = _drawLarge;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 小さい画像切り替え
+        /// </summary>
+        public void Small(Victory victory)
+        {
+            if (!_imgSmall) return;
+            _img.enabled = false;
+            _imgSmall.enabled = true;
+            switch (victory)
+            {
+                case Victory.Win:
+                    _imgSmall.sprite = _winSmall;
+                    break;
+                case Victory.Lose:
+                    _imgSmall.sprite = _loseSmall;
+                    break;
+                case Victory.Draw:
+                    _imgSmall.sprite = _drawSmall;
+                    break;
+            }
+        }
+
+        #endregion
+    }
     [SerializeField, Header("イベントUI")]
-    private Image _imgEvent;
-
-    [SerializeField, Header("勝利画像")]
-    private Sprite _win;
-
-    [SerializeField, Header("敗北画像")]
-    private Sprite _lose;
-
-    [SerializeField, Header("引き分け画像")]
-    private Sprite _draw;
+    private EventUI _eventUI;
 
     private BattleManager _battleManager;
 
-    [SerializeField]
+    [SerializeField, Header("プレイヤーキャンバス")]
     private GameObject _playerUI;
 
+    GameTimer _hpFlashTimer = new GameTimer(0.2f);
+    bool _isHpFlash = false; 
+
+    #region イベント関数
+
+    /// <summary>
+    /// Updateの前に呼び出される
+    /// </summary>
     private void Start()
     {
         if (!_battleManager) _battleManager = BattleManager.I;
@@ -116,7 +201,58 @@ public class UIManager : BaseGameObject
     private void Update()
     {
         Timer();
+        if (_hpFlashTimer.UpdateTimer())
+        {
+            _hpFlashTimer.ResetTimer();
+            _isHpFlash = !_isHpFlash;
+        }
     }
+
+    #endregion
+
+    /// <summary>
+    /// カラーをカラーコードに変換
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns></returns>
+    public static string ColorToHex(Color color)
+    {
+        return UnityEngine.ColorUtility.ToHtmlStringRGB(color);
+    }
+
+    /// <summary>
+    /// 数字をテキストに変換
+    /// </summary>
+    /// <param name="num"></param>
+    /// <returns></returns>
+    private string GetTextNum(float num, Color color, bool f2 = false)
+    {
+        string numStr = "";
+        if (f2)
+        {
+            numStr = Mathf.Abs(num).ToString("F2");
+        }
+        else
+        {
+            numStr = Mathf.Abs(num).ToString();
+        }
+        // テキストに変換していく
+        string str = "";
+        for (int i = 0; i < numStr.Length; i++)
+        {
+            if (numStr[i] != '.')
+            {
+                str += "<sprite=" + numStr[i] + " color=#" + ColorToHex(color) + ">";
+            }
+            else
+            {
+                str += "<sprite=10>";
+            }
+        }
+        return str;
+    }
+
+    #region UI操作
 
     /// <summary>
     /// タイマーの設定
@@ -124,7 +260,8 @@ public class UIManager : BaseGameObject
     private void Timer()
     {
         if (!_battleManager) return;
-        _txtTime.text = _battleManager.battleTimer.ToString("f2");
+        //_txtTime.text = _battleManager.battleTimer.ToString("f2");
+        _txtTime.text = GetTextNum(_battleManager.battleTimer, Color.white, true);
     }
 
     /// <summary>
@@ -135,7 +272,27 @@ public class UIManager : BaseGameObject
     {
         if (_imgBoostGauge)
         {
+            if(value < 0.2f)
+            {
+                _imgBoostGauge.color = Color.red;
+            }
+            else if(value < 0.5f)
+            {
+                _imgBoostGauge.color = Color.yellow;
+            }
+            else
+            {
+                _imgBoostGauge.color = new Color(0, 0.7f, 1);
+            }
             _imgBoostGauge.fillAmount = value;
+        }
+        if(value <= 0)
+        {
+            _imgBoostOverHeat.enabled = true;
+        }
+        else
+        {
+            _imgBoostOverHeat.enabled = false;
         }
     }
 
@@ -158,15 +315,17 @@ public class UIManager : BaseGameObject
         // 弾を設定
         if (_armed._txtValue[index])
         {
+            Color color = Color.white;
             if (_value <= 0)
             {
-                _armed._txtValue[index].color = Color.red;
+                color = Color.red;
             }
             else
             {
-                _armed._txtValue[index].color = Color.white;
+                color = Color.white;
             }
-            _armed._txtValue[index].text = _value.ToString();
+            string str = GetTextNum(_value, color);
+            _armed._txtValue[index].text = str;
         }
         // ゲージを設定
         if (_armed._imgGauge[index])
@@ -179,9 +338,9 @@ public class UIManager : BaseGameObject
     /// 戦力値設定
     /// </summary>
     /// <param name="teamId"></param>
-    public void StrengthGauge(Team teamId)
+    public void SetStrengthGauge(Team teamId)
     {
-        if (!_imgStrengthGauge[0] || !_imgStrengthGauge[1])
+        if (!_strengthGauge._imgGauge[0] || !_strengthGauge._imgGauge[1])
             return;
         if (!_battleManager) return;
         float max = GameManager.teamCostMax;
@@ -189,13 +348,29 @@ public class UIManager : BaseGameObject
         float blue = (max - (max - _battleManager.blueCost)) / max;
         if (teamId == Team.Red)
         {
-            _imgStrengthGauge[0].fillAmount = red;
-            _imgStrengthGauge[1].fillAmount = blue;
+            _strengthGauge._imgGauge[0].fillAmount = red;
+            _strengthGauge._imgGauge[1].fillAmount = blue;
+            if(red < 0.5)
+            {
+                _strengthGauge._imgWarning[0].enabled = true;
+            }
+            if (blue < 0.5)
+            {
+                _strengthGauge._imgWarning[1].enabled = true;
+            }
         }
         else if (teamId == Team.Blue)
         {
-            _imgStrengthGauge[0].fillAmount = blue;
-            _imgStrengthGauge[1].fillAmount = red;
+            _strengthGauge._imgGauge[0].fillAmount = blue;
+            _strengthGauge._imgGauge[1].fillAmount = red;
+            if (red < 0.5)
+            {
+                _strengthGauge._imgWarning[0].enabled = true;
+            }
+            if (blue < 0.5)
+            {
+                _strengthGauge._imgWarning[0].enabled = true;
+            }
         }
     }
 
@@ -207,19 +382,27 @@ public class UIManager : BaseGameObject
     {
         if (_txtHp)
         {
-            if(rate <= 0)
+            Color color = Color.white;
+            if (rate <= 0.3)
             {
-                _txtHp.color = Color.red;
+                if(_isHpFlash)
+                {
+                    color = Color.red;
+                }
+                else
+                {
+                    color = new Color(0.3f, 0.0f, 0.0f);
+                }
             }
-            else if(rate <= 0.5f)
+            else if (rate <= 0.5f)
             {
-                _txtHp.color = Color.yellow;
+                color = Color.yellow;
             }
             else
             {
-                _txtHp.color = Color.white;
+                color = Color.white;
             }
-            _txtHp.text = current.ToString();
+            _txtHp.text = GetTextNum(current, color);
         }
     }
 
@@ -227,20 +410,15 @@ public class UIManager : BaseGameObject
     /// 勝敗を設定
     /// </summary>
     /// <param name="victory"></param>
-    public void SetVictory(Victory victory)
+    public void SetVictory(Victory victory, bool isEnd)
     {
-        _imgEvent.enabled = true;
-        if (victory == Victory.Win)
+        if (!isEnd)
         {
-            _imgEvent.sprite = _win;
-        }
-        else if (victory == Victory.Lose)
-        {
-            _imgEvent.sprite = _lose;
+            _eventUI.Big(victory);
         }
         else
         {
-            _imgEvent.sprite = _draw;
+            _eventUI.Small(victory);
         }
     }
 
@@ -326,7 +504,7 @@ public class UIManager : BaseGameObject
         }
         else
         {
-            if(isEnable)
+            if (isEnable)
             {
                 if (!_teamHp._barBack.gameObject.activeSelf)
                 {
@@ -358,19 +536,27 @@ public class UIManager : BaseGameObject
         {
             _teamHp._hpBack.gameObject.SetActive(true);
         }
-        if (rate <= 0)
+        Color color = Color.white;
+        if (rate <= 0.3f)
         {
-            _teamHp._hp.color = Color.red;
+            if (_isHpFlash)
+            {
+                color = Color.red;
+            }
+            else
+            {
+                color = new Color(0.3f, 0.0f, 0.0f);
+            }
         }
         else if (rate <= 0.5f)
         {
-            _teamHp._hp.color = Color.yellow;
+            color = Color.yellow;
         }
         else
         {
-            _teamHp._hp.color = Color.white;
+            color = Color.white;
         }
-        _teamHp._hp.text = hp.ToSafeString();
+        _teamHp._hp.text = GetTextNum(hp, color);
     }
 
     public override void Play()
@@ -384,4 +570,6 @@ public class UIManager : BaseGameObject
         base.Stop();
         _playerUI.gameObject.SetActive(false);
     }
+
+    #endregion
 }

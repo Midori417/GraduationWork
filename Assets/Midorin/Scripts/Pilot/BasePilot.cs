@@ -23,6 +23,7 @@ public class BasePilot : BaseGameObject
     private List<BasePilot> _enemyPilots;
     protected GameInput msInput = new GameInput();
     private int _targetIndex = 0;
+    Victory _victory;
 
     #region プロパティ
 
@@ -72,6 +73,8 @@ public class BasePilot : BaseGameObject
 
     private Vector3 _responPos = Vector3.zero;
 
+    public Victory victory => _victory;
+
     #endregion
 
     /// <summary>
@@ -95,6 +98,10 @@ public class BasePilot : BaseGameObject
                     _responTimer.ResetTimer();
                     _responPos = mana.GetResponPos();
                     _respon = true;
+                }
+                else
+                {
+                    mana.EndMs(myMs);
                 }
             }
             // 復活処理が行われる
@@ -202,6 +209,14 @@ public class BasePilot : BaseGameObject
     /// <param name="victory"></param>
     public virtual void SetVitory(Victory victory)
     {
+        _victory = victory;
+    }
 
+    /// <summary>
+    /// 終了処理
+    /// </summary>
+    public virtual void End()
+    {
+        _cameraManager.CameraStop();
     }
 }

@@ -124,11 +124,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5060820521513299941, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5060820521513299941, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_TargetDisplay
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6120217246572985811, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LookAt

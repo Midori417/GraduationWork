@@ -29,6 +29,7 @@ public class HumanPilot : BasePilot
     {
         base.Play();
         _uiManager.Play();
+        cameraManager.Play();
     }
 
     /// <summary>
@@ -38,6 +39,7 @@ public class HumanPilot : BasePilot
     {
         base.Stop();
         _uiManager.Stop();
+        cameraManager.Stop();
     }
 
     /// <summary>
@@ -75,7 +77,7 @@ public class HumanPilot : BasePilot
 
         _uiManager.SetHp((int)myMs.hp, myMs.hpRate);
         _uiManager.BoostGauge(myMs.boostRate);
-        _uiManager.StrengthGauge(team);
+        _uiManager.SetStrengthGauge(team);
 
         if (targetMs)
         {
@@ -129,6 +131,12 @@ public class HumanPilot : BasePilot
         }
     }
 
+    public override void End()
+    {
+        base.End();
+        _uiManager.SetVictory(victory, true);
+    }
+
     /// <summary>
     /// 勝敗を設定
     /// </summary>
@@ -138,6 +146,6 @@ public class HumanPilot : BasePilot
         base.SetVitory(victory);
         if (!_uiManager) return;
 
-        _uiManager.SetVictory(victory);
+        _uiManager.SetVictory(victory, false);
     }
 }

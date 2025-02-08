@@ -28,15 +28,20 @@ public class BulletCollision : MonoBehaviour
     private AudioClip _seHit;
 
     // trueなら衝突可能
-    private bool _isCollision = false;
+    private Collider _collider;
 
     BasicBulletMove _basicBulletMove;
 
     #region イベント関数
 
+    /// <summary>
+    /// Updateの前に呼び出される
+    /// </summary>
     private void Start()
     {
        _basicBulletMove = GetComponent<BasicBulletMove>();
+        _collider = GetComponent<Collider>();
+        _collider.enabled = false;
     }
 
     /// <summary>
@@ -44,9 +49,10 @@ public class BulletCollision : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        // 一定時間たったら衝突判定を起動する
         if (_collisionTimer.UpdateTimer())
         {
-            _isCollision = true;
+            _collider.enabled = true;
         }
     }
 
@@ -56,8 +62,6 @@ public class BulletCollision : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (!_isCollision) return;
-
         // 機体に衝突したらダメージを与える
         if (other.CompareTag("MsCollision"))
         {

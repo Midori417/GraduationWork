@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Cinemachine;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -211,6 +213,13 @@ public class BattleManager : SingletonBehavior<BattleManager>
     private AudioValiable _audio;
 
     private List<BasicBulletMove> _bulletList = new List<BasicBulletMove>(100);
+
+    private BaseMs _lastMs;
+
+    [SerializeField, Header("破壊された機体を見るカメラ")]
+    private Camera _destroyCamera;
+    [SerializeField, Header("仮想シネマカメラ")]
+    CinemachineVirtualCamera _virtualCamera;
 
     #region イベント関数
 
@@ -521,6 +530,10 @@ public class BattleManager : SingletonBehavior<BattleManager>
         {
             _audio.BGMStop();
             Stop();
+            foreach(BasePilot pilot in _pilot._all)
+            {
+                pilot.End();
+            }
         };
         _stateMachine.AddState(state, enter, update, lateUpdate, exit);
     }
@@ -531,7 +544,9 @@ public class BattleManager : SingletonBehavior<BattleManager>
     private void SetUpEnd()
     {
         State state = State.End;
-        GameTimer uitimer = new GameTimer(1);
+        GameTimer startTimer = new GameTimer(1);
+        bool isStart = false;
+        GameTimer uitimer = new GameTimer(2);
         Action<State> enter = (prev) =>
         {
             _audio.FinishPlay();
@@ -599,6 +614,19 @@ public class BattleManager : SingletonBehavior<BattleManager>
         };
         Action update = () =>
         {
+            if (!isStart)
+            {
+                if (startTimer.UpdateTimer())
+                {
+                    isStart = true;
+                    _lastMs.Play();
+                    foreach (BasePilot pilot in _pilot._all)
+                    {
+                        pilot.End();
+
+                    }
+                }
+            }
             if (uitimer.UpdateTimer())
             {
                 // ボタンを表示する
@@ -708,6 +736,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
 
     #endregion
 
+    #region 再生・ストップ
     private void Play()
     {
         isStop = false;
@@ -732,6 +761,17 @@ public class BattleManager : SingletonBehavior<BattleManager>
         {
             bullet.Stop();
         }
+    }
+
+    #endregion
+
+    public void EndMs(BaseMs ms)
+    {
+        _lastMs = ms;
+        _destroyCamera.gameObject.SetActive(true);
+        _virtualCamera.Follow = ms.center;
+        _virtualCamera.LookAt = ms.center;
+        _virtualCamera.PreviousStateIsValid = false;
     }
 
     public void SetBullet(BasicBulletMove bullet)

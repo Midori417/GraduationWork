@@ -12,6 +12,7 @@ public enum GameInputState
     MainAttack,
     TargetChange,
     Option,
+    Destory,
 
     Max,
 }
@@ -87,6 +88,7 @@ public class GameInput
         SetInput(GameInputState.MainAttack, KeyCode.Mouse1);
         SetInput(GameInputState.TargetChange, KeyCode.Mouse2);
         SetInput(GameInputState.Option, KeyCode.Escape);
+        SetInput(GameInputState.Destory, KeyCode.P);
     }
 
     /// <summary>

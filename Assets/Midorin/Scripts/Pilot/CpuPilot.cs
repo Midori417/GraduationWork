@@ -193,12 +193,46 @@ public class CpuPilot : BasePilot
         if (_targetChangeTimer.UpdateTimer())
         {
             _targetChangeTimer.ResetTimer();
-            int random = Random.Range(0, 1);
-            if (random > 0)
+            int random = Random.Range(0, 10);
+            // 近いほうのパイロットを取得
+            BasePilot pilot = EnemyDistance();
+            //近いパイロットが同じなら基本そのまま
+            if (targetPilot == pilot)
             {
-                msInput.SetInput(GameInputState.TargetChange, false);
-                msInput.SetInput(GameInputState.TargetChange, true);
+                if (random > 8)
+                {
+                    msInput.SetInput(GameInputState.TargetChange, false);
+                    msInput.SetInput(GameInputState.TargetChange, true);
+                }
+            }
+            else
+            {
+                if (random > 2)
+                {
+                    msInput.SetInput(GameInputState.TargetChange, false);
+                    msInput.SetInput(GameInputState.TargetChange, true);
+                }
             }
         }
+    }
+
+    /// <summary>
+    /// 近いほうのエネミーを取得する
+    /// </summary>
+    private BasePilot EnemyDistance()
+    {
+        // エネミーの数が少ない
+        if(enemyPilots.Count <= 1)
+        {
+            return null;
+        }
+        BasePilot tmp = null;
+        float distanceA = Vector3.Distance(myMs.transform.position, enemyPilots[0].myMs.transform.position);
+        float distanceB = Vector3.Distance(myMs.transform.position, enemyPilots[1].myMs.transform.position);
+        if(distanceA > distanceB)
+        {
+            return enemyPilots[1];
+        }
+        return enemyPilots[0];
     }
 }

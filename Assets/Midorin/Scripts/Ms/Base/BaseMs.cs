@@ -247,6 +247,8 @@ public class BaseMs : BaseGameObject
     GameTimer _hitStop = new GameTimer(0.1f);
     bool isHitStop = false;
 
+    private Vector3 _destroySpeed = Vector3.zero;
+
     #region プロパティ
 
     public Rigidbody rb => _rb;
@@ -339,6 +341,10 @@ public class BaseMs : BaseGameObject
     }
     public bool isVisible => _meshRenderer.isVisible;
     public int amoCount => _uiArmeds.Count;
+    public Vector3 destroySpeed
+    {
+        set => _destroySpeed = value; 
+    }
 
 
     #endregion
@@ -350,7 +356,7 @@ public class BaseMs : BaseGameObject
     {
         if (!isHitStop) return;
 
-        if(_hitStop.UpdateTimer())
+        if (_hitStop.UpdateTimer())
         {
             Stop();
         }
@@ -378,6 +384,11 @@ public class BaseMs : BaseGameObject
     {
         base.Play();
         animator.speed = 1;
+        rb.useGravity = true;
+        if (hp <= 0)
+        {
+            rb.AddForce(_destroySpeed, ForceMode.Impulse);
+        }
     }
 
     /// <summary>
@@ -386,11 +397,9 @@ public class BaseMs : BaseGameObject
     public override void Stop()
     {
         base.Stop();
-        if (hp > 0)
-        {
-            rb.velocity = Vector3.zero;
-            _animator.speed = 0;
-        }
+        rb.velocity = Vector3.zero;
+        rb.useGravity = false;
+        _animator.speed = 0;
     }
 
     /// <summary>

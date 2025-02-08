@@ -266,8 +266,7 @@ public class GundamDamage : BaseMsParts
         // 破壊されている
         if (mainMs.hp <= 0)
         {
-            rb.AddForce(Vector3.up * 20, ForceMode.Impulse);
-            rb.AddForce(_directionToTarget * 30, ForceMode.Impulse);
+            mainMs.destroySpeed = (_directionToTarget * 30) + Vector3.up * 20;
             return;
         }
 

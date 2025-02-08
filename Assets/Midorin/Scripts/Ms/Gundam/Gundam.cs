@@ -116,6 +116,7 @@ public class Gundam : BaseMs
     [SerializeField, Header("死亡")]
     private AudioClip _seDead;
 
+
     #region イベント関数
 
     /// <summary>
@@ -146,6 +147,7 @@ public class Gundam : BaseMs
     /// </summary>
     private void Update()
     {
+        if (isStop) return;
         _stateMachine.UpdateState();
         HitStopUpdate();
     }
@@ -155,6 +157,7 @@ public class Gundam : BaseMs
     /// </summary>
     private void LateUpdate()
     {
+        if (isStop) return;
         _stateMachine.LateUpdateState();
     }
 
@@ -184,7 +187,10 @@ public class Gundam : BaseMs
         };
         Action update = () =>
         {
-            if (isStop) return;
+            if(msInput.GetInputDown(GameInputState.Destory))
+            {
+                Damage((int)hpMax, 0, Vector3.forward);
+            }
 
             // 破壊された
             if (hp <= 0)
@@ -210,7 +216,6 @@ public class Gundam : BaseMs
         };
         Action lateUpdate = () =>
         {
-            if (isStop) return;
             if (ActionCheck())
             {
                 MainShot();

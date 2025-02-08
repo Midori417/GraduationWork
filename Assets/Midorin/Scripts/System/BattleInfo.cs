@@ -68,6 +68,7 @@ public struct BattleInfo
 // 勝敗
 public enum Victory
 {
+    None,
     Win,
     Lose,
     Draw

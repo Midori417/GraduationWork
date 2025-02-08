@@ -37,6 +37,11 @@ public class CameraManager : BaseGameObject
         set => _target = value;
     }
 
+    private void Start()
+    {
+        if (_target) _virtualCamera.LookAt = _target;
+    }
+
     /// <summary>
     /// 毎フレーム呼び出される
     /// </summary>
@@ -73,5 +78,11 @@ public class CameraManager : BaseGameObject
     private bool ProsessCheck()
     {
         return (!_myMs) || (!_virtualCamera);
+    }
+
+    public void CameraStop()
+    {
+        mainCamera.gameObject.SetActive(false);
+        _virtualCamera.enabled = false;
     }
 }
