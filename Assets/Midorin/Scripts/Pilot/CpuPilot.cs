@@ -77,6 +77,7 @@ public class CpuPilot : BasePilot
     protected override void MsUpdate()
     {
         base.MsUpdate();
+        //return;
         MsInput();
     }
 
