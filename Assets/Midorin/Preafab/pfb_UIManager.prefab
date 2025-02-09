@@ -859,7 +859,7 @@ MonoBehaviour:
     _imgSmall: {fileID: 246231421631688416}
     _winLarge: {fileID: 21300000, guid: df315f637c2c89c4ab45e0b7e745da0a, type: 3}
     _winSmall: {fileID: 21300000, guid: f9ad75eb4d7a9874d95fecac0d44bd2d, type: 3}
-    _loseLarge: {fileID: 21300000, guid: 23343d0dcb8907b4b86fef893c644980, type: 3}
+    _loseLarge: {fileID: 21300000, guid: 4c5740889dcd94a41b80cd7c62d12646, type: 3}
     _loseSmall: {fileID: 21300000, guid: 23343d0dcb8907b4b86fef893c644980, type: 3}
     _drawLarge: {fileID: 21300000, guid: a0d088862639684479607d8de1973aab, type: 3}
     _drawSmall: {fileID: 21300000, guid: cd50568c07659624ea86f8885d4d668b, type: 3}
