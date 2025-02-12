@@ -149,7 +149,6 @@ public class Gundam : BaseMs
     {
         if (isStop) return;
         _stateMachine.UpdateState();
-        HitStopUpdate();
     }
 
     /// <summary>
@@ -250,7 +249,7 @@ public class Gundam : BaseMs
                 Destroy(obj, 4);
                 gameObject.SetActive(false);
                 isDestroy = true;
-                mainAudio.PlayOneShot(_seDead);
+                audio.MainSe(_seDead);
             }
         };
         Action lateUpdate = () =>

@@ -301,7 +301,7 @@ public class GundamMainShot : BaseMsAmoParts
             BasicBulletMove bullet = Instantiate(_pfbBullet, pos, rot);
             bullet.team = mainMs.team;
         }
-        mainAudio.PlayOneShot(_seShot);
+        audio.MainSe(_seShot);
         // 弾を減らす
         amo--;
     }

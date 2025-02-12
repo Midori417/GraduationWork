@@ -34,29 +34,7 @@ public class BaseMsParts : MonoBehaviour
             return null;
         }
     }
-    protected AudioSource mainAudio
-    {
-        get
-        {
-            if(mainMs)
-            {
-                return mainMs.mainAudio;
-            }
-            return null;
-        }
-    }
-    protected AudioSource subAudio
-    {
-        get
-        {
-            if (mainMs)
-            {
-                return mainMs.subAudio;
-            }
-            return null;
-        }
-    }
-
+    protected BaseMs.AudioValiable audio => mainMs.audio;
     protected Transform targetMsCenter
     {
         get

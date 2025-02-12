@@ -10,7 +10,10 @@ public class BaseMsAmoParts : BaseMsParts
     [SerializeField, Header("最大弾")]
     private int _amoMax;
 
+    // trueだとメイン機体に追加されている
     private bool isAdd = false;
+
+    #region プロパティ
 
     public int amoMax => _amoMax;
     public int amo
@@ -18,6 +21,8 @@ public class BaseMsAmoParts : BaseMsParts
         get => _amo;
         protected set => _amo = value;
     }
+
+    #endregion
 
     /// <summary>
     /// 初期化

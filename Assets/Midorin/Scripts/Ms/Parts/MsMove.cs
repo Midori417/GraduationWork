@@ -154,7 +154,7 @@ public class MsMove : BaseMsParts
                     rb.velocity = transform.forward * _move._speed + new Vector3(0, rb.velocity.y, 0);
                     if(seTimer.UpdateTimer())
                     {
-                        subAudio.PlayOneShot(_seLeg);
+                        audio.SubSe(_seLeg);
                         seTimer.ResetTimer();
                     }
                 }
@@ -192,7 +192,7 @@ public class MsMove : BaseMsParts
         {
             rb.useGravity = false;
             mainMs.UseBoost(5, true);
-            mainAudio.PlayOneShot(_seDash);
+            audio.MainSe(_seDash);
             _jumpBtnTimer.ResetTimer();
         };
         Action update = () =>
@@ -254,7 +254,7 @@ public class MsMove : BaseMsParts
             rb.AddForce(transform.forward * 30.0f, ForceMode.Impulse);
             rb.useGravity = false;
             mainMs.UseBoost(10, true);
-            mainAudio.PlayOneShot(_seDash);
+            audio.MainSe(_seDash);
         };
         Action update = () =>
         {
@@ -298,7 +298,7 @@ public class MsMove : BaseMsParts
             rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, _landing.inertia);
             animator.SetTrigger("Landing");
             timer.ResetTimer();
-            mainAudio.PlayOneShot(_seLanding);
+            audio.MainSe(_seLanding);
         };
         Action update = () =>
         {

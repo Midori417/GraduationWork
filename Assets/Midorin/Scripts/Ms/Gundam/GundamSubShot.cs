@@ -250,7 +250,7 @@ public class GundamSubShot : BaseMsAmoParts
             bullet.team = mainMs.team;
         }
         rb.AddForce(-transform.forward * _recoil, ForceMode.Impulse);
-        mainAudio.PlayOneShot(_seShot);
+       audio.MainSe(_seShot);
         // 弾を減らす
         amo--;
         if (amo <= 0)

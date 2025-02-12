@@ -77,10 +77,6 @@ public class MeleeCollision : MonoBehaviour
             }
 
             ms.Damage(_atk, _down, transform.position, 1);
-            if (_mainMs)
-            {
-                _mainMs.SetHitStop(1);
-            }
             _isHit = true;
             CreteHitEffect();
         }

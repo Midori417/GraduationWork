@@ -217,7 +217,7 @@ public class GundamMelee : BaseMsParts
         GameTimer attackTimer = new GameTimer();
         Action<State> enter = (prev) =>
         {
-            mainAudio.PlayOneShot(_seSable);
+            audio.MainSe(_seSable);
             rb.velocity = Vector3.zero;
             timer.ResetTimer(_stateTime._attack1);
             attackTimer.ResetTimer(_stateTime._attack1Coll);
@@ -274,7 +274,7 @@ public class GundamMelee : BaseMsParts
         GameTimer attackTimer = new GameTimer();
         Action<State> enter = (prev) =>
         {
-            mainAudio.PlayOneShot(_seSable);
+            audio.MainSe(_seSable);
             rb.useGravity = false;
             timer.ResetTimer(_stateTime._attack2);
             attackTimer.ResetTimer(_stateTime._attack2Coll);
@@ -330,7 +330,7 @@ public class GundamMelee : BaseMsParts
         GameTimer attackTimer = new GameTimer();
         Action<State> enter = (prev) =>
         {
-            mainAudio.PlayOneShot(_seSable);
+            audio.MainSe(_seSable);
             _isCombo = true;
             rb.useGravity = false;
             timer.ResetTimer(_stateTime._attack3);

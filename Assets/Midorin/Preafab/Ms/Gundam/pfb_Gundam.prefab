@@ -488,8 +488,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50c37c0e0090880468c0c36b44f205c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mainAudio: {fileID: 1217158876793159272}
-  _subAudio: {fileID: 8399935464330759143}
+  _audio:
+    _main: {fileID: 1217158876793159272}
+    _sub: {fileID: 8399935464330759143}
   _center: {fileID: 6178711139368531833}
   _cost: 2000
   _hp:

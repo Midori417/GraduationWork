@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// ゲームに登場するゲームオブジェクト
 /// </summary>
 public class BaseGameObject : MonoBehaviour
 {
+    // trueなら行動を止める
     private bool _isStop = false;
 
     public bool isStop => _isStop;

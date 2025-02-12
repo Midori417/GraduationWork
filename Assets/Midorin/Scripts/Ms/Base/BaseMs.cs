@@ -12,10 +12,40 @@ public class BaseMs : BaseGameObject
     private Animator _animator;
     private SkinnedMeshRenderer _meshRenderer;
     private GroundCheck _groundCheck;
-    [SerializeField]
-    private AudioSource _mainAudio;
-    [SerializeField]
-    private AudioSource _subAudio;
+
+    [Serializable]
+    public struct AudioValiable
+    {
+        [SerializeField, Header("メイン")]
+        private AudioSource _main;
+
+        [SerializeField, Header("サブ")]
+        private AudioSource _sub;
+
+        /// <summary>
+        /// メインオウディオでSEを再生
+        /// </summary>
+        /// <param name="clip"></param>
+        public void MainSe(AudioClip clip)
+        {
+            if (!_main) return;
+            if (!clip) return;
+            _main.PlayOneShot(clip);
+        }
+
+        /// <summary>
+        /// サブオウディオでSEを再生
+        /// </summary>
+        /// <param name="clip"></param>
+        public void SubSe(AudioClip clip)
+        {
+            if (!_sub) return;
+            if (!clip) return;
+            _sub.PlayOneShot(clip);
+        }
+    }
+    [SerializeField, Header("サウンド")]
+    private AudioValiable _audio;
 
     [SerializeField, Header("機体の真ん中")]
     private Transform _center;
@@ -23,8 +53,7 @@ public class BaseMs : BaseGameObject
     private Transform _myCamera;
     private BaseMs _targetMs;
     private List<BaseMsAmoParts> _uiArmeds = new List<BaseMsAmoParts>();
-
-    private Team _team;
+    private Team _team = Team.None;
 
     [SerializeField, Header("機体コスト")]
     private int _cost = 0;
@@ -223,7 +252,7 @@ public class BaseMs : BaseGameObject
     [SerializeField, Header("ターゲット距離")]
     private TargetDistace _targetDistace;
 
-    [HideInInspector]
+    [HideInInspector, Header("機体入力")]
     private GameInput _msInput;
 
     [SerializeField, Header("無敵タイマー")]
@@ -244,9 +273,7 @@ public class BaseMs : BaseGameObject
     // trueなら破壊が完了した
     private bool _isDestroy = false;
 
-    GameTimer _hitStop = new GameTimer(0.1f);
-    bool isHitStop = false;
-
+    // 破壊速度
     private Vector3 _destroySpeed = Vector3.zero;
 
     #region プロパティ
@@ -255,9 +282,7 @@ public class BaseMs : BaseGameObject
     public Animator animator => _animator;
     public SkinnedMeshRenderer meshRenderer => _meshRenderer;
     public GroundCheck groundCheck => _groundCheck;
-    public AudioSource mainAudio => _mainAudio;
-    public AudioSource subAudio => _subAudio;
-
+    public AudioValiable audio => _audio;
     public Team team
     {
         get => _team;
@@ -316,7 +341,6 @@ public class BaseMs : BaseGameObject
             return 0f;
         }
     }
-
     protected float responTime => _responTime;
     public bool isDamageOk
     {
@@ -346,36 +370,7 @@ public class BaseMs : BaseGameObject
         set => _destroySpeed = value; 
     }
 
-
     #endregion
-
-    /// <summary>
-    /// ヒットストップ更新
-    /// </summary>
-    protected void HitStopUpdate()
-    {
-        if (!isHitStop) return;
-
-        if (_hitStop.UpdateTimer())
-        {
-            Stop();
-        }
-        else
-        {
-            isHitStop = false;
-            Play();
-        }
-    }
-
-    /// <summary>
-    /// ヒットストップを設定
-    /// </summary>
-    /// <param name="time"></param>
-    public void SetHitStop(float time)
-    {
-        isHitStop = true;
-        _hitStop.ResetTimer(time);
-    }
 
     /// <summary>
     /// 処理を開始
@@ -420,14 +415,6 @@ public class BaseMs : BaseGameObject
                 mats[i] = new Material(meshRenderer.materials[i]);
                 meshRenderer.materials[i] = mats[i];
             }
-        }
-        if (!mainAudio)
-        {
-            _mainAudio.maxDistance = 1000;
-        }
-        if (!subAudio)
-        {
-            _subAudio.maxDistance = 1000;
         }
         _hp.Initialzie();
         _boost.Initialize();
