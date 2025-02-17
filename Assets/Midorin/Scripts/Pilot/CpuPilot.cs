@@ -227,7 +227,6 @@ public class CpuPilot : BasePilot
         {
             return null;
         }
-        BasePilot tmp = null;
         float distanceA = Vector3.Distance(myMs.transform.position, enemyPilots[0].myMs.transform.position);
         float distanceB = Vector3.Distance(myMs.transform.position, enemyPilots[1].myMs.transform.position);
         if(distanceA > distanceB)

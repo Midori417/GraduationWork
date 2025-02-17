@@ -34,25 +34,25 @@ public class GundamMelee : BaseMsParts
     [Serializable]
     private struct StateTime
     {
-        [Header("移動状態")]
+        [SerializeField, Header("移動状態")]
         public float _move;
 
-        [Header("攻撃１")]
+        [SerializeField, Header("攻撃１")]
         public float _attack1;
 
-        [Header("攻撃1の判定")]
+        [SerializeField, Header("攻撃1の判定")]
         public float _attack1Coll;
 
-        [Header("攻撃2")]
+        [SerializeField, Header("攻撃2")]
         public float _attack2;
 
-        [Header("攻撃2の判定")]
+        [SerializeField, Header("攻撃2の判定")]
         public float _attack2Coll;
 
-        [Header("攻撃3")]
+        [SerializeField, Header("攻撃3")]
         public float _attack3;
 
-        [Header("攻撃3の判定")]
+        [SerializeField, Header("攻撃3の判定")]
         public float _attack3Coll;
     }
     [SerializeField, Header("状態の時間")]
@@ -61,22 +61,22 @@ public class GundamMelee : BaseMsParts
     [Serializable]
     private struct AtkDown
     {
-        [Header("攻撃")]
+        [SerializeField, Header("攻撃")]
         public int _atk;
 
-        [Header("ダウン")]
+        [SerializeField, Header("ダウン")]
         public float _down;
     }
     [Serializable]
     private struct AtkDownList
     {
-        [Header("攻撃1")]
+        [SerializeField, Header("攻撃1")]
         public AtkDown _attack1;
 
-        [Header("攻撃2")]
+        [SerializeField, Header("攻撃2")]
         public AtkDown _attack2;
 
-        [Header("攻撃3")]
+        [SerializeField, Header("攻撃3")]
         public AtkDown _attack3;
     }
     [SerializeField, Header("攻撃とダウン")]
@@ -128,7 +128,7 @@ public class GundamMelee : BaseMsParts
         SetUpAttack1();
         SetUpAttack2();
         SetUpAttack3();
-        _stateMachine.Setup(State.None);
+        _stateMachine.SetUp(State.None);
     }
 
     /// <summary>
@@ -159,9 +159,6 @@ public class GundamMelee : BaseMsParts
                 }
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             // 赤距離なのでターゲットを設定
@@ -170,7 +167,7 @@ public class GundamMelee : BaseMsParts
                 _target = targetMs.transform;
             }
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -197,14 +194,11 @@ public class GundamMelee : BaseMsParts
                 _stateMachine.ChangeState(State.Attack1);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             rb.useGravity = true;
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -254,14 +248,11 @@ public class GundamMelee : BaseMsParts
                 }
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             AttackFaild();
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -310,14 +301,11 @@ public class GundamMelee : BaseMsParts
                 }
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             AttackFaild();
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -353,14 +341,11 @@ public class GundamMelee : BaseMsParts
                 _stateMachine.ChangeState(State.None);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             AttackFaild();
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     #endregion

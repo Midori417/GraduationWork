@@ -34,7 +34,7 @@ public class MsDamageCollision : BaseMsParts
     /// <param name="damage"></param>
     /// <param name="downValue"></param>
     /// <param name="bulletPos"></param>
-    public bool Damage(int damage, float downValue, Vector3 bulletPos, float hitStop = 0)
+    public bool Damage(float damage, float downValue, Vector3 bulletPos, float hitStop = 0)
     {
         if (mainMs)
         {

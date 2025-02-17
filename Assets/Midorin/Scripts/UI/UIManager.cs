@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,28 +9,55 @@ using UnityEngine.UI;
 /// </summary>
 public class UIManager : BaseGameObject
 {
+    [SerializeField, Header("プレイヤーキャンバス")]
+    private GameObject _playerUI;
+
     [SerializeField, Header("自身の機体の体力")]
     private TextMeshProUGUI _txtHp;
 
-    [SerializeField, Header("ブーストゲージ")]
-    private Image _imgBoostGauge;
+    [Serializable]
+    private struct Boost
+    {
+        [SerializeField, Header("ゲージ")]
+        public Image _gauge;
 
-    [SerializeField, Header("ブーストゲージオーバーヒート")]
-    private Image _imgBoostOverHeat;
+        [SerializeField, Header("オーバーヒート")]
+        private Image _overHeat;
 
-    [SerializeField, Header("残り時間")]
-    private TextMeshProUGUI _txtTime;
+        /// <summary>
+        /// オーバーヒートUIを表示するか設定
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetOverHert(float value)
+        {
+            if (!_overHeat) return;
+
+            // 0以下なら表示
+            if(value <= 0)
+            {
+                if (!_overHeat.enabled)
+                    _overHeat.enabled = true;
+            }
+            else
+            {
+                if (_overHeat.enabled)
+                    _overHeat.enabled = false;
+            }
+        }
+    }
+    [SerializeField, Header("ブースト")]
+    private Boost _boost;
 
     [Serializable]
     private struct Armed
     {
-        [Header("武装背景")]
+        [SerializeField, Header("武装背景")]
         public List<Image> _imgBack;
 
-        [Header("武装の弾")]
+        [SerializeField, Header("武装の弾")]
         public List<TextMeshProUGUI> _txtValue;
 
-        [Header("武装ゲージ")]
+        [SerializeField, Header("武装ゲージ")]
         public List<Image> _imgGauge;
     }
     [SerializeField, Header("武装変数")]
@@ -41,19 +66,19 @@ public class UIManager : BaseGameObject
     [Serializable]
     private struct TargetMark
     {
-        [Header("ターゲットImage")]
+        [SerializeField, Header("ターゲットImage")]
         public Image _img;
 
-        [Header("赤カーソル")]
+        [SerializeField, Header("赤カーソル")]
         public Sprite _red;
 
-        [Header("ロックオンカーソル")]
+        [SerializeField, Header("ロックオンカーソル")]
         public Sprite _lookOn;
 
-        [Header("緑カーソル")]
+        [SerializeField, Header("緑カーソル")]
         public Sprite _green;
 
-        [Header("イエローカーソル")]
+        [SerializeField, Header("イエローカーソル")]
         public Sprite _yellow;
     }
     [SerializeField, Header("ターゲットカーソル")]
@@ -62,10 +87,10 @@ public class UIManager : BaseGameObject
     [Serializable]
     private struct EnemyHp
     {
-        [Header("体力バー")]
+        [SerializeField, Header("体力バー")]
         public List<Image> _bar;
 
-        [Header("背景")]
+        [SerializeField, Header("背景")]
         public List<Image> _back;
     }
     [SerializeField, Header("エネミーHp")]
@@ -74,28 +99,28 @@ public class UIManager : BaseGameObject
     [Serializable]
     private struct TeamHp
     {
-        [Header("体力バー")]
+        [SerializeField, Header("体力バー")]
         public Image _bar;
-        [Header("背景")]
+        [SerializeField, Header("背景")]
         public Image _barBack;
 
-        [Header("体力")]
+        [SerializeField, Header("体力")]
         public TextMeshProUGUI _hp;
 
-        [Header("体力背景")]
+        [SerializeField, Header("体力背景")]
         public Image _hpBack;
     }
     [SerializeField, Header("チームHp")]
-    private TeamHp _teamHp;
+    private TeamHp _teamHp = default;
 
     [Serializable]
     private struct StrengthGauge
     {
-        [Header("戦力ゲージ0味方1敵")]
-        public List<Image> _imgGauge;
+        [SerializeField, Header("戦力ゲージ0味方1敵")]
+        public List<Image> _gauge;
 
-        [Header("戦力ゲージWarning")]
-        public List<Image> _imgWarning;
+        [SerializeField,  Header("戦力ゲージWarning")]
+        public Image _warning;
     }
     [SerializeField, Header("戦力ゲージ")]
     private StrengthGauge _strengthGauge;
@@ -103,28 +128,28 @@ public class UIManager : BaseGameObject
     [Serializable]
     private struct EventUI
     {
-        [Header("イベントUI(大)")]
+        [SerializeField, Header("イベントUI(大)")]
         public Image _img;
 
-        [Header("イベントUI(小)")]
+        [SerializeField, Header("イベントUI(小)")]
         public Image _imgSmall;
 
-        [Header("勝利画像(大)")]
+        [SerializeField, Header("勝利画像(大)")]
         public Sprite _winLarge;
 
-        [Header("勝利画像(小)")]
+        [SerializeField, Header("勝利画像(小)")]
         public Sprite _winSmall;
 
-        [Header("敗北画像(大)")]
+        [SerializeField, Header("敗北画像(大)")]
         public Sprite _loseLarge;
 
-        [Header("敗北画像(小)")]
+        [SerializeField, Header("敗北画像(小)")]
         public Sprite _loseSmall;
 
-        [Header("引き分け画像(大)")]
+        [SerializeField, Header("引き分け画像(大)")]
         public Sprite _drawLarge;
 
-        [Header("引き分け画像(小)")]
+        [SerializeField, Header("引き分け画像(小)")]
         public Sprite _drawSmall;
 
         #region 画像関数
@@ -139,7 +164,7 @@ public class UIManager : BaseGameObject
             switch (victory)
             {
                 case Victory.Win:
-                  _img.sprite = _winLarge;
+                    _img.sprite = _winLarge;
                     break;
                 case Victory.Lose:
                     _img.sprite = _loseLarge;
@@ -177,13 +202,13 @@ public class UIManager : BaseGameObject
     [SerializeField, Header("イベントUI")]
     private EventUI _eventUI;
 
+    [SerializeField, Header("残り時間")]
+    private TextMeshProUGUI _txtTime;
+
     private BattleManager _battleManager;
 
-    [SerializeField, Header("プレイヤーキャンバス")]
-    private GameObject _playerUI;
-
     GameTimer _hpFlashTimer = new GameTimer(0.2f);
-    bool _isHpFlash = false; 
+    bool _isHpFlash = false;
 
     #region イベント関数
 
@@ -260,7 +285,6 @@ public class UIManager : BaseGameObject
     private void Timer()
     {
         if (!_battleManager) return;
-        //_txtTime.text = _battleManager.battleTimer.ToString("f2");
         _txtTime.text = GetTextNum(_battleManager.battleTimer, Color.white, true);
     }
 
@@ -270,30 +294,22 @@ public class UIManager : BaseGameObject
     /// <param name="value">現在のブースト容量(0～1)</param>
     public void BoostGauge(float value)
     {
-        if (_imgBoostGauge)
+        if (!_boost._gauge) return;
+
+        // 残り量によって色を変える
         {
-            if(value < 0.2f)
-            {
-                _imgBoostGauge.color = Color.red;
-            }
-            else if(value < 0.5f)
-            {
-                _imgBoostGauge.color = Color.yellow;
-            }
-            else
-            {
-                _imgBoostGauge.color = new Color(0, 0.7f, 1);
-            }
-            _imgBoostGauge.fillAmount = value;
+            Color color = Color.white;
+            if (value < 0.2f) color = Color.red;
+            else if (value < 0.5f) color = Color.yellow;
+            else color = new Color(0, 0.7f, 1);
+            _boost._gauge.color = color;
         }
-        if(value <= 0)
-        {
-            _imgBoostOverHeat.enabled = true;
-        }
-        else
-        {
-            _imgBoostOverHeat.enabled = false;
-        }
+
+        // ゲージに変更があれば変える
+        if(_boost._gauge.fillAmount !=  value)
+        _boost._gauge.fillAmount = value;
+
+        _boost.SetOverHert(value);
     }
 
     /// <summary>
@@ -340,7 +356,7 @@ public class UIManager : BaseGameObject
     /// <param name="teamId"></param>
     public void SetStrengthGauge(Team teamId)
     {
-        if (!_strengthGauge._imgGauge[0] || !_strengthGauge._imgGauge[1])
+        if (!_strengthGauge._gauge[0] || !_strengthGauge._gauge[1])
             return;
         if (!_battleManager) return;
         float max = GameManager.teamCostMax;
@@ -348,28 +364,20 @@ public class UIManager : BaseGameObject
         float blue = (max - (max - _battleManager.blueCost)) / max;
         if (teamId == Team.Red)
         {
-            _strengthGauge._imgGauge[0].fillAmount = red;
-            _strengthGauge._imgGauge[1].fillAmount = blue;
-            if(red < 0.5)
+            _strengthGauge._gauge[0].fillAmount = red;
+            _strengthGauge._gauge[1].fillAmount = blue;
+            if (red < 0.5)
             {
-                _strengthGauge._imgWarning[0].enabled = true;
-            }
-            if (blue < 0.5)
-            {
-                _strengthGauge._imgWarning[1].enabled = true;
+                _strengthGauge._warning.enabled = true;
             }
         }
         else if (teamId == Team.Blue)
         {
-            _strengthGauge._imgGauge[0].fillAmount = blue;
-            _strengthGauge._imgGauge[1].fillAmount = red;
+            _strengthGauge._gauge[0].fillAmount = blue;
+            _strengthGauge._gauge[1].fillAmount = red;
             if (red < 0.5)
             {
-                _strengthGauge._imgWarning[0].enabled = true;
-            }
-            if (blue < 0.5)
-            {
-                _strengthGauge._imgWarning[0].enabled = true;
+                _strengthGauge._warning.enabled = true;
             }
         }
     }
@@ -385,7 +393,7 @@ public class UIManager : BaseGameObject
             Color color = Color.white;
             if (rate <= 0.3)
             {
-                if(_isHpFlash)
+                if (_isHpFlash)
                 {
                     color = Color.red;
                 }

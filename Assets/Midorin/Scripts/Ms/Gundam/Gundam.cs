@@ -34,19 +34,19 @@ public class Gundam : BaseMs
     [Serializable]
     private struct ActiveObject
     {
-        [Header("ビームライフル")]
+        [SerializeField, Header("ビームライフル")]
         public GameObject _beumRifle;
 
-        [Header("バズーカ")]
+        [SerializeField, Header("バズーカ")]
         public GameObject _bazooka;
 
-        [Header("サーベル")]
+        [SerializeField, Header("サーベル")]
         public GameObject _sable;
 
-        [Header("バックパックサーベル")]
+        [SerializeField, Header("バックパックサーベル")]
         public GameObject _mountSable;
 
-        [Header("バ―ニア")]
+        [SerializeField, Header("バ―ニア")]
         public GameObject _roketFire;
 
         /// <summary>
@@ -104,9 +104,6 @@ public class Gundam : BaseMs
     [SerializeField, Header("オブジェクト")]
     private ActiveObject _activeObj;
 
-    [SerializeField, Header("破壊されてから爆発するまで")]
-    private float _destroyTime = 0;
-
     [SerializeField, Header("爆発エフェクト")]
     private GameObject _pfbExsprosion;
 
@@ -115,7 +112,6 @@ public class Gundam : BaseMs
 
     [SerializeField, Header("死亡")]
     private AudioClip _seDead;
-
 
     #region イベント関数
 
@@ -172,7 +168,7 @@ public class Gundam : BaseMs
         SetUpNormal();
         SetUpDestroy();
         SetUpRespon();
-        _stateMachine.Setup(State.Normal);
+        _stateMachine.SetUp(State.Normal);
     }
 
     /// <summary>
@@ -244,7 +240,6 @@ public class Gundam : BaseMs
         {
             if (timer.UpdateTimer())
             {
-
                 var obj = Instantiate(_pfbExsprosion, transform.position, Quaternion.identity);
                 Destroy(obj, 4);
                 gameObject.SetActive(false);
@@ -252,13 +247,10 @@ public class Gundam : BaseMs
                 audio.MainSe(_seDead);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -281,13 +273,10 @@ public class Gundam : BaseMs
                 _stateMachine.ChangeState(State.Normal);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
 
     }
 
@@ -432,7 +421,7 @@ public class Gundam : BaseMs
     /// </summary>
     private void MainShot()
     {
-        if (_move.isLanding || _subShot.isNow || _melee.isNow)
+        if (_subShot.isNow || _melee.isNow)
             return;
 
         _mainShot.UpdateState();
@@ -484,7 +473,7 @@ public class Gundam : BaseMs
     /// <param name="downValue"></param>
     /// <param name="bulletPos"></param>
     /// <returns></returns>
-    public override bool Damage(int damage, float downValue, Vector3 bulletPos, float hitStop = 0)
+    public override bool Damage(float damage, float downValue, Vector3 bulletPos, float hitStop = 0)
     {
         if (!base.Damage(damage, downValue, bulletPos))
         {

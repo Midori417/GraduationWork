@@ -70,7 +70,7 @@ public class GundamSubShot : BaseMsAmoParts
         SetUpNone();
         SetUpShotF();
         SetUpShotB();
-        _stateMachine.Setup(State.None);
+        _stateMachine.SetUp(State.None);
     }
 
     /// <summary>
@@ -92,13 +92,10 @@ public class GundamSubShot : BaseMsAmoParts
                 }
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -139,14 +136,11 @@ public class GundamSubShot : BaseMsAmoParts
                 _stateMachine.ChangeState(State.ShotB);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             rb.useGravity = true;
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -169,9 +163,6 @@ public class GundamSubShot : BaseMsAmoParts
                 _stateMachine.ChangeState(State.None);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             rb.useGravity = true;
@@ -179,7 +170,7 @@ public class GundamSubShot : BaseMsAmoParts
             _target = null;
             _interval.ResetTimer();
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     #endregion

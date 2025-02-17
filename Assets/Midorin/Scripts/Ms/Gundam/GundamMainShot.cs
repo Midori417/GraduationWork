@@ -51,10 +51,10 @@ public class GundamMainShot : BaseMsAmoParts
         [HideInInspector, Header("前フレーム時の回転")]
         public Quaternion _old;
 
-        [Header("回転速度")]
+        [SerializeField, Header("回転速度")]
         public float _rotSpeed;
 
-        [Header("ボーン")]
+        [SerializeField, Header("ボーン")]
         public Transform _bone;
     }
     [SerializeField, Header("腹回転変数")]
@@ -108,7 +108,7 @@ public class GundamMainShot : BaseMsAmoParts
         SetUpNone();
         SetUpShotF();
         SetUpShotB();
-        _stateMachine.Setup(State.None);
+        _stateMachine.SetUp(State.None);
     }
 
     /// <summary>
@@ -130,13 +130,10 @@ public class GundamMainShot : BaseMsAmoParts
                 }
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -196,14 +193,11 @@ public class GundamMainShot : BaseMsAmoParts
                 _stateMachine.ChangeState(State.ShotB);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             _spine._old = _spine._bone.localRotation;
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -231,9 +225,6 @@ public class GundamMainShot : BaseMsAmoParts
                 _stateMachine.ChangeState(State.None);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             _isNow = false;
@@ -242,7 +233,7 @@ public class GundamMainShot : BaseMsAmoParts
             isBack = false;
             _interval.ResetTimer();
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     #endregion

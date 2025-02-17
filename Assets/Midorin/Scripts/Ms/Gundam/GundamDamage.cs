@@ -70,7 +70,7 @@ public class GundamDamage : BaseMsParts
         SetUpDamage();
         SetUpDown();
         SetUpStanding();
-        _stateMachine.Setup(State.Normal);
+        _stateMachine.SetUp(State.Normal);
     }
 
     /// <summary>
@@ -85,13 +85,10 @@ public class GundamDamage : BaseMsParts
         Action update = () =>
         {
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -118,7 +115,7 @@ public class GundamDamage : BaseMsParts
         };
         Action update = () =>
         {
-            if(_redMeshTimer.UpdateTimer())
+            if (_redMeshTimer.UpdateTimer())
             {
                 mainMs.NormalMesh();
             }
@@ -128,13 +125,10 @@ public class GundamDamage : BaseMsParts
                 _stateMachine.ChangeState(State.Normal);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -169,9 +163,9 @@ public class GundamDamage : BaseMsParts
                 mainMs.NormalMesh();
             }
             // 地面についていたらタイマー作動
-            if(groundCheck.isGround)
+            if (groundCheck.isGround)
             {
-                if(inputTimer.UpdateTimer())
+                if (inputTimer.UpdateTimer())
                 {
                     if (msInput.GetMoveAxis() != Vector2.zero)
                     {
@@ -184,15 +178,12 @@ public class GundamDamage : BaseMsParts
                 }
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             // ダウン値をリセット
             mainMs.downValue = 0;
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -210,19 +201,16 @@ public class GundamDamage : BaseMsParts
         };
         Action update = () =>
         {
-            if(timer.UpdateTimer())
+            if (timer.UpdateTimer())
             {
                 mainMs.InvisibleTimer(_invisibleTime);
                 _stateMachine.ChangeState(State.Normal);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     #endregion
@@ -241,7 +229,7 @@ public class GundamDamage : BaseMsParts
     /// <param name="damage"></param>
     /// <param name="downValue"></param>
     /// <param name="bulletPos"></param>
-    public void SetState(int damage, float downValue, Vector3 bulletPos)
+    public void SetState(float damage, float downValue, Vector3 bulletPos)
     {
         rb.useGravity = true;
         _directionToTarget = Vector3.Scale(transform.position - bulletPos, new Vector3(1, 0, 1));
@@ -271,7 +259,7 @@ public class GundamDamage : BaseMsParts
         }
 
         // ダメージ
-        if(mainMs.downValue < 5)
+        if (mainMs.downValue < 5)
         {
             _stateMachine.ChangeState(State.Damage);
         }

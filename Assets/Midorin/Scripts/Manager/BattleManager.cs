@@ -1,8 +1,6 @@
 ﻿using Cinemachine;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -17,7 +15,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
         Standby,
         Go,
         Battle,
-        End
+        Finish
     }
     StateMachine<State> _stateMachine = new StateMachine<State>();
 
@@ -50,28 +48,8 @@ public class BattleManager : SingletonBehavior<BattleManager>
     }
     private TeamCost _teamCost = new TeamCost();
 
-    private struct PilotVaiable
-    {
-        // 全パイロット
-        public List<BasePilot> _all;
-
-        // 赤チームパイロット
-        public List<BasePilot> _red;
-
-        // 青チームパイロット
-        public List<BasePilot> _blue;
-
-        /// <summary>
-        /// 初期化
-        /// </summary>
-        public void Initialize()
-        {
-            _all = new List<BasePilot>();
-            _red = new List<BasePilot>();
-            _blue = new List<BasePilot>();
-        }
-    }
-    private PilotVaiable _pilot;
+    [Header("パイロットマネージャ")]
+    private PilotManager _pilotManager = new PilotManager();
 
     // バトル時間を格納する変数
     private float _battleTime = 0;
@@ -88,28 +66,6 @@ public class BattleManager : SingletonBehavior<BattleManager>
 
     // ゲームマネージャー
     private GameManager _gameManager;
-
-    public float battleTimer => _battleTimer;
-    public int redCost => _teamCost._red;
-    public int blueCost => _teamCost._blue;
-
-    [SerializeField, Header("フェードオブジェクト")]
-    private FadeOut _fadeOut;
-
-    [SerializeField, Header("btnの親")]
-    private GameObject _btnParent;
-
-    int _selctNum = 0;
-
-    [SerializeField]
-    private List<Image> _selectedImages;
-    [SerializeField]
-    private List<Button> _selectedButtons;
-
-    Color _noramColor = new Color(0.4f, 0.4f, 0.4f);
-    Color _hightColor = Color.white;
-    bool isOn = false;
-
 
     [Serializable]
     private struct AudioValiable
@@ -212,14 +168,42 @@ public class BattleManager : SingletonBehavior<BattleManager>
     [SerializeField, Header("サウンド関係")]
     private AudioValiable _audio;
 
-    private List<BasicBulletMove> _bulletList = new List<BasicBulletMove>(100);
+    #region フィニッシュ処理変数
 
-    private BaseMs _lastMs;
+    [SerializeField, Header("フェードオブジェクト")]
+    private FadeOut _fadeOut;
+
+    [SerializeField, Header("btnの親")]
+    private GameObject _btnParent;
+
+    private int _selctNum = 0;
+
+    [SerializeField]
+    private List<Image> _selectedImages;
+    [SerializeField]
+    private List<Button> _selectedButtons;
+
+    Color _noramColor = new Color(0.4f, 0.4f, 0.4f);
+    Color _hightColor = Color.white;
+    private bool isOn = false;
+
+    // 最後に破壊された機体
+    private BaseMs _lastDestoryMs;
 
     [SerializeField, Header("破壊された機体を見るカメラ")]
     private Camera _destroyCamera;
     [SerializeField, Header("仮想シネマカメラ")]
     CinemachineVirtualCamera _virtualCamera;
+
+    #endregion
+
+    #region プロパティ
+
+    public float battleTimer => _battleTimer;
+    public int redCost => _teamCost._red;
+    public int blueCost => _teamCost._blue;
+
+    #endregion
 
     #region イベント関数
 
@@ -230,6 +214,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
     {
         base.Awake();
         SetUp();
+        _pilotManager.Initialize();
     }
 
     /// <summary>
@@ -237,7 +222,6 @@ public class BattleManager : SingletonBehavior<BattleManager>
     /// </summary>
     private void Start()
     {
-        _pilot.Initialize();
         Setting();
     }
 
@@ -301,10 +285,6 @@ public class BattleManager : SingletonBehavior<BattleManager>
         BattleSetting(battleInfo);
         PilotSetting(battleInfo);
         MsStartPos();
-        foreach (BasePilot pilot in _pilot._all)
-        {
-            pilot.Stop();
-        }
     }
 
     /// <summary>
@@ -344,42 +324,16 @@ public class BattleManager : SingletonBehavior<BattleManager>
             if (pilotInfo.teamId == Team.Red)
             {
                 pilot.team = Team.Red;
-                _pilot._red.Add(pilot);
+                _pilotManager.AddRedPilot(pilot);
             }
             else if (pilotInfo.teamId == Team.Blue)
             {
                 pilot.team = Team.Blue;
-                _pilot._blue.Add(pilot);
+                _pilotManager.BlueAddPilot(pilot);
             }
-            // リストに追加
-            _pilot._all.Add(pilot);
         }
 
-        // 敵チームを設定
-        foreach (BasePilot pilot in _pilot._red)
-        {
-            pilot.enemyPilots = _pilot._blue;
-        }
-        foreach (BasePilot pilot in _pilot._blue)
-        {
-            pilot.enemyPilots = _pilot._red;
-        }
-        if (_pilot._red.Count > 1)
-        {
-            _pilot._red[0].teamPilot = _pilot._red[1];
-            _pilot._red[1].teamPilot = _pilot._red[0];
-        }
-        if (_pilot._blue.Count > 1)
-        {
-            _pilot._blue[0].teamPilot = _pilot._blue[1];
-            _pilot._blue[1].teamPilot = _pilot._blue[0];
-        }
-
-        // パイロットの初期化
-        foreach (BasePilot pilot in _pilot._all)
-        {
-            pilot.Initialize();
-        }
+        _pilotManager.SetUpPilot();
     }
 
     /// <summary>
@@ -409,16 +363,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
             return;
         }
         _responTrs = _mapManager.responTrs;
-        for (int i = 0; i < _pilot._red.Count; ++i)
-        {
-            _pilot._red[i].myMs.transform.SetPositionAndRotation(_responTrs[0].position, _responTrs[0].rotation);
-            _pilot._red[i].myMs.transform.Translate(30 * i, 0, 0);
-        }
-        for (int i = 0; i < _pilot._blue.Count; ++i)
-        {
-            _pilot._blue[i].myMs.transform.SetPositionAndRotation(_responTrs[1].position, _responTrs[1].rotation);
-            _pilot._blue[i].myMs.transform.Translate(30 * i, 0, 0);
-        }
+        _pilotManager.SetStartPos(_responTrs[0], _responTrs[1]);
     }
 
     #endregion
@@ -433,9 +378,9 @@ public class BattleManager : SingletonBehavior<BattleManager>
         SetUpStandby();
         SetUpGo();
         SetUpBattle();
-        SetUpEnd();
+        SetUpFinish();
 
-        _stateMachine.Setup(State.Standby);
+        _stateMachine.SetUp(State.Standby);
     }
 
     /// <summary>
@@ -457,14 +402,10 @@ public class BattleManager : SingletonBehavior<BattleManager>
                 _stateMachine.ChangeState(State.Go);
             }
         };
-        Action lateUpdate = () =>
-        {
-
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -486,14 +427,10 @@ public class BattleManager : SingletonBehavior<BattleManager>
                 _stateMachine.ChangeState(State.Battle);
             }
         };
-        Action lateUpdate = () =>
-        {
-
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -519,99 +456,32 @@ public class BattleManager : SingletonBehavior<BattleManager>
             if (timer.UpdateTimer() || _teamCost.IsEnd())
             {
                 _battleTimer = timer.remain;
-                _stateMachine.ChangeState(State.End);
+                _stateMachine.ChangeState(State.Finish);
             }
-        };
-        Action lateUpdate = () =>
-        {
-
         };
         Action<State> exit = (next) =>
         {
             _audio.BGMStop();
             Stop();
-            foreach(BasePilot pilot in _pilot._all)
-            {
-                pilot.End();
-            }
+            _pilotManager.End();
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
-    /// End状態をセットアップ
+    /// Finish状態をセットアップ
     /// </summary>
-    private void SetUpEnd()
+    private void SetUpFinish()
     {
-        State state = State.End;
+        State state = State.Finish;
         GameTimer startTimer = new GameTimer(1);
         bool isStart = false;
         GameTimer uitimer = new GameTimer(2);
         Action<State> enter = (prev) =>
         {
             _audio.FinishPlay();
-            if (battleTimer <= 0)
-            {
-                // 青の勝ち
-                if (redCost < blueCost)
-                {
-                    foreach (BasePilot pilot in _pilot._red)
-                    {
-                        pilot.SetVitory(Victory.Lose);
-                    }
-                    foreach (BasePilot pilot in _pilot._blue)
-                    {
-                        pilot.SetVitory(Victory.Win);
-                    }
-                }
-                // 勝ちの勝ち
-                else if (blueCost < redCost)
-                {
-                    foreach (BasePilot pilot in _pilot._red)
-                    {
-                        pilot.SetVitory(Victory.Win);
-                    }
-                    foreach (BasePilot pilot in _pilot._blue)
-                    {
-                        pilot.SetVitory(Victory.Lose);
-                    }
-                }
-                // 引き分け
-                else
-                {
-                    foreach (BasePilot pilot in _pilot._all)
-                    {
-                        pilot.SetVitory(Victory.Draw);
-                    }
-                }
-            }
-            else
-            {
-                if (redCost <= 0)
-                {
-                    foreach (BasePilot pilot in _pilot._red)
-                    {
-                        pilot.SetVitory(Victory.Lose);
-                    }
-                    foreach (BasePilot pilot in _pilot._blue)
-                    {
-                        pilot.SetVitory(Victory.Win);
-                    }
-                }
-                if (blueCost <= 0)
-                {
-                    foreach (BasePilot pilot in _pilot._red)
-                    {
-                        pilot.SetVitory(Victory.Win);
-                    }
-                    foreach (BasePilot pilot in _pilot._blue)
-                    {
-                        pilot.SetVitory(Victory.Lose);
-                    }
-                }
-            }
-
-        };
+            VictoryCheck();
+        }; 
         Action update = () =>
         {
             if (!isStart)
@@ -619,12 +489,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
                 if (startTimer.UpdateTimer())
                 {
                     isStart = true;
-                    _lastMs.Play();
-                    foreach (BasePilot pilot in _pilot._all)
-                    {
-                        pilot.End();
-
-                    }
+                    _lastDestoryMs.Play();
                 }
             }
             if (uitimer.UpdateTimer())
@@ -635,13 +500,10 @@ public class BattleManager : SingletonBehavior<BattleManager>
                 EndControlUpdate();
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update,  exit);
     }
 
     #endregion
@@ -737,51 +599,74 @@ public class BattleManager : SingletonBehavior<BattleManager>
     #endregion
 
     #region 再生・ストップ
+
+    /// <summary>
+    /// 処理の再生
+    /// </summary>
     private void Play()
     {
         isStop = false;
-        foreach (BasePilot pilot in _pilot._all)
-        {
-            pilot.Play();
-        }
-        foreach (BasicBulletMove bullet in _bulletList)
-        {
-            bullet.Play();
-        }
+        _pilotManager.Play();
     }
 
+    /// <summary>
+    /// 処理の停止
+    /// </summary>
     private void Stop()
     {
         isStop = true;
-        foreach (BasePilot pilot in _pilot._all)
-        {
-            pilot.Stop();
-        }
-        foreach (BasicBulletMove bullet in _bulletList)
-        {
-            bullet.Stop();
-        }
+        _pilotManager.Stop();
     }
 
     #endregion
 
+    /// <summary>
+    /// 勝利判定
+    /// </summary>
+    public void VictoryCheck()
+    {
+        if (battleTimer <= 0)
+        {
+            // 青の勝ち
+            if (redCost < blueCost)
+            {
+                _pilotManager.BlueWin();
+            }
+            // 勝ちの勝ち
+            else if (blueCost < redCost)
+            {
+                _pilotManager.RedWin();
+            }
+            // 引き分け
+            else
+            {
+                _pilotManager.Draw();
+            }
+        }
+        else
+        {
+            if (redCost <= 0)
+            {
+                _pilotManager.BlueWin();
+            }
+            if (blueCost <= 0)
+            {
+                _pilotManager.RedWin();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 最後に破壊された機体を設定
+    /// </summary>
+    /// <param name="ms"></param>
     public void EndMs(BaseMs ms)
     {
-        _lastMs = ms;
+        _lastDestoryMs = ms;
         _destroyCamera.gameObject.SetActive(true);
         _virtualCamera.Follow = ms.center;
         _virtualCamera.LookAt = ms.center;
         _virtualCamera.PreviousStateIsValid = false;
-    }
-
-    public void SetBullet(BasicBulletMove bullet)
-    {
-        _bulletList.Add(bullet);
-    }
-
-    public void RemoveBullet(BasicBulletMove bullet)
-    {
-        _bulletList.Remove(bullet);
     }
 
     /// <summary>

@@ -2,14 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeleeCollision : MonoBehaviour
+public class MeleeCollision : BaseAttackCollision
 {
-    [SerializeField, Header("与えるダメージ")]
-    private int _atk = 0;
-
-    [SerializeField, Header("ダウン値")]
-    private float _down = 0;
-
     [SerializeField, Header("衝突時のエフェクト")]
     private GameObject _pfbEffHit = null;
 
@@ -40,16 +34,6 @@ public class MeleeCollision : MonoBehaviour
         }
     }
 
-    public int attack
-    {
-        set => _atk = value;
-    }
-
-    public float down
-    {
-        set => _down = value;
-    }
-
     public BaseMs mainMs
     {
         set => _mainMs = value;
@@ -76,7 +60,7 @@ public class MeleeCollision : MonoBehaviour
                 return;
             }
 
-            ms.Damage(_atk, _down, transform.position, 1);
+            ms.Damage(atk, down, transform.position, 1);
             _isHit = true;
             CreteHitEffect();
         }
@@ -112,7 +96,7 @@ public class MeleeCollision : MonoBehaviour
     /// <param name="down"></param>
     public void SetAtkDown(int atk, float down)
     {
-        _atk = atk;
-        _down = down;
+        this.atk = atk;
+        this.down = down;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 // ステートマシンを実装するクラス
 // Enum型限定テンプレート
@@ -50,7 +51,7 @@ public class StateMachine<T> where T : Enum
     /// その状態のEnterを実行する
     /// </summary>
     /// <param name="first">設定する状態</param>
-    public void Setup(T first)
+    public void SetUp(T first)
     {
         _currentState = first;
         _dict[_currentState].Enter(first);
@@ -77,6 +78,27 @@ public class StateMachine<T> where T : Enum
     }
 
     /// <summary>
+    /// 新しい状態を設定する
+    /// </summary>
+    /// <param name="value">状態の識別子(enum)</param>
+    /// <param name="enter">状態開始時の処理</param>
+    /// <param name="update">状態更新ジ時の処理</param>
+    /// <param name="exit">状態終了時の処理</param>
+    public void AddState(T value, Action<T> enter, Action update, Action<T> exit)
+    {
+        var state = new State()
+        {
+            Value = value,
+            Enter = enter,
+            Update = update,
+            LateUpdate = delegate { },
+            Exit = exit,
+        };
+        _dict[value] = state;
+    }
+
+
+    /// <summary>
     /// 現在の状態のUpdate処理を実行する
     /// </summary>
     public void UpdateState()
@@ -89,6 +111,10 @@ public class StateMachine<T> where T : Enum
     /// </summary>
     public void LateUpdateState()
     {
+        if(_dict[_currentState].LateUpdate == null)
+        {
+            return;
+        }
         _dict[_currentState].LateUpdate();
     }
 
@@ -100,6 +126,12 @@ public class StateMachine<T> where T : Enum
     /// <param name="next">次の状態の識別子</param>
     public void ChangeState(T next)
     {
+        if(!_dict.ContainsKey(next))
+        {
+            // 登録されていないKeyが呼び出されたとき
+            return;
+        }
+
         var prev = _currentState;
         _dict[_currentState].Exit(next);
         _currentState = next;

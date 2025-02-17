@@ -5,14 +5,8 @@ using UnityEngine;
 /// <summary>
 /// 当たり衝突判定コンポーネント
 /// </summary>
-public class BulletCollision : MonoBehaviour
+public class BulletCollision : BaseAttackCollision
 {
-    [SerializeField, Header("与えるダメージ")]
-    private int _atk = 0;
-
-    [SerializeField, Header("ダウン値")]
-    private float _down = 0;
-
     [SerializeField, Header("衝突したときに自身を破壊するか")]
     private bool _isHitDestroy = false;
 
@@ -30,7 +24,11 @@ public class BulletCollision : MonoBehaviour
     // trueなら衝突可能
     private Collider _collider;
 
-    BasicBulletMove _basicBulletMove;
+    // 所属チーム
+    private Team _team = Team.None;
+
+    public Team team
+    { set => team = value; }
 
     #region イベント関数
 
@@ -39,7 +37,6 @@ public class BulletCollision : MonoBehaviour
     /// </summary>
     private void Start()
     {
-       _basicBulletMove = GetComponent<BasicBulletMove>();
         _collider = GetComponent<Collider>();
         _collider.enabled = false;
     }
@@ -67,11 +64,11 @@ public class BulletCollision : MonoBehaviour
         {
             MsDamageCollision ms = other.GetComponent<MsDamageCollision>();
             // 同じチームなので当たらない
-            if (_basicBulletMove.team == ms.team)
+            if (_team == ms.team)
             {
                 return;
             }
-            if (!ms.Damage(_atk, _down, transform.position))
+            if (!ms.Damage(atk, down, transform.position))
             {
                 return;
             }

@@ -31,10 +31,10 @@ public class MsMove : BaseMsParts
     [Serializable]
     private struct MoveValiable
     {
-        [Header("移動速度")]
+        [SerializeField, Header("移動速度")]
         public float _speed;
 
-        [Header("旋回速度")]
+        [SerializeField, Header("旋回速度")]
         public float _rotationSpeed;
     }
     [SerializeField, Header("移動変数")]
@@ -43,16 +43,16 @@ public class MsMove : BaseMsParts
     [Serializable]
     private struct JumpValiable
     {
-        [Header("ジャンプ力")]
+        [SerializeField, Header("ジャンプ力")]
         public float _power;
 
-        [Header("移動速度")]
+        [SerializeField, Header("移動速度")]
         public float _speed;
 
-        [Header("旋回速度")]
+        [SerializeField, Header("旋回速度")]
         public float _rotationSpeed;
 
-        [Header("ブーストゲージの消費量")]
+        [SerializeField, Header("ブーストゲージの消費量")]
         public float useBoost;
     }
     [SerializeField, Header("ジャンプ変数")]
@@ -61,13 +61,13 @@ public class MsMove : BaseMsParts
     [Serializable]
     private struct DashValiable
     {
-        [Header("移動速度")]
+        [SerializeField, Header("移動速度")]
         public float speed;
 
-        [Header("旋回速度")]
+        [SerializeField, Header("旋回速度")]
         public float rotationSpeed;
 
-        [Header("ブーストゲージの消費量")]
+        [SerializeField, Header("ブーストゲージの消費量")]
         public float useBoost;
     }
     [SerializeField, Header("ダッシュパラメータ")]
@@ -76,11 +76,23 @@ public class MsMove : BaseMsParts
     [Serializable]
     private struct LandingValiable
     {
-        [Header("着地時の慣性")]
+        [SerializeField, Header("着地時の慣性")]
         public float inertia;
     }
     [SerializeField, Header("着地変数")]
     private LandingValiable _landing;
+
+    [Serializable]
+    private struct StepValiable
+    {
+        [SerializeField, Header("移動速度")]
+        public float _speed;
+
+        [SerializeField, Header("ステップ時間")]
+        public float _time;
+    }
+    [SerializeField, Header("ステップ変数")]
+    private StepValiable _step;
 
     [SerializeField, Header("ダッシュ音")]
     private AudioClip _seDash;
@@ -125,7 +137,7 @@ public class MsMove : BaseMsParts
         SetUpJump();
         SetUpDash();
         SetUpLanding();
-        _stateMachine.Setup(State.Normal);
+        _stateMachine.SetUp(State.Normal);
     }
 
     /// <summary>
@@ -173,13 +185,10 @@ public class MsMove : BaseMsParts
                 }
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
        {
        };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -227,14 +236,11 @@ public class MsMove : BaseMsParts
             mainMs.UseBoost(_jump.useBoost);
 
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             rb.useGravity = true;
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -276,14 +282,11 @@ public class MsMove : BaseMsParts
             // エネルギーの使用
             mainMs.UseBoost(_dash.useBoost);
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
             rb.useGravity = true;
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     /// <summary>
@@ -307,13 +310,10 @@ public class MsMove : BaseMsParts
                 _stateMachine.ChangeState(State.Normal);
             }
         };
-        Action lateUpdate = () =>
-        {
-        };
         Action<State> exit = (next) =>
         {
         };
-        _stateMachine.AddState(state, enter, update, lateUpdate, exit);
+        _stateMachine.AddState(state, enter, update, exit);
     }
 
     #endregion

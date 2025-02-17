@@ -64,7 +64,7 @@ public class BaseMs : BaseGameObject
         [HideInInspector, Header("現在の体力")]
         public float _current;
 
-        [Header("最大体力")]
+        [SerializeField, Header("最大体力")]
         public float _max;
 
         // 現在のエネルギーの割合(0～1)
@@ -98,10 +98,10 @@ public class BaseMs : BaseGameObject
         // チャージタイマー
         private float _chargeTimer;
 
-        [Header("チャージロック時間")]
+        [SerializeField, Header("チャージロック時間")]
         public float _chargeLockTime;
 
-        [Header("オーバーヒートしたときのチャージロック時間")]
+        [SerializeField, Header("オーバーヒートしたときのチャージロック時間")]
         public float _overHeartChargeLockTime;
 
         // trueなら使用中
@@ -112,6 +112,7 @@ public class BaseMs : BaseGameObject
         /// </summary>
         public void Initialize()
         {
+            _isUse = false; 
             _current = _max;
         }
 
@@ -184,20 +185,20 @@ public class BaseMs : BaseGameObject
     [Serializable]
     private struct TargetDistace
     {
-        [Header("赤距離")]
+        [SerializeField, Header("赤距離")]
         public float _redHorizontal;
 
-        [Header("赤距離(上)")]
+        [SerializeField, Header("赤距離(上)")]
         public float _redUp;
 
-        [Header("赤距離(下)")]
+        [SerializeField, Header("赤距離(下)")]
         public float _redDown;
 
-        [Header("ロック距離")]
+        [SerializeField, Header("ロック距離")]
         public float _lookOn;
 
         /// <summary>
-        /// 赤ロック範囲筧さん
+        /// 赤ロック範囲計算
         /// </summary>
         /// <param name="myPos"></param>
         /// <param name="targetPos"></param>
@@ -230,7 +231,7 @@ public class BaseMs : BaseGameObject
         /// <param name="myPos"></param>
         /// <param name="targetPos"></param>
         /// <returns></returns>
-        public bool LooOnDistance(Vector3 myPos, Vector3 targetPos)
+        public bool LookOnDistance(Vector3 myPos, Vector3 targetPos)
         {
             if (!RedDistance(myPos, targetPos)) return false;
 
@@ -327,7 +328,7 @@ public class BaseMs : BaseGameObject
             {
                 return false;
             }
-            return _targetDistace.LooOnDistance(center.position, targetMs.center.position);
+            return _targetDistace.LookOnDistance(center.position, targetMs.center.position);
         }
     }
     public float targetDistance
@@ -450,7 +451,7 @@ public class BaseMs : BaseGameObject
     /// ダメージを与える
     /// </summary>
     /// <param name="damage"></param>
-    public virtual bool Damage(int damage, float downValue, Vector3 bulletPos, float hitStop = 0)
+    public virtual bool Damage(float damage, float downValue, Vector3 bulletPos, float hitStop = 0)
     {
         if (!_isDamageOk) return false;
 

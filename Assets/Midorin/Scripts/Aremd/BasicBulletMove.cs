@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 基本の弾の動き
 /// </summary>
-public class BasicBulletMove : BaseGameObject
+public class BasicBulletMove : BaseArmed
 {
     /// <summary> 速度 </summary>
     [SerializeField, Header("速度")]
@@ -28,7 +28,13 @@ public class BasicBulletMove : BaseGameObject
     /// <summary> 射撃対象 </summary>
     private Transform _target = null;
 
+    // 射撃したMSのチーム
     private Team _team;
+
+    [SerializeField, Header("攻撃判定")]
+    private BaseAttackCollision _attackCollision;
+
+    #region プロパティ
 
     /// <summary>
     /// 射撃対象用プロパティ
@@ -44,20 +50,32 @@ public class BasicBulletMove : BaseGameObject
         set => _team = value;
     }
 
+    #endregion
+
     #region イベント関数
 
+    /// <summary>
+    /// 生成時に呼び出す
+    /// </summary>
     private void Awake()
     {
-        BattleManager i = BattleManager.I;
-        if(i)
-       i.SetBullet(this);
+        ArmedManager i = ArmedManager.I;
+        if (i)
+        {
+            i.AddArmed(this);
+        }
     }
 
+    /// <summary>
+    /// 破壊時に呼び出す
+    /// </summary>
     private void OnDestroy()
     {
-        BattleManager i = BattleManager.I;
+        ArmedManager i = ArmedManager.I;
         if (i)
-            i.RemoveBullet(this);
+        {
+            i.RemoveArmed(this);
+        }
     }
 
     /// <summary>
