@@ -350,6 +350,9 @@ public class GundamMelee : BaseMsParts
 
     #endregion
 
+    /// <summary>
+    /// 初期化
+    /// </summary>
     public override void Initalize()
     {
         base.Initalize();

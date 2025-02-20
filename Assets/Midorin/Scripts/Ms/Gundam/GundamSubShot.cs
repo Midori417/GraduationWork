@@ -41,6 +41,7 @@ public class GundamSubShot : BaseMsAmoParts
     [SerializeField, Header("一発の弾がリロードされるまでの時間")]
     private GameTimer _reloadTime = new GameTimer();
 
+    private BaseMs _targetMs;
     private Transform _target;
 
     [SerializeField, Header("発射音")]
@@ -115,6 +116,7 @@ public class GundamSubShot : BaseMsAmoParts
             rb.velocity = Vector3.zero;
             timer.ResetTimer(_shotTime);
             // ターゲットを設定
+            _targetMs = targetMs;
             _target = targetMsCenter;
             animator.SetInteger("ShotType", 2);
             animator.SetTrigger("Shot");
@@ -228,7 +230,7 @@ public class GundamSubShot : BaseMsAmoParts
             bullet.team = mainMs.team;
             if (mainMs.isRedDistance)
             {
-                bullet.target = _target;
+                bullet.targetMs = _targetMs;
             }
         }
         else

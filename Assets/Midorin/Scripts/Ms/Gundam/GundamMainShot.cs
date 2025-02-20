@@ -60,6 +60,7 @@ public class GundamMainShot : BaseMsAmoParts
     [SerializeField, Header("腹回転変数")]
     private SpineRotValiable _spine;
 
+    private BaseMs _targetMs;
     private Transform _target;
 
     [SerializeField, Header("発射音")]
@@ -150,6 +151,7 @@ public class GundamMainShot : BaseMsAmoParts
             _isNow = true;
             timer.ResetTimer(_shotTime);
             // ターゲットを設定
+            _targetMs = targetMs;
             _target = targetMsCenter;
             _spine._old = _spine._bone.localRotation;
             // バックショットか判定
@@ -280,7 +282,7 @@ public class GundamMainShot : BaseMsAmoParts
             bullet.team = mainMs.team;
             if (mainMs.isRedDistance)
             {
-                bullet.target = _target;
+                bullet.targetMs = _targetMs;
             }
         }
         else

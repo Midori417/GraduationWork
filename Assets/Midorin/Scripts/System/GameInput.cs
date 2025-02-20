@@ -14,6 +14,8 @@ public enum GameInputState
     Option,
     Destory,
 
+    CPUStep,
+
     Max,
 }
 

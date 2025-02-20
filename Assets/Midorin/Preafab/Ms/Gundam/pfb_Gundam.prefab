@@ -206,6 +206,7 @@ GameObject:
   - component: {fileID: 8399935464330759143}
   - component: {fileID: 3573684057943629597}
   - component: {fileID: 4240836231859876430}
+  - component: {fileID: 281268526113518301}
   - component: {fileID: 4291080379478233942}
   - component: {fileID: 8897959845904195392}
   - component: {fileID: 6549153352651540980}
@@ -514,7 +515,6 @@ MonoBehaviour:
     _sable: {fileID: 67951682668063735}
     _mountSable: {fileID: 7678663053291520856}
     _roketFire: {fileID: 6446761921569794267}
-  _destroyTime: 3
   _pfbExsprosion: {fileID: 8602677898691735879, guid: a18d3476372bd644aad42d9561f8ee32, type: 3}
   _seDead: {fileID: 8300000, guid: f86348f276eb6c94abbe91600f8a44c3, type: 3}
 --- !u!114 &4240836231859876430
@@ -543,9 +543,29 @@ MonoBehaviour:
     useBoost: 30
   _landing:
     inertia: 5
+  _step:
+    _speed: 0
+    _time: 0
   _seDash: {fileID: 8300000, guid: 198c0f7958934ec4387304b562b9f7b5, type: 3}
   _seLanding: {fileID: 8300000, guid: ffcca09ffb08405488b18c2ce53a19f3, type: 3}
   _seLeg: {fileID: 8300000, guid: f4cfc47d55c38b2409667f682e29ef68, type: 3}
+--- !u!114 &281268526113518301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130403658863983141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0c041738a52bb347a21cca5433ce52b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 60
+  _inputTime:
+    _maxTime: 0.5
+  _stepTime: 0.5
+  _seStep: {fileID: 8300000, guid: 0a37bfc248698024fb0b53008c602bcb, type: 3}
 --- !u!114 &4291080379478233942
 MonoBehaviour:
   m_ObjectHideFlags: 0

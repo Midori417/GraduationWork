@@ -274,6 +274,9 @@ public class BaseMs : BaseGameObject
     // trueなら破壊が完了した
     private bool _isDestroy = false;
 
+    // trueならホーミング無し
+    private bool _homingCut = false;
+
     // 破壊速度
     private Vector3 _destroySpeed = Vector3.zero;
 
@@ -341,6 +344,11 @@ public class BaseMs : BaseGameObject
             }
             return 0f;
         }
+    }
+    public bool homingCut
+    {
+        get => _homingCut;
+        set => _homingCut = value;
     }
     protected float responTime => _responTime;
     public bool isDamageOk
@@ -421,6 +429,7 @@ public class BaseMs : BaseGameObject
         _boost.Initialize();
         _downValue = 0;
         _isDestroy = false;
+        _homingCut = false;
         NormalMesh();
         gameObject.SetActive(true);
     }

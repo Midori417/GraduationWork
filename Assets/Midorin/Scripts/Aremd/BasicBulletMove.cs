@@ -26,7 +26,7 @@ public class BasicBulletMove : BaseArmed
     private readonly float _percentMax = 100.0f;
 
     /// <summary> 射撃対象 </summary>
-    private Transform _target = null;
+    private BaseMs _targetMs = null;
 
     // 射撃したMSのチーム
     private Team _team;
@@ -39,9 +39,9 @@ public class BasicBulletMove : BaseArmed
     /// <summary>
     /// 射撃対象用プロパティ
     /// </summary>
-    public Transform target
+    public BaseMs targetMs
     {
-        set { _target = value; }
+        set { _targetMs = value; }
     }
 
     public Team team
@@ -84,7 +84,7 @@ public class BasicBulletMove : BaseArmed
     void Start()
     {
         // nullチェック
-        if (!_target)
+        if (!_targetMs)
         {
             return;
         }
@@ -126,10 +126,16 @@ public class BasicBulletMove : BaseArmed
     /// </summary>
     private void TargetLookMove()
     {
-        if (!_target) return;
+        if (!_targetMs) return;
+        // 誘導切り
+        if(_targetMs.homingCut)
+        {
+            _targetMs = null;
+            return;
+        }
 
         // 射撃対象までの向きベクトル
-        Vector3 direction = _target.position - transform.position;
+        Vector3 direction = _targetMs.transform.position - transform.position;
 
         // 射撃対象までの角度
         float angleDiff = Vector3.Angle(transform.forward, direction);

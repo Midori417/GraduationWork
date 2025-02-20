@@ -31,6 +31,8 @@ public class CpuPilot : BasePilot
 
         Jump,
 
+        Step,
+
         Max,
     }
 
@@ -77,7 +79,6 @@ public class CpuPilot : BasePilot
     protected override void MsUpdate()
     {
         base.MsUpdate();
-        //return;
         MsInput();
     }
 
@@ -117,6 +118,7 @@ public class CpuPilot : BasePilot
             MoveActionState state = (MoveActionState)Random.Range(0, (int)MoveActionState.Max);
             bool dash = false;
             bool jump = false;
+            bool step = false;
             switch (state)
             {
                 case MoveActionState.None:
@@ -127,9 +129,12 @@ public class CpuPilot : BasePilot
                 case MoveActionState.Jump:
                     jump = true;
                     break;
+                case MoveActionState.Step:
+                    break;
             }
             msInput.SetInput(GameInputState.Dash, dash);
             msInput.SetInput(GameInputState.Jump, jump);
+            msInput.SetInput(GameInputState.CPUStep, step);
         }
     }
 

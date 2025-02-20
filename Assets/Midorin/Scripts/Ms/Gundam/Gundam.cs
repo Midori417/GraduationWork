@@ -24,6 +24,7 @@ public class Gundam : BaseMs
     StateMachine<State> _stateMachine = new StateMachine<State>();
 
     private MsMove _move;
+    private MsStep _step;
     private GundamMainShot _mainShot;
     private GundamSubShot _subShot;
     private GundamDamage _damage;
@@ -121,6 +122,7 @@ public class Gundam : BaseMs
     private void Awake()
     {
         _move = GetComponent<MsMove>();
+        _step = GetComponent<MsStep>();
         _mainShot = GetComponent<GundamMainShot>();
         _subShot = GetComponent<GundamSubShot>();
         _melee = GetComponent<GundamMelee>();
@@ -199,6 +201,7 @@ public class Gundam : BaseMs
                 Move();
                 SubShot();
                 Melee();
+                Step();
             }
 
             MsDamage();
@@ -277,7 +280,6 @@ public class Gundam : BaseMs
         {
         };
         _stateMachine.AddState(state, enter, update, exit);
-
     }
 
     #endregion
@@ -293,6 +295,11 @@ public class Gundam : BaseMs
         {
             _move.SetMainMs(this);
             _move.Initalize();
+        }
+        if(_step)
+        {
+            _step.SetMainMs(this);
+            _step.Initalize();
         }
         if (_mainShot)
         {
@@ -367,7 +374,7 @@ public class Gundam : BaseMs
     {
         if (ActionCheck())
         {
-            bool isRoket = _move.isDash || _move.isJump || _subShot.isNow || _melee.isNow;
+            bool isRoket = _move.isDash || _move.isJump || _subShot.isNow || _melee.isNow ||_step.isNow;
             _activeObj.RoketFireActive(isRoket);
         }
         else
@@ -411,9 +418,19 @@ public class Gundam : BaseMs
     /// </summary>
     private void Move()
     {
-        if (_subShot.isNow || _melee.isNow)
+        if (_subShot.isNow || _melee.isNow || _step.isNow)
             return;
         _move.UpdateState();
+    }
+
+    /// <summary>
+    /// ステップ
+    /// </summary>
+    private void Step()
+    {
+        if (_subShot.isNow)
+            return;
+        _step.UpdateState();
     }
 
     /// <summary>
@@ -455,6 +472,10 @@ public class Gundam : BaseMs
     {
         if (_mainShot.isNow || _subShot.isNow || _move.isLanding)
             return;
+        if(_step.isNow)
+        {
+            _melee.Initalize();
+        }
         _melee.UpdateState();
     }
 
