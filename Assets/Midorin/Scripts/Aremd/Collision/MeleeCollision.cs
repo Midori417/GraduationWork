@@ -36,6 +36,7 @@ public class MeleeCollision : BaseAttackCollision
 
     public BaseMs mainMs
     {
+        get => _mainMs;
         set => _mainMs = value;
     }
     #endregion

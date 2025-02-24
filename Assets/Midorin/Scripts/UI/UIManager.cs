@@ -359,7 +359,7 @@ public class UIManager : BaseGameObject
         if (!_strengthGauge._gauge[0] || !_strengthGauge._gauge[1])
             return;
         if (!_battleManager) return;
-        float max = GameManager.teamCostMax;
+        float max = BattleInfo.teamCostMax;
         float red = (max - (max - _battleManager.redCost)) / max;
         float blue = (max - (max - _battleManager.blueCost)) / max;
         if (teamId == Team.Red)

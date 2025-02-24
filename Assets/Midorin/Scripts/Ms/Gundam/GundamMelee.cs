@@ -140,22 +140,25 @@ public class GundamMelee : BaseMsParts
         GameTimer timer = new GameTimer();
         Action<State> enter = (prev) =>
         {
+            if(rb)
+            rb.useGravity = true;
         };
         Action update = () =>
         {
-            if (_intervalTimer.UpdateTimer())
+            if (!_intervalTimer.UpdateTimer())
+                return;
+
+            // 攻撃入力があれば
+            if (msInput.GetInputDown(GameInputState.MainAttack))
             {
-                if (msInput.GetInputDown(GameInputState.MainAttack))
+                // すでに攻撃可能距離ならすぐに攻撃1に移る
+                if (mainMs.targetDistance < _attackDistace)
                 {
-                    // すでに攻撃可能距離ならすぐに攻撃1に移る
-                    if (mainMs.targetDistance < _attackDistace)
-                    {
-                        _stateMachine.ChangeState(State.Attack1);
-                    }
-                    else
-                    {
-                        _stateMachine.ChangeState(State.Move);
-                    }
+                    _stateMachine.ChangeState(State.Attack1);
+                }
+                else
+                {
+                    _stateMachine.ChangeState(State.Move);
                 }
             }
         };
@@ -166,6 +169,7 @@ public class GundamMelee : BaseMsParts
             {
                 _target = targetMs.transform;
             }
+            rb.useGravity = false;
         };
         _stateMachine.AddState(state, enter, update, exit);
     }
@@ -179,24 +183,27 @@ public class GundamMelee : BaseMsParts
         GameTimer timer = new GameTimer();
         Action<State> enter = (prev) =>
         {
-            rb.useGravity = false;
             timer.ResetTimer(_stateTime._move);
             animator.SetInteger("SableType", 0);
             animator.SetTrigger("Sable");
         };
         Action update = () =>
         {
-            LookTarget(true);
-            rb.velocity = transform.forward * _moveSpeed;
-            mainMs.UseBoost(userBoost);
-            if (timer.UpdateTimer() || mainMs.targetDistance < _attackDistace)
+            // 移動時間か攻撃距離になれば攻撃位置に移る
+            if (timer.UpdateTimer() || mainMs.targetDistance < _attackDistace || mainMs.boostRate <=0)
             {
                 _stateMachine.ChangeState(State.Attack1);
+            }
+            else if (!timer.UpdateTimer())
+            {
+                // ターゲットの方向に向きながら進む
+                LookTarget(true);
+                rb.velocity = transform.forward * _moveSpeed;
+                mainMs.UseBoost(userBoost);
             }
         };
         Action<State> exit = (next) =>
         {
-            rb.useGravity = true;
         };
         _stateMachine.AddState(state, enter, update, exit);
     }
@@ -211,24 +218,31 @@ public class GundamMelee : BaseMsParts
         GameTimer attackTimer = new GameTimer();
         Action<State> enter = (prev) =>
         {
-            audio.MainSe(_seSable);
-            rb.velocity = Vector3.zero;
-            timer.ResetTimer(_stateTime._attack1);
-            attackTimer.ResetTimer(_stateTime._attack1Coll);
-            animator.SetInteger("SableType", 1);
-            animator.SetTrigger("Sable");
+            // タイマーのリセット
+            {
+                timer.ResetTimer(_stateTime._attack1);
+                attackTimer.ResetTimer(_stateTime._attack1Coll);
+            }
+            // アニメーションを設定
+            {
+                animator.SetInteger("SableType", 1);
+                animator.SetTrigger("Sable");
+            }
+            // ターゲットの方向に向く
             LookTarget(false);
+            // 攻撃判定にステータスを与える
             _attackCollision.SetAtkDown(_atkDown._attack1._atk, _atkDown._attack1._down);
+            // サウンド
+            audio.MainSe(_seSable);
         };
         Action update = () =>
         {
-            mainMs.UseBoost(userBoost);
-
-            rb.velocity = transform.forward * _attackSpeed;
+            // 攻撃時間になれば攻撃判定を付与
             if (attackTimer.UpdateTimer())
             {
                 _attackCollision.isCollision = true;
             }
+
             if (timer.UpdateTimer())
             {
                 if (_isCombo)
@@ -242,6 +256,10 @@ public class GundamMelee : BaseMsParts
             }
             else
             {
+                mainMs.UseBoost(userBoost);
+                rb.velocity = transform.forward * _attackSpeed;
+
+                // 時間内に攻撃入力されたらコンボ入力とみなす
                 if (msInput.GetInputDown(GameInputState.MainAttack))
                 {
                     _isCombo = true;
@@ -265,19 +283,26 @@ public class GundamMelee : BaseMsParts
         GameTimer attackTimer = new GameTimer();
         Action<State> enter = (prev) =>
         {
-            audio.MainSe(_seSable);
-            rb.useGravity = false;
-            timer.ResetTimer(_stateTime._attack2);
-            attackTimer.ResetTimer(_stateTime._attack2Coll);
-            animator.SetInteger("SableType", 2);
-            animator.SetTrigger("Sable");
+            // タイマーのリセット
+            {
+                timer.ResetTimer(_stateTime._attack2);
+                attackTimer.ResetTimer(_stateTime._attack2Coll);
+            }
+            // アニメーションを設定
+            {
+                animator.SetInteger("SableType", 2);
+                animator.SetTrigger("Sable");
+            }
+            // ターゲットの方向に向く
             LookTarget(false);
+            // 攻撃判定にステータスを与える
             _attackCollision.SetAtkDown(_atkDown._attack2._atk, _atkDown._attack2._down);
+            // サウンド
+            audio.MainSe(_seSable);
         };
         Action update = () =>
         {
-            mainMs.UseBoost(userBoost);
-            rb.velocity = transform.forward * _attackSpeed;
+            // 攻撃時間になれば攻撃判定を付与
             if (attackTimer.UpdateTimer())
             {
                 _attackCollision.isCollision = true;
@@ -295,6 +320,10 @@ public class GundamMelee : BaseMsParts
             }
             else
             {
+                rb.velocity = transform.forward * _attackSpeed;
+                mainMs.UseBoost(userBoost);
+
+                // 時間内に攻撃入力があればコンボとみなす
                 if (msInput.GetInputDown(GameInputState.MainAttack))
                 {
                     _isCombo = true;
@@ -318,20 +347,26 @@ public class GundamMelee : BaseMsParts
         GameTimer attackTimer = new GameTimer();
         Action<State> enter = (prev) =>
         {
-            audio.MainSe(_seSable);
-            _isCombo = true;
-            rb.useGravity = false;
-            timer.ResetTimer(_stateTime._attack3);
-            attackTimer.ResetTimer(_stateTime._attack3Coll);
-            animator.SetInteger("SableType", 3);
-            animator.SetTrigger("Sable");
+            // タイマーのリセット
+            {
+                timer.ResetTimer(_stateTime._attack3);
+                attackTimer.ResetTimer(_stateTime._attack3Coll);
+            }
+            // アニメーションを設定
+            {
+                animator.SetInteger("SableType", 3);
+                animator.SetTrigger("Sable");
+            }
+            // ターゲットの方向に向く
             LookTarget(false);
+            // 攻撃判定にステータスを与える
             _attackCollision.SetAtkDown(_atkDown._attack3._atk, _atkDown._attack3._down);
+            // サウンド
+            audio.MainSe(_seSable);
         };
         Action update = () =>
         {
-            mainMs.UseBoost(userBoost);
-            rb.velocity = transform.forward * _attackSpeed;
+            // 攻撃判定
             if (attackTimer.UpdateTimer())
             {
                 _attackCollision.isCollision = true;
@@ -339,6 +374,11 @@ public class GundamMelee : BaseMsParts
             if (timer.UpdateTimer())
             {
                 _stateMachine.ChangeState(State.None);
+            }
+            else
+            {
+                rb.velocity = transform.forward * _attackSpeed;
+                mainMs.UseBoost(userBoost);
             }
         };
         Action<State> exit = (next) =>
@@ -356,11 +396,14 @@ public class GundamMelee : BaseMsParts
     public override void Initalize()
     {
         base.Initalize();
+        if (!_attackCollision.mainMs)
+        {
+            _attackCollision.mainMs = mainMs;
+        }
+        _stateMachine.ChangeState(State.None);
         _isCombo = false;
         _target = null;
-        _stateMachine.ChangeState(State.None);
         _attackCollision.isCollision = false;
-        _attackCollision.mainMs = mainMs;
         animator.SetInteger("SableType", -1);
     }
 
@@ -408,7 +451,6 @@ public class GundamMelee : BaseMsParts
         }
 
         _isCombo = false;
-        rb.useGravity = true;
         _attackCollision.isCollision = false;
         _attackCollision.End();
         _intervalTimer.ResetTimer(_interval);

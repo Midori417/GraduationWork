@@ -7,6 +7,15 @@ using UnityEngine;
 /// </summary>
 public class CpuPilot : BasePilot
 {
+    private enum Mode
+    {
+        Stop,
+        Easy,
+        Hard
+    }
+    [SerializeField, Header("モード")]
+    private Mode _mode = Mode.Stop;
+
     // 仮想軸
     private List<Vector2> _moveAxisList = new List<Vector2>();
 
@@ -79,6 +88,7 @@ public class CpuPilot : BasePilot
     protected override void MsUpdate()
     {
         base.MsUpdate();
+        if(_mode == Mode.Stop) return;
         MsInput();
     }
 

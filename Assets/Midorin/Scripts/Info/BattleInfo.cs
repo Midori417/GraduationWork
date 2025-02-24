@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 /// <summary>
 /// チーム
@@ -13,24 +12,6 @@ public enum Team
 }
 
 /// <summary>
-/// プレイヤーのタイプ
-/// </summary>
-public enum PlayerType
-{
-    Human,
-    Cpu,
-}
-
-/// <summary>
-/// 機体リスト
-/// </summary>
-public enum MsList
-{
-    Gundam,
-    None,
-}
-
-/// <summary>
 /// パイロット情報
 /// </summary>
 [Serializable]
@@ -40,10 +21,10 @@ public struct PilotInfo
     public Team teamId;
 
     // プレイヤータイプ
-    public PlayerType playerType;
+    public PilotType playerType;
 
     // 仕様機体
-    public MsList useMs;
+    public MsType useMs;
 }
 
 /// <summary>
@@ -52,6 +33,9 @@ public struct PilotInfo
 [Serializable]
 public struct BattleInfo
 {
+    // チームのコストの最大値
+    public static readonly int teamCostMax = 6000;
+
     // 赤チームのコスト
     public int teamRedCost;
 
@@ -60,6 +44,8 @@ public struct BattleInfo
 
     // 制限時間
     public int time;
+
+    public MapType mapType;
 
     // パイロット情報配列
     public List<PilotInfo> pilotsInfo;

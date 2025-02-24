@@ -206,11 +206,11 @@ public class MsStep : BaseMsParts
             {
                 if (perendicular.y > 0)
                 {
-                    animator.SetInteger("StepType", 2);
+                    animator.SetInteger("StepType", 3);
                 }
                 else if (perendicular.y < 0)
                 {
-                    animator.SetInteger("StepType", 3);
+                    animator.SetInteger("StepType", 2);
                 }
             }
             animator.SetTrigger("Step");
@@ -243,6 +243,16 @@ public class MsStep : BaseMsParts
     public void UpdateState()
     {
         _stateMachine.UpdateState();
+    }
+
+    /// <summary>
+    /// ステップキャンセル
+    /// </summary>
+    public void StepCancel()
+    {
+        if(_stateMachine.currentState != State.None)
+        _stateMachine.ChangeState(State.None);
+        mainMs.homingCut = false;
     }
 
     /// <summary>

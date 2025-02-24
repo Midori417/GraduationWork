@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Factory;
 
 /// <summary>
 /// バトル管理クラス
@@ -190,11 +191,6 @@ public class BattleManager : SingletonBehavior<BattleManager>
     // 最後に破壊された機体
     private BaseMs _lastDestoryMs;
 
-    [SerializeField, Header("破壊された機体を見るカメラ")]
-    private Camera _destroyCamera;
-    [SerializeField, Header("仮想シネマカメラ")]
-    CinemachineVirtualCamera _virtualCamera;
-
     #endregion
 
     #region プロパティ
@@ -251,38 +247,25 @@ public class BattleManager : SingletonBehavior<BattleManager>
                 battleInfo.time = 3 * 60;
                 battleInfo.teamRedCost = 6000;
                 battleInfo.teamBlueCost = 6000;
+                battleInfo.mapType = MapType.Side7;
             }
             {
                 PilotInfo pilotInfo;
                 pilotInfo.teamId = Team.Red;
-                pilotInfo.playerType = PlayerType.Human;
-                pilotInfo.useMs = MsList.Gundam;
+                pilotInfo.playerType = PilotType.Human;
+                pilotInfo.useMs = MsType.Gundam;
                 battleInfo.pilotsInfo.Add(pilotInfo);
             }
             {
                 PilotInfo pilotInfo;
                 pilotInfo.teamId = Team.Blue;
-                pilotInfo.playerType = PlayerType.Cpu;
-                pilotInfo.useMs = MsList.Gundam;
-                battleInfo.pilotsInfo.Add(pilotInfo);
-            }
-
-            {
-                PilotInfo pilotInfo;
-                pilotInfo.teamId = Team.Blue;
-                pilotInfo.playerType = PlayerType.Cpu;
-                pilotInfo.useMs = MsList.Gundam;
-                battleInfo.pilotsInfo.Add(pilotInfo);
-            }
-            {
-                PilotInfo pilotInfo;
-                pilotInfo.teamId = Team.Red;
-                pilotInfo.playerType = PlayerType.Cpu;
-                pilotInfo.useMs = MsList.Gundam;
+                pilotInfo.playerType = PilotType.StopCpu;
+                pilotInfo.useMs = MsType.Gundam;
                 battleInfo.pilotsInfo.Add(pilotInfo);
             }
         }
         BattleSetting(battleInfo);
+        MapSetting(battleInfo);
         PilotSetting(battleInfo);
         MsStartPos();
     }
@@ -295,6 +278,15 @@ public class BattleManager : SingletonBehavior<BattleManager>
         _teamCost._red = battleInfo.teamRedCost;
         _teamCost._blue = battleInfo.teamBlueCost;
         _battleTime = (battleInfo.time);
+    }
+    
+    /// <summary>
+    /// マップをセッティング
+    /// </summary>
+    /// <param name="battleInfo"></param>
+    private void MapSetting(BattleInfo battleInfo)
+    {
+        _mapManager = MapFactory.Create(battleInfo.mapType);
     }
 
     /// <summary>
@@ -311,11 +303,7 @@ public class BattleManager : SingletonBehavior<BattleManager>
             if (pilotInfo.teamId == Team.None) continue;
 
             // 人間かCPUか判断
-            BasePilot pilot;
-            if (pilotInfo.playerType == PlayerType.Human)
-                pilot = Instantiate(_gameManager.GetPilotPrefab(true));
-            else
-                pilot = Instantiate(_gameManager.GetPilotPrefab(false));
+            BasePilot pilot = PilotFactory.Create(pilotInfo.playerType);
 
             // 機体選び
             pilot.myMs = MsInstance(pilotInfo.useMs);
@@ -339,14 +327,14 @@ public class BattleManager : SingletonBehavior<BattleManager>
     /// <summary>
     /// 機体の生成
     /// </summary>
-    private BaseMs MsInstance(MsList useMs)
+    private BaseMs MsInstance(MsType useMs)
     {
         BaseMs ms = null;
 
         switch (useMs)
         {
-            case MsList.Gundam:
-                ms = Instantiate(_gameManager.GetMsPrefab((int)MsList.Gundam));
+            case MsType.Gundam:
+                ms = MsFactory.Create(useMs);
                 break;
         }
         return ms;
@@ -663,10 +651,6 @@ public class BattleManager : SingletonBehavior<BattleManager>
     public void EndMs(BaseMs ms)
     {
         _lastDestoryMs = ms;
-        _destroyCamera.gameObject.SetActive(true);
-        _virtualCamera.Follow = ms.center;
-        _virtualCamera.LookAt = ms.center;
-        _virtualCamera.PreviousStateIsValid = false;
     }
 
     /// <summary>

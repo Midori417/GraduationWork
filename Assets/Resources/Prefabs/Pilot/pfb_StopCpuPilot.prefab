@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7327235419003881748}
   - component: {fileID: 4001080478965952619}
   m_Layer: 0
-  m_Name: pfb_CpuPilot
+  m_Name: pfb_StopCpuPilot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cameraManager: {fileID: 5055779101882152996}
+  _isStop: 1
   _moveTimer:
     _maxTime: 0.3
   _moveActionTimer:
@@ -117,6 +118,10 @@ PrefabInstance:
     - target: {fileID: 2976882775775432740, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.0011538339
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246070270152988177, guid: 991fed602e78a254e886419c64651952, type: 3}
+      propertyPath: m_CollideAgainst.m_Bits
+      value: 2113
       objectReference: {fileID: 0}
     - target: {fileID: 4458886686039897116, guid: 991fed602e78a254e886419c64651952, type: 3}
       propertyPath: m_Name
