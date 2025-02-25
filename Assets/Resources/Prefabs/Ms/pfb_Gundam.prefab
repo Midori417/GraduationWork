@@ -566,6 +566,8 @@ MonoBehaviour:
     _maxTime: 0.5
   _stepTime: 0.5
   _seStep: {fileID: 8300000, guid: 0a37bfc248698024fb0b53008c602bcb, type: 3}
+  _useLockBoost: 10
+  _useBoost: 30
 --- !u!114 &4291080379478233942
 MonoBehaviour:
   m_ObjectHideFlags: 0

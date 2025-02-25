@@ -8,13 +8,13 @@ using UnityEngine;
 public class ArmedManager : SingletonBehavior<ArmedManager>
 {
     //武装リスト
-    private List<BasicBulletMove> _armedList = new List<BasicBulletMove>(100);
+    private List<BaseArmed> _armedList = new List<BaseArmed>(100);
 
     /// <summary>
     /// 武装の追加
     /// </summary>
     /// <param name="bullet"></param>
-    public void AddArmed(BasicBulletMove bullet)
+    public void AddArmed(BaseArmed bullet)
     {
         _armedList.Add(bullet);
     }
@@ -23,7 +23,7 @@ public class ArmedManager : SingletonBehavior<ArmedManager>
     /// 武装の削除
     /// </summary>
     /// <param name="bullet"></param>
-    public void RemoveArmed(BasicBulletMove bullet)
+    public void RemoveArmed(BaseArmed bullet)
     {
         _armedList.Remove(bullet);
     }

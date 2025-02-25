@@ -34,6 +34,8 @@ public class BasicBulletMove : BaseArmed
     [SerializeField, Header("攻撃判定")]
     private BaseAttackCollision _attackCollision;
 
+    private Rigidbody _rb;
+
     #region プロパティ
 
     /// <summary>
@@ -55,42 +57,13 @@ public class BasicBulletMove : BaseArmed
     #region イベント関数
 
     /// <summary>
-    /// 生成時に呼び出す
-    /// </summary>
-    private void Awake()
-    {
-        ArmedManager i = ArmedManager.I;
-        if (i)
-        {
-            i.AddArmed(this);
-        }
-    }
-
-    /// <summary>
-    /// 破壊時に呼び出す
-    /// </summary>
-    private void OnDestroy()
-    {
-        ArmedManager i = ArmedManager.I;
-        if (i)
-        {
-            i.RemoveArmed(this);
-        }
-    }
-
-    /// <summary>
     /// Updateの前に呼び出される
     /// </summary>
     void Start()
     {
-        // nullチェック
-        if (!_targetMs)
-        {
-            return;
-        }
-
-        //// 射撃対象がいる方向に向ける
-        //transform.LookAt(_target.position);
+        _attackCollision = GetComponent<BaseAttackCollision>();
+        _rb = GetComponent<Rigidbody>();
+        _attackCollision.team = _team;
     }
 
     /// <summary>
@@ -98,8 +71,11 @@ public class BasicBulletMove : BaseArmed
     /// </summary>
     void Update()
     {
-        if (isStop) return;
-
+        if (isStop)
+        {
+            _rb.velocity = Vector3.zero;
+            return;
+        }
         // 破棄時間
         if (_destroyTimer.UpdateTimer())
         {
@@ -118,7 +94,7 @@ public class BasicBulletMove : BaseArmed
     private void Move()
     {
         // 向いている方向に進む
-        transform.position += transform.forward * _speed * Time.deltaTime;
+        _rb.velocity = transform.forward * _speed;
     }
 
     /// <summary>
@@ -128,7 +104,7 @@ public class BasicBulletMove : BaseArmed
     {
         if (!_targetMs) return;
         // 誘導切り
-        if(_targetMs.homingCut)
+        if (_targetMs.homingCut)
         {
             _targetMs = null;
             return;

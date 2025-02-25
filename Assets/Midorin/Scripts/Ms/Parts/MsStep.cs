@@ -50,6 +50,12 @@ public class MsStep : BaseMsParts
     [SerializeField, Header("ステップサウンド")]
     private AudioClip _seStep;
 
+    [SerializeField, Header("固定ブースト使用量")]
+    private float _useLockBoost = 0;
+    [SerializeField, Header("ブースト使用量")]
+    private float _useBoost = 0;
+
+
     #region プロパティ
 
     public bool isNow => _stateMachine.currentState == State.Step;
@@ -182,7 +188,7 @@ public class MsStep : BaseMsParts
         Action<State> enter = (prev) =>
         {
             timer.ResetTimer(_stepTime);
-            mainMs.UseBoost(10, true);
+            mainMs.UseBoost(_useLockBoost, true);
             audio.MainSe(_seStep);
             mainMs.homingCut = true;
 
@@ -223,14 +229,15 @@ public class MsStep : BaseMsParts
             }
             else
             {
-                mainMs.UseBoost(30);
+                mainMs.UseBoost(_useBoost);
                 rb.velocity = moveFoward * _speed;
             }
         };
         Action<State> exit = (next) =>
         {
             mainMs.homingCut = false;
-            rb.velocity = Vector3.zero;
+            //rb.velocity = Vector3.zero;
+            rb.velocity = rb.velocity * 0.5f;
         };
         _stateMachine.AddState(state, enter, update, exit);
     }

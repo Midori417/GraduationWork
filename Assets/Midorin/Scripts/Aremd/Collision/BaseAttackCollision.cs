@@ -13,6 +13,9 @@ public class BaseAttackCollision : MonoBehaviour
     [SerializeField, Header("ダウン値")]
     private float _down = 0;
 
+    // 所属チーム
+    private Team _team = Team.None;
+
     #region プロパティ
 
     public float atk
@@ -24,6 +27,12 @@ public class BaseAttackCollision : MonoBehaviour
     {
         get => _down;
         set => _down = value;
+    }
+
+    public Team team
+    {
+        protected get => _team;
+        set => _team = value;
     }
 
     #endregion

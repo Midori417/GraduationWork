@@ -32,7 +32,7 @@ public class StateMachine<T> where T : Enum
     // 現在の状態を外部で取得
     public T currentState => _currentState;
 
-    // Dictionary C++のstd::mapみたいなもの？
+    // Dictionary C++のstd::mapみたいなもの
     private Dictionary<T, State> _dict = new Dictionary<T, State>()
     {
         [default(T)] = new State()

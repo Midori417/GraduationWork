@@ -84,6 +84,6 @@ public class TitleManager : MonoBehaviour
             Debug.LogError("フェードオブジェクトが存在しません");
             return;
         }
-        _fadeOut.FadeStrt(Global._selectScene);
+        _fadeOut.FadeStrt(Global._modeSelectScene);
     }
 }

@@ -24,12 +24,6 @@ public class BulletCollision : BaseAttackCollision
     // trueなら衝突可能
     private Collider _collider;
 
-    // 所属チーム
-    private Team _team = Team.None;
-
-    public Team team
-    { set => team = value; }
-
     #region イベント関数
 
     /// <summary>
@@ -64,7 +58,7 @@ public class BulletCollision : BaseAttackCollision
         {
             MsDamageCollision ms = other.GetComponent<MsDamageCollision>();
             // 同じチームなので当たらない
-            if (_team == ms.team)
+            if (team == ms.team)
             {
                 return;
             }

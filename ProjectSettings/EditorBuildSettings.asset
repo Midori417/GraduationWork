@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Midorin/Scenes/Title.unity
     guid: 39cc3b16e1daaac4eb47a776c1043d73
   - enabled: 1
-    path: Assets/Midorin/Scenes/Select.unity
+    path: Assets/Midorin/Scenes/ModeSelect.unity
     guid: fd5e8d92268b9ee4fa1ce7061f2d81b1
   - enabled: 1
     path: Assets/Midorin/Scenes/BattleSetting.unity

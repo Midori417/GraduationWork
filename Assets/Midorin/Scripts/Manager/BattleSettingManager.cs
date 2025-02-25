@@ -9,6 +9,13 @@ using UnityEngine.UI;
 /// </summary>
 public class BattleSettingManager : MonoBehaviour
 {
+    enum State
+    {
+
+    }
+
+    #region シーン切り替え変数
+
     [SerializeField, Header("フェードオブジェクト")]
     private FadeOut _fadeOut;
 
@@ -25,25 +32,32 @@ public class BattleSettingManager : MonoBehaviour
 
     [SerializeField]
     private List<Image> _selectedImages;
-    [SerializeField]
-    private List<Button> _selectedButtons;
 
     Color _noramColor = new Color(0.4f, 0.4f, 0.4f);
     Color _hightColor = Color.white;
     bool isOn = false;
 
+    #endregion
+
+    #region イベント関数
+
     /// <summary>
-    /// スタートイベント
+    /// Updateの前に呼び出される
     /// </summary>
     private void Start()
     {
 
     }
 
+    /// <summary>
+    /// 毎フレーム呼び出される
+    /// </summary>
     void Update()
     {
         ControlUpdate();
     }
+
+    #endregion
 
     /// <summary>
     /// 操作の更新
@@ -57,12 +71,8 @@ public class BattleSettingManager : MonoBehaviour
             // テスト用
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                _fadeOut.FadeStrt(Global._selectScene);
+                _fadeOut.FadeStrt(Global._modeSelectScene);
                 isOn = true;
-            }
-            foreach (Button button in _selectedButtons)
-            {
-                button.enabled = true;
             }
         }
         else
@@ -75,11 +85,7 @@ public class BattleSettingManager : MonoBehaviour
             else if (Gamepad.current.circleButton.wasPressedThisFrame)
             {
                 isOn = true;
-                _fadeOut.FadeStrt(Global._selectScene);
-            }
-            foreach(Button button in _selectedButtons)
-            {
-               button.enabled = false;
+                _fadeOut.FadeStrt(Global._modeSelectScene);
             }
             for (int i = 0; i < _selectedImages.Count; i++)
             {
