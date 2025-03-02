@@ -21,7 +21,7 @@ public class TitleManager : MonoBehaviour
     private Image _imgPlaseButton;
 
     [SerializeField, Header("画像")]
-    private List<Sprite> _sprites;
+    private Sprite _sprites;
 
     private float t = 0f;
 
@@ -46,24 +46,8 @@ public class TitleManager : MonoBehaviour
                     Cursor.visible = false;
                     Cursor.lockState = CursorLockMode.Locked;
                 }
-                _imgPlaseButton.sprite = _sprites[0];
+                _imgPlaseButton.sprite = _sprites;
                 if (Gamepad.current.crossButton.wasPressedThisFrame)
-                {
-                    isOn = true;
-                    PushPleaseButton();
-                    GetComponent<AudioSource>().Play();
-                    _bgmSource.Stop();
-                }
-            }
-            else
-            {
-                if (!Cursor.visible)
-                {
-                    Cursor.visible = true;
-                    Cursor.lockState = CursorLockMode.None;
-                }
-                _imgPlaseButton.sprite = _sprites[1];
-                if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     isOn = true;
                     PushPleaseButton();
